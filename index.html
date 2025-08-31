@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame it Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .file-input-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-container input[type=file] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .bg-pattern {
+            background-color: #f3f4f6; /* light gray fallback */
+            background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px), radial-gradient(circle, #d1d5db 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            
+        }
+        @media (prefers-color-scheme: dark) {
+            .bg-pattern {
+                background-color: #1f2937; /* dark gray fallback */
+                background-image: radial-gradient(circle, #4b5563 1px, transparent 1px), radial-gradient(circle, #4b5563 1px, transparent 1px);
+            }
+        }
+     </style>
+ </head>
+ <body class="bg-pattern text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center p-4 pt-16">
+
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-4xl aspect-video flex flex-col justify-between relative">
+        <div class="absolute top-4 right-4 flex space-x-2">
+            
+        </div>
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">Frame it Up</h1>
+
+        <div class="space-y-6 flex-grow flex flex-col justify-center">
+            <!-- File Selection -->
+            <div class="flex flex-col items-center">
+                <label for="file-upload" class="sr-only">Choose Images</label>
+                <div class="file-input-container">
+                    <button class="bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md">
+                        Select Images
+                    </button>
+                    <input id="file-upload" type="file" multiple accept="image/*" />
+                </div>
+                <p id="file-count" class="mt-2 text-sm text-gray-500 dark:text-gray-400">No images selected</p>
+            </div>
+
+            <!-- Border Settings -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Border Width -->
+                    <div>
+                        <label for="border-width" class="block text-sm font-medium mb-1">Border Width (pixels)</label>
+                        <input type="number" id="border-width" value="250" min="0" max="1000" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+                        <input type="range" id="border-width-slider" min="0" max="1000" value="250" step="25" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    
+                    <!-- Border Color -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Border Color</label>
+                        <div class="flex flex-wrap space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="border-color" value="white" checked class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">White</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="border-color" value="black" class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">Black</span>
+                            </label>
+                             <label class="inline-flex items-center">
+                                <input type="radio" name="border-color" value="average" class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">Average Color</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Corner Radius -->
+                    <div>
+                        <label for="corner-radius" class="block text-sm font-medium mb-1">Corner Radius (pixels)</label>
+                        <input type="number" id="corner-radius-input" value="50" min="0" max="500" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+                        <input type="range" id="corner-radius" min="0" max="500" value="50" step="50" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-center md:justify-between items-center mt-8 space-x-4">
+                <div class="flex items-center gap-4">
+                    <button id="process-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                        <span id="process-text">Process Images</span>
+                    </button>
+                    <span id="loading-text" class="hidden text-gray-700 dark:text-gray-300 font-semibold text-lg w-32 text-left"></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                     <button id="download-all-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                         Download All (ZIP)
+                     </button>
+                     <button id="reset-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                         Reset
+                     </button>
+                </div>
+            </div>
+
+            <!-- Message & Output -->
+            <div id="message-container" class="mt-16 text-center"></div>
+        </div>
+        
+        <!-- Uploaded Images and Processed Images -->
+        <div id="image-output" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('file-upload');
+            const fileCount = document.getElementById('file-count');
+            const borderWidthInput = document.getElementById('border-width');
+            const borderWidthSlider = document.getElementById('border-width-slider');
+            const cornerRadiusInput = document.getElementById('corner-radius');
+            const cornerRadiusNumberInput = document.getElementById('corner-radius-input');
+            const processButton = document.getElementById('process-button');
+            const downloadAllButton = document.getElementById('download-all-button');
+            const borderColorRadios = document.getElementsByName('border-color');
+            const imageOutput = document.getElementById('image-output');
+            const messageContainer = document.getElementById('message-container');
+            const resetButton = document.getElementById('reset-button');
+            const processText = document.getElementById('process-text');
+            const loadingText = document.getElementById('loading-text');
+            
+            let selectedFiles = [];
+            const loadedImages = [];
+            let processedImages = [];
+            let initialLoadComplete = false;
+            let loadingInterval;
+            
+            // Function to get the average color of an image
+            function getAverageColor(img) {
+                return new Promise(resolve => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 1;
+                    canvas.height = 1;
+                    ctx.drawImage(img, 0, 0, 1, 1);
+                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                    resolve(`rgb(${r}, ${g}, ${b})`);
+                });
+            }
+
+            // Function to draw a rounded rectangle
+            function drawRoundedRect(ctx, x, y, width, height, radius) {
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+            }
+
+            // Function to draw a single preview on a canvas
+            function drawFramedPreview(img, canvas, borderWidth, borderColor, cornerRadius) {
+                const ctx = canvas.getContext('2d');
+                const originalWidth = img.naturalWidth;
+                const originalHeight = img.naturalHeight;
+                const newWidth = originalWidth + 2 * borderWidth;
+                const newHeight = originalHeight + 2 * borderWidth;
+
+                const maxDimension = 300;
+                canvas.width = maxDimension;
+                canvas.height = maxDimension;
+
+                const ratio = Math.min(maxDimension / newWidth, maxDimension / newHeight);
+                const scaledWidth = newWidth * ratio;
+                const scaledHeight = newHeight * ratio;
+                
+                const offsetX = (maxDimension - scaledWidth) / 2;
+                const offsetY = (maxDimension - scaledHeight) / 2;
+                
+                // Helper function to perform the actual drawing
+                const drawCanvasContents = (frameColor) => {
+                    ctx.clearRect(0, 0, maxDimension, maxDimension);
+                    ctx.fillStyle = frameColor;
+                    ctx.fillRect(offsetX, offsetY, scaledWidth, scaledHeight);
+                    
+                    // Draw image with rounded corners
+                    ctx.save();
+                    drawRoundedRect(ctx, borderWidth * ratio + offsetX, borderWidth * ratio + offsetY, (originalWidth * ratio), (originalHeight * ratio), cornerRadius * ratio);
+                    ctx.clip();
+                    ctx.drawImage(img, borderWidth * ratio + offsetX, borderWidth * ratio + offsetY, (originalWidth * ratio), (originalHeight * ratio));
+                    ctx.restore();
+                };
+
+                if (borderColor === 'average') {
+                    // If the average color is already cached on the image object, use it.
+                    if (img.averageColor) {
+                        drawCanvasContents(img.averageColor);
+                    } else {
+                        // Otherwise, calculate it, cache it, and then draw.
+                        getAverageColor(img).then(avgColor => {
+                            img.averageColor = avgColor; // Cache for future use
+                            drawCanvasContents(avgColor);
+                        });
+                    }
+                } else {
+                    // For static colors, just draw directly.
+                    drawCanvasContents(borderColor);
+                }
+            }
+
+            // Function to update all previews
+            function updateAllPreviews() {
+                const borderWidth = parseInt(borderWidthInput.value, 10);
+                const borderColor = document.querySelector('input[name="border-color"]:checked').value;
+                const cornerRadius = parseInt(cornerRadiusInput.value, 10);
+                
+                // Update small previews
+                loadedImages.forEach(item => {
+                    const previewCanvas = item.element.querySelector('canvas');
+                    if (item.img.complete && item.img.naturalWidth > 0) {
+                        drawFramedPreview(item.img, previewCanvas, borderWidth, borderColor, cornerRadius);
+                    }
+                });
+            }
+
+            // Event listeners for dynamic preview
+            borderWidthInput.addEventListener('input', () => {
+                const value = Math.max(0, Math.min(1000, parseInt(borderWidthInput.value, 10) || 0));
+                borderWidthInput.value = value;
+                borderWidthSlider.value = value;
+                if (processedImages.length > 0) {
+                    resetToPreviewMode();
+                }
+                updateAllPreviews();
+            });
+            borderWidthSlider.addEventListener('input', () => {
+                borderWidthInput.value = borderWidthSlider.value;
+                if (processedImages.length > 0) {
+                    resetToPreviewMode();
+                }
+                updateAllPreviews();
+            });
+            borderColorRadios.forEach(radio => radio.addEventListener('change', () => {
+                if (processedImages.length > 0) {
+                    resetToPreviewMode();
+                }
+                updateAllPreviews();
+            }));
+            cornerRadiusInput.addEventListener('input', () => {
+                cornerRadiusNumberInput.value = cornerRadiusInput.value;
+                if (processedImages.length > 0) {
+                    resetToPreviewMode();
+                }
+                updateAllPreviews();
+            });
+
+            cornerRadiusNumberInput.addEventListener('input', () => {
+                const value = Math.max(0, Math.min(500, parseInt(cornerRadiusNumberInput.value, 10) || 0));
+                cornerRadiusNumberInput.value = value;
+                cornerRadiusInput.value = value;
+                if (processedImages.length > 0) {
+                    resetToPreviewMode();
+                }
+                updateAllPreviews();
+            });
+
+            // Event listener for file selection
+            fileInput.addEventListener('change', (event) => {
+                selectedFiles = Array.from(event.target.files);
+                loadedImages.length = 0; // Clear previous images
+                processedImages.length = 0; // Clear previous processed images
+                imageOutput.innerHTML = '';
+                messageContainer.textContent = '';
+                downloadAllButton.disabled = true;
+                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                
+                // Keep reset button disabled until files are selected
+                resetButton.disabled = true;
+                resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+
+
+                if (selectedFiles.length > 0) {
+                    fileCount.textContent = `${selectedFiles.length} image(s) selected.`;
+                    processButton.disabled = false;
+                    processButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    processButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                    
+                    // Enable reset button now that there are images
+                    resetButton.disabled = false;
+                    resetButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
+
+                    initialLoadComplete = false;
+
+                    // Display previews of uploaded files
+                    selectedFiles.forEach(file => {
+                        const container = document.createElement('div');
+                        container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
+
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
+                        
+                        const name = document.createElement('p');
+                        name.className = 'text-xs truncate text-gray-700 dark:text-gray-300';
+                        name.textContent = file.name;
+
+                        container.appendChild(canvas);
+                        container.appendChild(name);
+                        imageOutput.appendChild(container);
+
+                        const img = new Image();
+                        img.onload = () => {
+                            loadedImages.push({ file, img, element: container });
+                            updateAllPreviews();
+                            if (loadedImages.length === selectedFiles.length) {
+                                initialLoadComplete = true;
+                            }
+                        };
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    fileCount.textContent = 'No images selected';
+                    processButton.disabled = true;
+                    processButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    processButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                }
+            });
+
+            // Loading Animation
+            function startLoadingAnimation() {
+                let dots = 1;
+                loadingText.classList.remove('hidden');
+                loadingInterval = setInterval(() => {
+                    let text = 'Loading ';
+                    text += '. '.repeat(dots);
+                    loadingText.textContent = text;
+                    dots = (dots % 3) + 1;
+                }, 400);
+            }
+
+            function stopLoadingAnimation() {
+                clearInterval(loadingInterval);
+                loadingText.classList.add('hidden');
+                loadingText.textContent = '';
+            }
+
+            // Event listener for processing button
+            processButton.addEventListener('click', () => {
+                if (selectedFiles.length === 0) {
+                    showMessage('Please select at least one image.', 'text-red-500');
+                    return;
+                }
+
+                const borderWidth = parseInt(borderWidthInput.value, 10);
+                if (isNaN(borderWidth) || borderWidth < 0) {
+                    showMessage('Please enter a valid border width (a non-negative number).', 'text-red-500');
+                    return;
+                }
+                
+                messageContainer.textContent = ''; // Clear any previous messages
+                
+                processButton.disabled = true;
+                startLoadingAnimation();
+
+                processedImages = [];
+                processImagesSequentially(0);
+            });
+
+            // Function to process images one by one to avoid freezing the browser
+            function processImagesSequentially(index) {
+                if (index >= loadedImages.length) {
+                    // All images processed, finalize the UI
+                    displayProcessedImages();
+                    showMessage('Images processed successfully!', 'text-green-500');
+                    downloadAllButton.disabled = false;
+                    downloadAllButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    downloadAllButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
+                    processButton.disabled = false;
+                    stopLoadingAnimation();
+                    resetButton.disabled = false;
+                    resetButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                    return;
+                }
+
+                const item = loadedImages[index];
+                const borderWidth = parseInt(borderWidthInput.value, 10);
+                const cornerRadius = parseInt(cornerRadiusInput.value, 10);
+                const borderColor = document.querySelector('input[name="border-color"]:checked').value;
+
+                processImage(item.img, item.file.name, borderWidth, borderColor, cornerRadius, (dataUrl) => {
+                    const originalName = item.file.name.split('.')[0];
+                    const newName = `${originalName}_framed_${borderWidth}px.jpg`;
+                    processedImages.push({ name: newName, url: dataUrl });
+
+                    // Use setTimeout to process the next image, giving the browser time to update
+                    setTimeout(() => {
+                        processImagesSequentially(index + 1);
+                    }, 0);
+                });
+            }
+
+            // Function to handle full-size image processing and display
+            function processImage(img, fileName, borderWidth, borderColor, cornerRadius, callback) {
+                const originalWidth = img.naturalWidth;
+                const originalHeight = img.naturalHeight;
+                const framedWidth = originalWidth + 2 * borderWidth;
+                const framedHeight = originalHeight + 2 * borderWidth;
+
+                // Create a canvas that is the exact size of the final framed image
+                const canvas = document.createElement('canvas');
+                canvas.width = framedWidth;
+                canvas.height = framedHeight;
+                const ctx = canvas.getContext('2d');
+
+                if (borderColor === 'average') {
+                    getAverageColor(img).then(avgColor => {
+                        ctx.fillStyle = avgColor;
+                        ctx.fillRect(0, 0, framedWidth, framedHeight);
+                        
+                        ctx.save();
+                        drawRoundedRect(ctx, borderWidth, borderWidth, originalWidth, originalHeight, cornerRadius);
+                        ctx.clip();
+                        ctx.drawImage(img, borderWidth, borderWidth);
+                        ctx.restore();
+                        
+                        callback(canvas.toDataURL('image/jpeg', 0.9));
+                    });
+                } else {
+                    ctx.fillStyle = borderColor;
+                    ctx.fillRect(0, 0, framedWidth, framedHeight);
+                    
+                    ctx.save();
+                    drawRoundedRect(ctx, borderWidth, borderWidth, originalWidth, originalHeight, cornerRadius);
+                    ctx.clip();
+                    ctx.drawImage(img, borderWidth, borderWidth);
+                    ctx.restore();
+
+                    callback(canvas.toDataURL('image/jpeg', 0.9));
+                }
+            }
+            
+            // Function to display processed images and download links
+            function displayProcessedImages() {
+                imageOutput.innerHTML = '';
+                processedImages.forEach(item => {
+                    const container = document.createElement('div');
+                    container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
+
+                    // Create a canvas for display to handle centering, just like the previews
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
+                    const maxDimension = 300; // Match preview canvas size
+                    canvas.width = maxDimension;
+                    canvas.height = maxDimension;
+                    const ctx = canvas.getContext('2d');
+
+                    const img = new Image();
+                    img.onload = () => {
+                        // Logic to center the final image in the square canvas
+                        const ratio = Math.min(maxDimension / img.width, maxDimension / img.height);
+                        const scaledWidth = img.width * ratio;
+                        const scaledHeight = img.height * ratio;
+                        const offsetX = (maxDimension - scaledWidth) / 2;
+                        const offsetY = (maxDimension - scaledHeight) / 2;
+
+                        ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+                    };
+                    img.src = item.url; // The src is the perfectly cropped final image
+                    
+                    const link = document.createElement('a');
+                    link.href = item.url;
+                    link.download = item.name;
+                    link.textContent = `Download`;
+                    link.className = 'text-blue-500 hover:underline text-base font-semibold';
+
+                    container.appendChild(canvas); // Append canvas instead of img for consistent centering
+                    container.appendChild(link);
+                    imageOutput.appendChild(container);
+                });
+            }
+
+            // Download all button event listener
+            downloadAllButton.addEventListener('click', () => {
+                if (processedImages.length === 0) {
+                    showMessage('No processed images to download.', 'text-red-500');
+                    return;
+                }
+                showMessage('Preparing zip file for download...', 'text-blue-500');
+
+                const zip = new JSZip();
+                processedImages.forEach(item => {
+                    const base64Data = item.url.split(',')[1];
+                    zip.file(item.name, base64Data, { base64: true });
+                });
+
+                zip.generateAsync({ type: "blob" })
+                    .then(function(content) {
+                        saveAs(content, "framed_images.zip");
+                        showMessage('Download started!', 'text-green-500');
+                    })
+                    .catch(e => {
+                        showMessage('Error creating zip file.', 'text-red-500');
+                        console.error(e);
+                    });
+            });
+
+            // Reset button event listener
+            resetButton.addEventListener('click', () => {
+                resetApplication();
+            });
+
+            function resetApplication() {
+                loadedImages.length = 0;
+                processedImages.length = 0;
+                imageOutput.innerHTML = '';
+                messageContainer.textContent = '';
+                processButton.disabled = true;
+                processButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                processButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                downloadAllButton.disabled = true;
+                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                resetButton.disabled = true;
+                resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                
+                fileInput.value = null; // Clear the selected files from the input
+                fileCount.textContent = 'No images selected';
+            }
+
+            function resetToPreviewMode() {
+                imageOutput.innerHTML = '';
+                processedImages.length = 0;
+                downloadAllButton.disabled = true;
+                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                
+                loadedImages.forEach(item => {
+                    imageOutput.appendChild(item.element);
+                });
+                updateAllPreviews();
+            }
+
+            function showMessage(msg, colorClass) {
+                messageContainer.textContent = msg;
+                messageContainer.className = `mt-16 text-center text-lg font-semibold ${colorClass}`;
+            }
+        });
+    </script>
+
+</body>
+</html>
+
