@@ -68,7 +68,7 @@
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Border Width -->
-                    <div>
+                    <div id="border-width-container" class="transition-opacity duration-300">
                         <label for="border-width" class="block text-sm font-medium mb-1">Border Width (pixels)</label>
                         <input type="number" id="border-width" value="250" min="0" max="1000" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
                         <input type="range" id="border-width-slider" min="0" max="1000" value="250" step="25" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
@@ -97,7 +97,7 @@
                         </div>
                     </div>
                     <!-- Corner Radius -->
-                    <div>
+                    <div id="corner-radius-container" class="transition-opacity duration-300">
                         <label for="corner-radius" class="block text-sm font-medium mb-1">Corner Radius (pixels)</label>
                         <input type="number" id="corner-radius-input" value="50" min="0" max="500" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
                         <input type="range" id="corner-radius" min="0" max="500" value="50" step="50" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
@@ -147,6 +147,8 @@
             const resetButton = document.getElementById('reset-button');
             const processText = document.getElementById('process-text');
             const loadingText = document.getElementById('loading-text');
+            const borderWidthContainer = document.getElementById('border-width-container');
+            const cornerRadiusContainer = document.getElementById('corner-radius-container');
             
             let selectedFiles = [];
             const loadedImages = [];
@@ -361,6 +363,14 @@
                 borderWidthSlider.disabled = isFilm;
                 cornerRadiusInput.disabled = isFilm;
                 cornerRadiusNumberInput.disabled = isFilm;
+
+                if (isFilm) {
+                    borderWidthContainer.classList.add('opacity-50');
+                    cornerRadiusContainer.classList.add('opacity-50');
+                } else {
+                    borderWidthContainer.classList.remove('opacity-50');
+                    cornerRadiusContainer.classList.remove('opacity-50');
+                }
 
                 loadedImages.forEach(item => {
                     const previewCanvas = item.element.querySelector('canvas');
@@ -733,4 +743,5 @@
 
 </body>
 </html>
+
 
