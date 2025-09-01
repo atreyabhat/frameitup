@@ -54,13 +54,9 @@
         <!-- Tool Description and Donation Section -->
         <div class="text-center mb-8 space-y-2">
             <p class="text-sm text-gray-300 dark:text-gray-400">
-                 By a photographer, for photographers. Effortlessly add clean, elegant frames to your images for social media or printing.
+                By a photographer, for photographers. Effortlessly add clean, elegant frames to your images for social media or printing.
                 <br>Simple & ad-free experience.
             </p>
-            <!-- <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                If you appreciate this tool, your support helps keep it running.
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=YOUR_PAYPAL_EMAIL&item_name=Frame%20it%20Up%20Donation&currency_code=USD" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-600 underline">Donate to support this project</a>.
-            </p> -->
         </div>
 
         <div class="space-y-6 flex-grow flex flex-col justify-center">
@@ -81,9 +77,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Border Width -->
                     <div id="border-width-container" class="transition-opacity duration-300">
-                        <label for="border-width" class="block text-sm font-medium mb-1">Border Width (pixels)</label>
-                        <input type="number" id="border-width" value="200" min="0" max="1000" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
-                        <input type="range" id="border-width-slider" min="0" max="1000" value="200" step="25" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                        <label for="border-width" class="block text-sm font-medium mb-1">Border Width (%)</label>
+                        <input type="number" id="border-width" value="5" min="0" max="25" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
+                        <input type="range" id="border-width-slider" min="0" max="25" value="5" step="1" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
                     </div>
                     
                     <!-- Border Color -->
@@ -104,15 +100,15 @@
                             </label>
                             <label class="inline-flex items-center">
                                 <input type="radio" name="border-color" value="film" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
-                                <span class="ml-2 text-gray-100 dark:text-gray-300">35  MM Film</span>
+                                <span class="ml-2 text-gray-100 dark:text-gray-300">35mm Film</span>
                             </label>
                         </div>
                     </div>
                     <!-- Corner Radius -->
                     <div id="corner-radius-container" class="transition-opacity duration-300">
-                        <label for="corner-radius" class="block text-sm font-medium mb-1">Corner Radius (pixels)</label>
-                        <input type="number" id="corner-radius-input" value="0" min="0" max="500" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
-                        <input type="range" id="corner-radius" min="0" max="500" value="0" step="50" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                        <label for="corner-radius-input" class="block text-sm font-medium mb-1">Corner Radius (%)</label>
+                        <input type="number" id="corner-radius-input" value="0" min="0" max="25" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
+                        <input type="range" id="corner-radius" min="0" max="25" value="0" step="1" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
                     </div>
                 </div>
             </div>
@@ -247,24 +243,33 @@
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         
+                        // Randomize position along the strip
+                        const randomOffset = (Math.random() * 0.7 - 0.35) * stripLength;
+                        ctx.save();
+                        ctx.translate(randomOffset, 0);
+
                         ctx.fillText('35  MM', 0, 0);
 
+                        const textMetrics = ctx.measureText('35  MM');
                         const arrowHeight = stripWidth * 0.35;
                         const arrowWidth = arrowHeight * 1.2;
+                        const arrowOffset = textMetrics.width * 1.8;
 
                         ctx.beginPath();
-                        ctx.moveTo(stripLength * 0.1, -arrowWidth / 2);
-                        ctx.lineTo(stripLength * 0.1 + arrowHeight, 0);
-                        ctx.lineTo(stripLength * 0.1, arrowWidth/2);
+                        ctx.moveTo(arrowOffset, -arrowWidth / 2);
+                        ctx.lineTo(arrowOffset + arrowHeight, 0);
+                        ctx.lineTo(arrowOffset, arrowWidth/2);
                         ctx.closePath();
                         ctx.fill();
 
                         ctx.beginPath();
-                        ctx.moveTo(-stripLength * 0.1 - arrowHeight, -arrowWidth / 2);
-                        ctx.lineTo(-stripLength * 0.1, 0);
-                        ctx.lineTo(-stripLength * 0.1 - arrowHeight, arrowWidth/2);
+                        ctx.moveTo(-arrowOffset - arrowHeight, -arrowWidth / 2);
+                        ctx.lineTo(-arrowOffset, 0);
+                        ctx.lineTo(-arrowOffset - arrowHeight, arrowWidth / 2);
                         ctx.closePath();
                         ctx.fill();
+                        
+                        ctx.restore();
                         
                     } else { // Draw barcode pattern on the right strip
                         const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
@@ -273,7 +278,7 @@
                         let currentPosAlongStrip = -stripLength / 2 * 0.95;
                         const endPosAlongStrip = stripLength / 2 * 0.95;
                         
-                        const posAcrossStrip = -stripWidth * 0.1; // Inner edge is negative Y after rotation for right strip
+                        const posAcrossStrip = stripWidth * 0.45; // Move to the outer edge
 
                         while (currentPosAlongStrip < endPosAlongStrip) {
                             for (let i = 0; i < pattern.length && currentPosAlongStrip < endPosAlongStrip; i++) {
@@ -297,9 +302,9 @@
                 // --- Draw sprocket holes ---
                 ctx.fillStyle = 'white';
                 const numHoles = 8;
-                const holeWidth = filmStripWidth * 0.64;
-                const holeHeight = holeWidth * 0.7; 
-                const holeRadius = holeHeight * 0.4; 
+                const holeHeight = filmStripWidth * 0.5;
+                const holeWidth = holeHeight * 1.6;
+                const holeRadius = holeHeight * 0.25; 
 
                 for (let i = 0; i < numHoles; i++) {
                     const holeY = (i * (height / numHoles)) + (height / numHoles - holeHeight) / 2;
@@ -342,29 +347,52 @@
                 ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
                 ctx.restore();
 
-                const drawTopStrip = (x) => {
+                const drawTopStrip = () => {
                     ctx.save();
                     ctx.fillStyle = '#f59e0b'; // amber-500
                     const fontSize = filmStripHeight * 0.4;
                     ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
-                    ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
 
-                    const textX = x + width * 0.1;
-                    const textY = filmStripHeight / 2;
-                    ctx.fillText('35  MM', textX, textY);
-                    
+                    // Randomize position
+                    const textContent = '35 MM';
+                    const textMetrics = ctx.measureText(textContent);
                     const arrowHeight = filmStripHeight * 0.35;
                     const arrowWidth = arrowHeight * 1.2;
-                    const arrowY = filmStripHeight / 2;
+                    const gap = filmStripHeight * 0.8;
+
+                    // Calculate total width of the text + arrows + gaps block
+                    const blockWidth = textMetrics.width + (gap * 2) + (arrowWidth * 2);
+                    const safeAreaWidth = width - blockWidth - (sideBorderWidth * 2);
                     
-                    const arrowX = textX + width * 0.08;
+                    const startX = sideBorderWidth + (Math.random() * safeAreaWidth);
+
+                    const textY = filmStripHeight / 2;
+                    const arrowY = filmStripHeight / 2;
+
+                    // Left Arrow (points right)
+                    const arrowXLeft = startX;
                     ctx.beginPath();
-                    ctx.moveTo(arrowX - arrowWidth / 2, arrowY - arrowHeight / 2);
-                    ctx.lineTo(arrowX - arrowWidth / 2, arrowY + arrowHeight / 2);
-                    ctx.lineTo(arrowX + arrowWidth / 2, arrowY);
+                    ctx.moveTo(arrowXLeft, arrowY - arrowHeight / 2);
+                    ctx.lineTo(arrowXLeft, arrowY + arrowHeight / 2);
+                    ctx.lineTo(arrowXLeft + arrowWidth, arrowY);
                     ctx.closePath();
                     ctx.fill();
+                    
+                    // Text
+                    ctx.textAlign = 'left';
+                    const textX = arrowXLeft + arrowWidth + gap;
+                    ctx.fillText(textContent, textX, textY);
+
+                    // Right Arrow (points right)
+                    const arrowXRight = textX + textMetrics.width + gap;
+                    ctx.beginPath();
+                    ctx.moveTo(arrowXRight, arrowY - arrowHeight / 2);
+                    ctx.lineTo(arrowXRight, arrowY + arrowHeight / 2);
+                    ctx.lineTo(arrowXRight + arrowWidth, arrowY);
+                    ctx.closePath();
+                    ctx.fill();
+                    
                     ctx.restore();
                 };
                 
@@ -391,15 +419,15 @@
                     ctx.restore();
                 };
 
-                drawTopStrip(0); // Text and arrows on top strip
+                drawTopStrip(); // Text and arrows on top strip
                 drawBottomStrip(height - filmStripHeight * 0.7); // Barcodes on bottom strip
 
 
                 ctx.fillStyle = 'white';
                 const numHoles = 8;
-                const holeHeight = filmStripHeight * 0.64;
-                const holeWidth = holeHeight * 1.2;
-                const holeRadius = holeWidth * 0.2; 
+                const holeWidth = filmStripHeight * 0.5;
+                const holeHeight = holeWidth * 1.6;
+                const holeRadius = holeWidth * 0.25; 
 
                 for (let i = 0; i < numHoles; i++) {
                     const holeX = (i * (width / numHoles)) + (width / numHoles - holeWidth) / 2;
@@ -410,7 +438,7 @@
                 }
             }
 
-            function drawFramedPreview(img, canvas, borderWidth, borderColor, cornerRadius) {
+            function drawFramedPreview(img, canvas, borderWidthPercent, borderColor, cornerRadiusPercent) {
                 const ctx = canvas.getContext('2d');
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
@@ -447,6 +475,10 @@
                     ctx.restore();
                     return;
                 }
+                
+                const shorterSide = Math.min(originalWidth, originalHeight);
+                const borderWidth = shorterSide * (borderWidthPercent / 100);
+                const cornerRadius = shorterSide * (cornerRadiusPercent / 100);
 
                 const newWidth = originalWidth + 2 * borderWidth;
                 const newHeight = originalHeight + 2 * borderWidth;
@@ -504,7 +536,7 @@
 
             // --- EVENT LISTENERS ---
             borderWidthInput.addEventListener('input', () => {
-                const value = Math.max(0, Math.min(1000, parseInt(borderWidthInput.value, 10) || 0));
+                const value = Math.max(0, Math.min(25, parseInt(borderWidthInput.value, 10) || 0));
                 borderWidthInput.value = value;
                 borderWidthSlider.value = value;
                 if (processedImages.length > 0) resetToPreviewMode();
@@ -525,7 +557,7 @@
                 updateAllPreviews();
             });
             cornerRadiusNumberInput.addEventListener('input', () => {
-                const value = Math.max(0, Math.min(500, parseInt(cornerRadiusNumberInput.value, 10) || 0));
+                const value = Math.max(0, Math.min(25, parseInt(cornerRadiusNumberInput.value, 10) || 0));
                 cornerRadiusNumberInput.value = value;
                 cornerRadiusInput.value = value;
                 if (processedImages.length > 0) resetToPreviewMode();
@@ -656,7 +688,7 @@
                 }, borderWidth, borderColor, cornerRadius);
             }
 
-            function processImage(img, callback, borderWidth, borderColor, cornerRadius) {
+            function processImage(img, callback, borderWidthPercent, borderColor, cornerRadiusPercent) {
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
                 const isPortrait = originalWidth < originalHeight;
@@ -688,6 +720,10 @@
                     callback(canvas.toDataURL('image/jpeg', 0.9));
                     return;
                 }
+                
+                const shorterSide = Math.min(originalWidth, originalHeight);
+                const borderWidth = shorterSide * (borderWidthPercent / 100);
+                const cornerRadius = shorterSide * (cornerRadiusPercent / 100);
 
                 const framedWidth = originalWidth + 2 * borderWidth;
                 const framedHeight = originalHeight + 2 * borderWidth;
@@ -810,5 +846,10 @@
 
 </body>
 </html>
+
+
+
+
+
 
 
