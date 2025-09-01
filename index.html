@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frame it Up</title>
+    <title>Frame it Up | Add Borders and 35mm Film Frames</title>
+    <meta name="description" content="By a photographer, for photographers. The free, ad-free online tool to add simple, elegant frames and 35mm film borders to your pictures for posting or printing.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -278,7 +279,7 @@
                     
                     // Barcode Pattern
                     if (!isLeftStrip) { // Only draw for the right strip
-                        ctx.fillStyle = '#f59e0b'; // Ensure barcode color is set
+                        ctx.fillStyle = '#f59e0b'; // amber-500
                         const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
                         const barThickness = stripWidth * 0.08;
                         const gapAlongStrip = stripWidth * 0.04;
