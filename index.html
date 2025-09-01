@@ -45,7 +45,7 @@
 </head>
 <body class="bg-pattern text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center p-4 pt-16">
 
-    <div class="bg-white dark:bg-gray-800 p-8 pb-12 rounded-xl shadow-lg w-full max-w-4xl min-h-[36rem] flex flex-col relative">
+    <div class="bg-white dark:bg-gray-800 p-8 pb-12 rounded-xl shadow-lg w-full max-w-6xl min-h-[36rem] flex flex-col relative">
         <div class="absolute top-4 right-4 flex space-x-2">
             
         </div>
@@ -200,7 +200,7 @@
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
 
-                const filmStripWidth = width * 0.12;
+                const filmStripWidth = width * 0.08;
                 const topBorderHeight = height * 0.02;
                 const imageAreaWidth = width - (2 * filmStripWidth);
                 const imageAreaHeight = height - (2 * topBorderHeight);
@@ -251,13 +251,13 @@
                         
                         let arrow1X;
                         do {
-                            arrow1X = stripLength * (Math.random() * 0.6 - 0.3);
+                            arrow1X = stripLength * (Math.random() * 0.6 + 0.2);
                         } while (Math.abs(arrow1X - textX) < minDistance);
                         positions.push(arrow1X);
 
                         let arrow2X;
                         do {
-                            arrow2X = stripLength * (Math.random() * 0.6 - 0.3);
+                            arrow2X = stripLength * (Math.random() * 0.6 + 0.2);
                         } while (Math.abs(arrow2X - textX) < minDistance || Math.abs(arrow2X - arrow1X) < minDistance);
                         positions.push(arrow2X);
 
@@ -329,7 +329,7 @@
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
 
-                const filmStripHeight = height * 0.12;
+                const filmStripHeight = height * 0.08;
                 const sideBorderWidth = width * 0.02;
                 const imageAreaHeight = height - (2 * filmStripHeight);
                 const imageAreaWidth = width - (2 * sideBorderWidth);
@@ -681,7 +681,7 @@
                     const finalImageRatio = isPortrait ? 2/3 : 3/2;
                     let filmWidth, filmHeight;
                     const sidePercentage = 0.02; 
-                    const stripPercentage = 0.12;
+                    const stripPercentage = 0.08;
 
                     if (isPortrait) {
                         filmHeight = Math.round(originalHeight / (1 - 2 * sidePercentage));
