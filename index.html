@@ -30,31 +30,30 @@
             height: 100%;
         }
         .bg-pattern {
-            background-color: #f3f4f6; /* gray-100 */
-            background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px), radial-gradient(circle, #d1d5db 1px, transparent 1px); /* gray-300 */
+            background-color: #0F172A; /* slate-950 */
+            background-image: radial-gradient(circle, #475569 1px, transparent 1px), radial-gradient(circle, #475569 1px, transparent 1px); /* slate-600 */
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
-            
         }
         @media (prefers-color-scheme: dark) {
             .bg-pattern {
-                background-color: #1f2937; /* gray-800 */
-                background-image: radial-gradient(circle, #4b5563 1px, transparent 1px), radial-gradient(circle, #4b5563 1px, transparent 1px); /* gray-600 */
+                background-color: #0C0C1E;
+                background-image: radial-gradient(circle, #25254A 1px, transparent 1px), radial-gradient(circle, #25254A 1px, transparent 1px);
             }
         }
     </style>
 </head>
-<body class="bg-pattern text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center p-4 pt-16">
+<body class="bg-pattern text-gray-100 dark:text-gray-100 min-h-screen flex flex-col items-center p-4 pt-16">
 
-    <div class="bg-white dark:bg-gray-800 p-8 pb-12 rounded-xl shadow-lg w-full max-w-6xl min-h-[36rem] flex flex-col relative">
+    <div class="bg-gray-900 p-8 pb-12 rounded-xl shadow-lg w-full max-w-6xl min-h-[36rem] flex flex-col relative">
         <div class="absolute top-4 right-4 flex space-x-2">
             
         </div>
-        <h1 class="text-3xl font-bold mb-2 text-center text-gray-900 dark:text-white">Frame it Up</h1>
+        <h1 class="text-3xl font-bold mb-2 text-center text-white dark:text-white">Frame it Up</h1>
         
         <!-- Tool Description and Donation Section -->
         <div class="text-center mb-8 space-y-2">
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-gray-300 dark:text-gray-400">
                  By a photographer, for photographers. Effortlessly add clean, elegant frames to your images for social media or printing.
                 <br>Simple & ad-free experience.
             </p>
@@ -69,22 +68,22 @@
             <div class="flex flex-col items-center">
                 <label for="file-upload" class="sr-only">Choose Images</label>
                 <div class="file-input-container">
-                    <button class="bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-md">
+                    <button class="bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors duration-300 shadow-md">
                         Select Images
                     </button>
                     <input id="file-upload" type="file" multiple accept="image/*" />
                 </div>
-                <p id="file-count" class="mt-2 text-sm text-gray-500 dark:text-gray-400">No images selected</p>
+                <p id="file-count" class="mt-2 text-sm text-gray-400 dark:text-gray-400">No images selected</p>
             </div>
 
             <!-- Border Settings -->
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
+            <div class="border-t border-gray-700 dark:border-gray-700 pt-6 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Border Width -->
                     <div id="border-width-container" class="transition-opacity duration-300">
                         <label for="border-width" class="block text-sm font-medium mb-1">Border Width (pixels)</label>
-                        <input type="number" id="border-width" value="200" min="0" max="1000" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
-                        <input type="range" id="border-width-slider" min="0" max="1000" value="200" step="25" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        <input type="number" id="border-width" value="200" min="0" max="1000" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
+                        <input type="range" id="border-width-slider" min="0" max="1000" value="200" step="25" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
                     </div>
                     
                     <!-- Border Color -->
@@ -92,28 +91,28 @@
                         <label class="block text-sm font-medium mb-1">Border Color</label>
                         <div class="flex flex-wrap gap-x-4 gap-y-2">
                             <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="white" checked class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">White</span>
+                                <input type="radio" name="border-color" value="white" checked class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
+                                <span class="ml-2 text-gray-100 dark:text-gray-300">White</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="black" class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">Black</span>
+                                <input type="radio" name="border-color" value="black" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
+                                <span class="ml-2 text-gray-100 dark:text-gray-300">Black</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="average" class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">Average Color</span>
+                                <input type="radio" name="border-color" value="average" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
+                                <span class="ml-2 text-gray-100 dark:text-gray-300">Average Color</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="film" class="form-radio text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
-                                <span class="ml-2 text-gray-700 dark:text-gray-300">35  MM Film</span>
+                                <input type="radio" name="border-color" value="film" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
+                                <span class="ml-2 text-gray-100 dark:text-gray-300">35  MM Film</span>
                             </label>
                         </div>
                     </div>
                     <!-- Corner Radius -->
                     <div id="corner-radius-container" class="transition-opacity duration-300">
                         <label for="corner-radius" class="block text-sm font-medium mb-1">Corner Radius (pixels)</label>
-                        <input type="number" id="corner-radius-input" value="0" min="0" max="500" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
-                        <input type="range" id="corner-radius" min="0" max="500" value="0" step="50" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        <input type="number" id="corner-radius-input" value="0" min="0" max="500" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
+                        <input type="range" id="corner-radius" min="0" max="500" value="0" step="50" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
                     </div>
                 </div>
             </div>
@@ -121,16 +120,16 @@
             <!-- Action Buttons -->
             <div class="flex justify-center md:justify-between items-center mt-8 space-x-4">
                 <div class="flex items-center gap-4">
-                    <button id="process-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                    <button id="process-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
                         <span id="process-text">Process Images</span>
                     </button>
-                    <span id="loading-text" class="hidden text-gray-700 dark:text-gray-300 font-semibold text-lg w-32 text-left"></span>
+                    <span id="loading-text" class="hidden text-gray-400 font-semibold text-lg w-32 text-left"></span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button id="download-all-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                    <button id="download-all-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
                         Download All (ZIP)
                     </button>
-                    <button id="reset-button" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
+                    <button id="reset-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
                         Reset
                     </button>
                 </div>
@@ -143,6 +142,12 @@
         <!-- Uploaded Images and Processed Images -->
         <div id="image-output" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
+    
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-sm text-gray-400">
+        <p>Copyright © Atreya Bhat. All rights reserved.</p>
+        <p class="mt-2">No cookies. No targeted ads. No BS.</p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -201,7 +206,7 @@
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
 
-                const filmStripWidth = width * 0.08;
+                const filmStripWidth = width * 0.12;
                 const topBorderHeight = height * 0.02;
                 const imageAreaWidth = width - (2 * filmStripWidth);
                 const imageAreaHeight = height - (2 * topBorderHeight);
@@ -227,59 +232,41 @@
                 ctx.restore();
 
                 // --- Draw Text & Markings (Rotated) ---
-                const drawRotatedContent = (stripX, isPrimaryStrip) => {
+                const drawRotatedContent = (stripX, isLeftStrip) => {
                     ctx.save();
                     ctx.translate(stripX, height / 2);
-                    const isLeftStrip = stripX < width / 2;
                     ctx.rotate(isLeftStrip ? Math.PI / 2 : -Math.PI / 2);
                     
                     const stripLength = height;
                     const stripWidth = filmStripWidth;
+                    ctx.fillStyle = '#f59e0b'; // amber-500
 
-                    if (isPrimaryStrip) {
-                        ctx.fillStyle = '#f59e0b'; // amber-500
+                    if (isLeftStrip) { // Draw text and arrows on the left strip
                         const fontSize = stripWidth * 0.4;
                         ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         
-                        const positions = [];
-                        const minDistance = stripLength * 0.15;
-
-                        // Generate positions for text and two arrows, ensuring they don't overlap
-                        const textX = stripLength * (Math.random() * 0.6 - 0.3);
-                        positions.push(textX);
-                        
-                        let arrow1X;
-                        do {
-                            arrow1X = stripLength * (Math.random() * 0.6 + 0.2);
-                        } while (Math.abs(arrow1X - textX) < minDistance);
-                        positions.push(arrow1X);
-
-                        let arrow2X;
-                        do {
-                            arrow2X = stripLength * (Math.random() * 0.6 + 0.2);
-                        } while (Math.abs(arrow2X - textX) < minDistance || Math.abs(arrow2X - arrow1X) < minDistance);
-                        positions.push(arrow2X);
-
-                        ctx.fillText('35  MM', textX, 0);
+                        ctx.fillText('35  MM', 0, 0);
 
                         const arrowHeight = stripWidth * 0.35;
                         const arrowWidth = arrowHeight * 1.2;
 
-                        [arrow1X, arrow2X].forEach(x => {
-                            ctx.beginPath();
-                            ctx.moveTo(x, -arrowWidth / 2);
-                            ctx.lineTo(x + arrowHeight, 0);
-                            ctx.lineTo(x, arrowWidth/2);
-                            ctx.closePath();
-                            ctx.fill();
-                        });
-                    }
-                    
-                    // Barcode Pattern
-                    if (!isLeftStrip) { // Only draw for the right strip
-                        ctx.fillStyle = '#f59e0b'; // amber-500
+                        ctx.beginPath();
+                        ctx.moveTo(stripLength * 0.1, -arrowWidth / 2);
+                        ctx.lineTo(stripLength * 0.1 + arrowHeight, 0);
+                        ctx.lineTo(stripLength * 0.1, arrowWidth/2);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        ctx.beginPath();
+                        ctx.moveTo(-stripLength * 0.1 - arrowHeight, -arrowWidth / 2);
+                        ctx.lineTo(-stripLength * 0.1, 0);
+                        ctx.lineTo(-stripLength * 0.1 - arrowHeight, arrowWidth/2);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                    } else { // Draw barcode pattern on the right strip
                         const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
                         const barThickness = stripWidth * 0.08;
                         const gapAlongStrip = stripWidth * 0.04;
@@ -303,16 +290,16 @@
                     ctx.restore();
                 };
                 
-                drawRotatedContent(filmStripWidth / 2, true); // Left strip with text
-                drawRotatedContent(width - filmStripWidth / 2, false); // Right strip without text
+                drawRotatedContent(filmStripWidth / 2, true); // Left strip
+                drawRotatedContent(width - filmStripWidth / 2, false); // Right strip
 
 
                 // --- Draw sprocket holes ---
                 ctx.fillStyle = 'white';
-                const holeWidth = filmStripWidth * 0.6;
+                const numHoles = 8;
+                const holeWidth = filmStripWidth * 0.64;
                 const holeHeight = holeWidth * 0.7; 
                 const holeRadius = holeHeight * 0.4; 
-                const numHoles = Math.floor(height / (holeHeight * 2.2));
 
                 for (let i = 0; i < numHoles; i++) {
                     const holeY = (i * (height / numHoles)) + (height / numHoles - holeHeight) / 2;
@@ -330,7 +317,7 @@
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
 
-                const filmStripHeight = height * 0.08;
+                const filmStripHeight = height * 0.12;
                 const sideBorderWidth = width * 0.02;
                 const imageAreaHeight = height - (2 * filmStripHeight);
                 const imageAreaWidth = width - (2 * sideBorderWidth);
@@ -355,48 +342,35 @@
                 ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
                 ctx.restore();
 
-                ctx.fillStyle = '#f59e0b'; // amber-500
-                const fontSize = filmStripHeight * 0.4;
-                ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                const drawTopStrip = (x) => {
+                    ctx.save();
+                    ctx.fillStyle = '#f59e0b'; // amber-500
+                    const fontSize = filmStripHeight * 0.4;
+                    ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
 
-                const positions = [];
-                const minDistance = width * 0.15;
-
-                // Generate positions for text and two arrows, ensuring they don't overlap
-                const textX = width * (Math.random() * 0.6 + 0.2);
-                positions.push(textX);
-                
-                let arrow1X;
-                do {
-                    arrow1X = width * (Math.random() * 0.6 + 0.2);
-                } while (Math.abs(arrow1X - textX) < minDistance);
-                positions.push(arrow1X);
-
-                let arrow2X;
-                do {
-                    arrow2X = width * (Math.random() * 0.6 + 0.2);
-                } while (Math.abs(arrow2X - textX) < minDistance || Math.abs(arrow2X - arrow1X) < minDistance);
-                positions.push(arrow2X);
-
-                const textY = filmStripHeight / 2;
-                ctx.fillText('35  MM', textX, textY);
-
-                const arrowHeight = filmStripHeight * 0.35;
-                const arrowWidth = arrowHeight * 1.2;
-                const arrowY = filmStripHeight / 2;
-
-                [arrow1X, arrow2X].forEach(x => {
+                    const textX = x + width * 0.1;
+                    const textY = filmStripHeight / 2;
+                    ctx.fillText('35  MM', textX, textY);
+                    
+                    const arrowHeight = filmStripHeight * 0.35;
+                    const arrowWidth = arrowHeight * 1.2;
+                    const arrowY = filmStripHeight / 2;
+                    
+                    const arrowX = textX + width * 0.08;
                     ctx.beginPath();
-                    ctx.moveTo(x - arrowWidth / 2, arrowY - arrowHeight / 2);
-                    ctx.lineTo(x - arrowWidth / 2, arrowY + arrowHeight / 2);
-                    ctx.lineTo(x + arrowWidth / 2, arrowY);
+                    ctx.moveTo(arrowX - arrowWidth / 2, arrowY - arrowHeight / 2);
+                    ctx.lineTo(arrowX - arrowWidth / 2, arrowY + arrowHeight / 2);
+                    ctx.lineTo(arrowX + arrowWidth / 2, arrowY);
                     ctx.closePath();
                     ctx.fill();
-                });
-
-                const drawAuthenticBarcodes = (y) => {
+                    ctx.restore();
+                };
+                
+                const drawBottomStrip = (y) => {
+                    ctx.save();
+                    ctx.fillStyle = '#f59e0b'; // amber-500
                     const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
                     const barWidth = width * 0.008;
                     const gapWidth = width * 0.004;
@@ -414,15 +388,18 @@
                             currentX += barWidth + gapWidth;
                         }
                     }
+                    ctx.restore();
                 };
-                
-                drawAuthenticBarcodes(height - filmStripHeight * 0.7);
+
+                drawTopStrip(0); // Text and arrows on top strip
+                drawBottomStrip(height - filmStripHeight * 0.7); // Barcodes on bottom strip
+
 
                 ctx.fillStyle = 'white';
-                const holeHeight = filmStripHeight * 0.6;
+                const numHoles = 8;
+                const holeHeight = filmStripHeight * 0.64;
                 const holeWidth = holeHeight * 1.2;
                 const holeRadius = holeWidth * 0.2; 
-                const numHoles = Math.floor(width / (holeWidth * 2.2));
 
                 for (let i = 0; i < numHoles; i++) {
                     const holeX = (i * (width / numHoles)) + (width / numHoles - holeWidth) / 2;
@@ -562,32 +539,32 @@
                 imageOutput.innerHTML = '';
                 messageContainer.textContent = '';
                 downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
                 
                 resetButton.disabled = true;
-                resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                resetButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'text-white');
 
                 if (selectedFiles.length > 0) {
                     fileCount.textContent = `${selectedFiles.length} image(s) selected.`;
                     processButton.disabled = false;
-                    processButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    processButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                    processButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    processButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
                     
                     resetButton.disabled = false;
-                    resetButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                    resetButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
 
                     initialLoadComplete = false;
 
                     selectedFiles.forEach(file => {
                         const container = document.createElement('div');
-                        container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
+                        container.className = 'bg-gray-800 dark:bg-gray-800 rounded-lg p-2 shadow-sm text-center';
                         const canvas = document.createElement('canvas');
                         canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
                         const name = document.createElement('p');
-                        name.className = 'text-xs truncate text-gray-700 dark:text-gray-300';
+                        name.className = 'text-xs truncate text-gray-300 dark:text-gray-300';
                         name.textContent = file.name;
 
                         container.appendChild(canvas);
@@ -609,8 +586,8 @@
                 } else {
                     fileCount.textContent = 'No images selected';
                     processButton.disabled = true;
-                    processButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                    processButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
                 }
             });
 
@@ -618,6 +595,7 @@
             function startLoadingAnimation() {
                 let dots = 1;
                 loadingText.classList.remove('hidden');
+                loadingText.classList.add('text-gray-400');
                 loadingInterval = setInterval(() => {
                     loadingText.textContent = 'Loading ' + '. '.repeat(dots);
                     dots = (dots % 3) + 1;
@@ -627,6 +605,7 @@
             function stopLoadingAnimation() {
                 clearInterval(loadingInterval);
                 loadingText.classList.add('hidden');
+                loadingText.classList.remove('text-gray-400');
             }
 
             processButton.addEventListener('click', () => {
@@ -641,6 +620,8 @@
                 }
                 messageContainer.textContent = '';
                 processButton.disabled = true;
+                processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
                 startLoadingAnimation();
                 processedImages = [];
                 processImagesSequentially(0);
@@ -651,13 +632,15 @@
                     displayProcessedImages();
                     showMessage('Images processed successfully!', 'text-green-500');
                     downloadAllButton.disabled = false;
-                    downloadAllButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    downloadAllButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
+                    downloadAllButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    downloadAllButton.classList.add('bg-purple-600', 'hover:bg-purple-700', 'text-white');
                     processButton.disabled = false;
+                    processButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    processButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
                     stopLoadingAnimation();
                     resetButton.disabled = false;
-                    resetButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                    resetButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
                     return;
                 }
                 const item = loadedImages[index];
@@ -735,7 +718,7 @@
                 imageOutput.innerHTML = '';
                 processedImages.forEach(item => {
                     const container = document.createElement('div');
-                    container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
+                    container.className = 'bg-gray-800 dark:bg-gray-800 rounded-lg p-2 shadow-sm text-center';
                     const canvas = document.createElement('canvas');
                     canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
                     const maxDimension = 300;
@@ -758,7 +741,7 @@
                     link.href = item.url;
                     link.download = item.name;
                     link.textContent = `Download`;
-                    link.className = 'text-blue-500 hover:underline text-base font-semibold';
+                    link.className = 'text-purple-600 hover:underline text-base font-semibold';
 
                     container.appendChild(canvas);
                     container.appendChild(link);
@@ -771,7 +754,7 @@
                     showMessage('No processed images to download.', 'text-red-500');
                     return;
                 }
-                showMessage('Preparing zip file for download...', 'text-blue-500');
+                showMessage('Preparing zip file for download...', 'text-purple-600');
                 const zip = new JSZip();
                 processedImages.forEach(item => {
                     const base64Data = item.url.split(',')[1];
@@ -796,14 +779,14 @@
                 imageOutput.innerHTML = '';
                 messageContainer.textContent = '';
                 processButton.disabled = true;
-                processButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                processButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
                 downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
                 resetButton.disabled = true;
-                resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                resetButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'text-white');
                 fileInput.value = null;
                 fileCount.textContent = 'No images selected';
             }
@@ -812,8 +795,8 @@
                 imageOutput.innerHTML = '';
                 processedImages.length = 0;
                 downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
                 loadedImages.forEach(item => imageOutput.appendChild(item.element));
                 updateAllPreviews();
             }
@@ -827,4 +810,5 @@
 
 </body>
 </html>
+
 
