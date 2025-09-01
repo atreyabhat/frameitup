@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frame It Up</title>
+    <title>Frame it Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +49,7 @@
         <div class="absolute top-4 right-4 flex space-x-2">
             
         </div>
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">Frame It Up</h1>
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">Frame it Up</h1>
 
         <div class="space-y-6 flex-grow flex flex-col justify-center">
             <!-- File Selection -->
@@ -70,8 +70,8 @@
                     <!-- Border Width -->
                     <div id="border-width-container" class="transition-opacity duration-300">
                         <label for="border-width" class="block text-sm font-medium mb-1">Border Width (pixels)</label>
-                        <input type="number" id="border-width" value="200" min="0" max="1000" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
-                        <input type="range" id="border-width-slider" min="0" max="1000" value="200" step="25" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        <input type="number" id="border-width" value="250" min="0" max="1000" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+                        <input type="range" id="border-width-slider" min="0" max="1000" value="250" step="25" class="mt-2 w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
                     </div>
                     
                     <!-- Border Color -->
@@ -156,7 +156,6 @@
             let initialLoadComplete = false;
             let loadingInterval;
             
-            // Function to get the average color of an image
             function getAverageColor(img) {
                 return new Promise(resolve => {
                     const canvas = document.createElement('canvas');
@@ -169,7 +168,6 @@
                 });
             }
 
-            // Function to draw a rounded rectangle
             function drawRoundedRect(ctx, x, y, width, height, radius) {
                 ctx.beginPath();
                 ctx.moveTo(x + radius, y);
@@ -184,21 +182,149 @@
                 ctx.closePath();
             }
 
-            // Function to draw the 35mm film frame specifically
-            function drawFilmFrame(ctx, width, height, img) {
+            // --- FILM FRAME DRAWING LOGIC ---
+
+            function drawVerticalFilmFrame(ctx, width, height, img) {
+                const originalWidth = img.naturalWidth;
+                const originalHeight = img.naturalHeight;
+
+                const filmStripWidth = width * 0.15;
+                const topBorderHeight = height * 0.02;
+                const imageAreaWidth = width - (2 * filmStripWidth);
+                const imageAreaHeight = height - (2 * topBorderHeight);
+                
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, width, height);
+
+                const imageRatio = originalWidth / originalHeight;
+                let newImageHeight = imageAreaHeight;
+                let newImageWidth = newImageHeight * imageRatio;
+
+                if (newImageWidth > imageAreaWidth) {
+                    newImageWidth = imageAreaWidth;
+                    newImageHeight = newImageWidth / imageRatio;
+                }
+
+                const imageX = filmStripWidth + (imageAreaWidth - newImageWidth) / 2;
+                const imageY = topBorderHeight + (imageAreaHeight - newImageHeight) / 2;
+                
+                ctx.save();
+                ctx.filter = 'saturate(0.8)';
+                ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
+                ctx.restore();
+
+                // --- Draw Text & Markings (Rotated) ---
+                const drawRotatedContent = (stripX, isPrimaryStrip) => {
+                    ctx.save();
+                    ctx.translate(stripX, height / 2);
+                    const isLeftStrip = stripX < width / 2;
+                    ctx.rotate(isLeftStrip ? Math.PI / 2 : -Math.PI / 2);
+                    
+                    const stripLength = height;
+                    const stripWidth = filmStripWidth;
+
+                    if (isPrimaryStrip) {
+                        ctx.fillStyle = '#f59e0b'; // amber-500
+                        const fontSize = stripWidth * 0.4;
+                        ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        
+                        const positions = [];
+                        const minDistance = stripLength * 0.15;
+
+                        // Generate positions for text and two arrows, ensuring they don't overlap
+                        const textX = stripLength * (Math.random() * 0.6 - 0.3);
+                        positions.push(textX);
+                        
+                        let arrow1X;
+                        do {
+                            arrow1X = stripLength * (Math.random() * 0.6 - 0.3);
+                        } while (Math.abs(arrow1X - textX) < minDistance);
+                        positions.push(arrow1X);
+
+                        let arrow2X;
+                        do {
+                            arrow2X = stripLength * (Math.random() * 0.6 - 0.3);
+                        } while (Math.abs(arrow2X - textX) < minDistance || Math.abs(arrow2X - arrow1X) < minDistance);
+                        positions.push(arrow2X);
+
+                        ctx.fillText('35MM', textX, 0);
+
+                        const arrowHeight = stripWidth * 0.35;
+                        const arrowWidth = arrowHeight * 1.2;
+
+                        [arrow1X, arrow2X].forEach(x => {
+                            ctx.beginPath();
+                            ctx.moveTo(x, -arrowWidth / 2);
+                            ctx.lineTo(x + arrowHeight, 0);
+                            ctx.lineTo(x, arrowWidth/2);
+                            ctx.closePath();
+                            ctx.fill();
+                        });
+                    }
+                    
+                    // Barcode Pattern
+                    if (!isLeftStrip) { // Only draw for the right strip
+                        ctx.fillStyle = '#f59e0b'; // Ensure barcode color is set
+                        const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
+                        const barThickness = stripWidth * 0.08;
+                        const gapAlongStrip = stripWidth * 0.04;
+                        let currentPosAlongStrip = -stripLength / 2 * 0.95;
+                        const endPosAlongStrip = stripLength / 2 * 0.95;
+                        
+                        const posAcrossStrip = -stripWidth * 0.1; // Inner edge is negative Y after rotation for right strip
+
+                        while (currentPosAlongStrip < endPosAlongStrip) {
+                             for (let i = 0; i < pattern.length && currentPosAlongStrip < endPosAlongStrip; i++) {
+                                const lengthMultiplier = pattern[i];
+                                 if (lengthMultiplier > 0) {
+                                    const barLength = -(stripWidth * 0.5 * lengthMultiplier); // Draw in negative direction for right strip
+                                    ctx.fillRect(currentPosAlongStrip, posAcrossStrip, barThickness, barLength);
+                                 }
+                                 currentPosAlongStrip += barThickness + gapAlongStrip;
+                             }
+                        }
+                    }
+
+                    ctx.restore();
+                };
+                
+                drawRotatedContent(filmStripWidth / 2, true); // Left strip with text
+                drawRotatedContent(width - filmStripWidth / 2, false); // Right strip without text
+
+
+                // --- Draw sprocket holes ---
+                ctx.fillStyle = 'white';
+                const holeWidth = filmStripWidth * 0.6;
+                const holeHeight = holeWidth * 0.7; 
+                const holeRadius = holeHeight * 0.4; 
+                const numHoles = Math.floor(height / (holeHeight * 2.2));
+
+                for (let i = 0; i < numHoles; i++) {
+                    const holeY = (i * (height / numHoles)) + (height / numHoles - holeHeight) / 2;
+                    // Left holes
+                    drawRoundedRect(ctx, (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
+                    ctx.fill();
+                    // Right holes
+                    drawRoundedRect(ctx, width - filmStripWidth + (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
+                    ctx.fill();
+                }
+            }
+
+
+            function drawHorizontalFilmFrame(ctx, width, height, img) {
                  const originalWidth = img.naturalWidth;
                  const originalHeight = img.naturalHeight;
 
                  const filmStripHeight = height * 0.15;
-                 const sideBorderWidth = width * 0.02; // A very thin 2% border on each side
+                 const sideBorderWidth = width * 0.02;
                  const imageAreaHeight = height - (2 * filmStripHeight);
                  const imageAreaWidth = width - (2 * sideBorderWidth);
                  
-                 // Black background for the whole frame
                  ctx.fillStyle = 'black';
                  ctx.fillRect(0, 0, width, height);
 
-                 // --- Calculate new image dimensions to fit within the area ("contain") ---
                  const imageRatio = originalWidth / originalHeight;
                  let newImageWidth = imageAreaWidth;
                  let newImageHeight = newImageWidth / imageRatio;
@@ -216,53 +342,59 @@
                  ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
                  ctx.restore();
 
-                 // --- Add "35MM" text at a random position on the top strip ---
                  ctx.fillStyle = '#f59e0b'; // amber-500
                  const fontSize = filmStripHeight * 0.4;
                  ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
                  ctx.textAlign = 'center';
                  ctx.textBaseline = 'middle';
-                 const textX = width * (Math.random() * 0.6 + 0.2); // Random position between 20% and 80%
-                 const textY = filmStripHeight / 2;
-                 ctx.fillText('35  MM', textX, textY);
 
-                 // --- Add a random arrow mark ---
+                 const positions = [];
+                 const minDistance = width * 0.15;
+
+                 // Generate positions for text and two arrows, ensuring they don't overlap
+                 const textX = width * (Math.random() * 0.6 + 0.2);
+                 positions.push(textX);
+                 
+                 let arrow1X;
+                 do {
+                     arrow1X = width * (Math.random() * 0.6 + 0.2);
+                 } while (Math.abs(arrow1X - textX) < minDistance);
+                 positions.push(arrow1X);
+
+                 let arrow2X;
+                 do {
+                     arrow2X = width * (Math.random() * 0.6 + 0.2);
+                 } while (Math.abs(arrow2X - textX) < minDistance || Math.abs(arrow2X - arrow1X) < minDistance);
+                 positions.push(arrow2X);
+
+                 const textY = filmStripHeight / 2;
+                 ctx.fillText('35MM', textX, textY);
+
                 const arrowHeight = filmStripHeight * 0.35;
                 const arrowWidth = arrowHeight * 1.2;
-                let arrowX = width * (Math.random() * 0.6 + 0.2);
                 const arrowY = filmStripHeight / 2;
 
-                // Ensure arrow is not too close to the text
-                const minDistance = width * 0.15; // Minimum 15% distance
-                while (Math.abs(arrowX - textX) < minDistance) {
-                    arrowX = width * (Math.random() * 0.6 + 0.2);
-                }
+                [arrow1X, arrow2X].forEach(x => {
+                    ctx.beginPath();
+                    ctx.moveTo(x - arrowWidth / 2, arrowY - arrowHeight / 2);
+                    ctx.lineTo(x - arrowWidth / 2, arrowY + arrowHeight / 2);
+                    ctx.lineTo(x + arrowWidth / 2, arrowY);
+                    ctx.closePath();
+                    ctx.fill();
+                });
 
-                ctx.beginPath();
-                ctx.moveTo(arrowX - arrowWidth / 2, arrowY - arrowHeight / 2); // Top-left point
-                ctx.lineTo(arrowX - arrowWidth / 2, arrowY + arrowHeight / 2); // Bottom-left point
-                ctx.lineTo(arrowX + arrowWidth / 2, arrowY); // Tip of arrow (right point)
-                ctx.closePath();
-                ctx.fill();
-
-
-                 // --- Draw Barcode Markings ---
                 const drawAuthenticBarcodes = (y) => {
-                    const startX = width * 0.05;
-                    const endX = width * 0.95;
-                    // Predefined pattern of heights (0-1) to replicate the film look. 0 is a gap.
                     const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
                     const barWidth = width * 0.008;
                     const gapWidth = width * 0.004;
-                    let currentX = startX;
-                    ctx.fillStyle = '#f59e0b'; // amber-500
+                    let currentX = width * 0.05;
+                    const endX = width * 0.95;
 
                     while (currentX < endX) {
                         for (let i = 0; i < pattern.length && currentX < endX; i++) {
                             const heightMultiplier = pattern[i];
                             if (heightMultiplier > 0) {
                                 const barHeight = filmStripHeight * 0.5 * heightMultiplier;
-                                // Align bars to the bottom edge of their drawing area
                                 const barY = y + (filmStripHeight * 0.5 * (1 - heightMultiplier));
                                 ctx.fillRect(currentX, barY, barWidth, barHeight);
                             }
@@ -271,34 +403,28 @@
                     }
                 };
                 
-                // Draw the pattern only on the bottom strip
                 drawAuthenticBarcodes(height - filmStripHeight * 0.7);
 
-
-                 // --- Draw sprocket holes ---
                  ctx.fillStyle = 'white';
                  const holeHeight = filmStripHeight * 0.6;
-                 const holeWidth = holeHeight * 0.7; // Wider punch holes
-                 const holeRadius = holeWidth * 0.4; 
+                 const holeWidth = holeHeight * 1.2;
+                 const holeRadius = holeWidth * 0.2; 
                  const numHoles = Math.floor(width / (holeWidth * 2.2));
 
                  for (let i = 0; i < numHoles; i++) {
                      const holeX = (i * (width / numHoles)) + (width / numHoles - holeWidth) / 2;
-                     // Top holes
                      drawRoundedRect(ctx, holeX, (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
                      ctx.fill();
-                     // Bottom holes
                      drawRoundedRect(ctx, holeX, height - filmStripHeight + (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
                      ctx.fill();
                  }
             }
 
-
-            // Function to draw a single preview on a canvas
             function drawFramedPreview(img, canvas, borderWidth, borderColor, cornerRadius) {
                 const ctx = canvas.getContext('2d');
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
+                const isPortrait = originalWidth < originalHeight;
                 
                 const maxDimension = 300;
                 canvas.width = maxDimension;
@@ -306,15 +432,28 @@
                 ctx.clearRect(0, 0, maxDimension, maxDimension);
                 
                 if (borderColor === 'film') {
-                    const filmRatio = 1.5; // Classic 3:2 aspect ratio for film
-                    const filmWidth = maxDimension;
-                    const filmHeight = maxDimension / filmRatio;
-                    const offsetX = 0;
-                    const offsetY = (maxDimension - filmHeight) / 2;
+                    const filmRatio = isPortrait ? 2/3 : 3/2;
+                    let filmWidth, filmHeight, offsetX, offsetY;
+
+                    if (isPortrait) {
+                        filmHeight = maxDimension;
+                        filmWidth = maxDimension * filmRatio;
+                        offsetX = (maxDimension - filmWidth) / 2;
+                        offsetY = 0;
+                    } else {
+                        filmWidth = maxDimension;
+                        filmHeight = maxDimension / filmRatio;
+                        offsetX = 0;
+                        offsetY = (maxDimension - filmHeight) / 2;
+                    }
 
                     ctx.save();
                     ctx.translate(offsetX, offsetY);
-                    drawFilmFrame(ctx, filmWidth, filmHeight, img);
+                    if (isPortrait) {
+                        drawVerticalFilmFrame(ctx, filmWidth, filmHeight, img);
+                    } else {
+                        drawHorizontalFilmFrame(ctx, filmWidth, filmHeight, img);
+                    }
                     ctx.restore();
                     return;
                 }
@@ -351,26 +490,19 @@
                 }
             }
 
-            // Function to update all previews
             function updateAllPreviews() {
                 const borderWidth = parseInt(borderWidthInput.value, 10);
                 const borderColor = document.querySelector('input[name="border-color"]:checked').value;
                 const cornerRadius = parseInt(cornerRadiusInput.value, 10);
                 
-                // Disable/enable border width and corner radius if film is selected
                 const isFilm = borderColor === 'film';
                 borderWidthInput.disabled = isFilm;
                 borderWidthSlider.disabled = isFilm;
                 cornerRadiusInput.disabled = isFilm;
                 cornerRadiusNumberInput.disabled = isFilm;
 
-                if (isFilm) {
-                    borderWidthContainer.classList.add('opacity-50');
-                    cornerRadiusContainer.classList.add('opacity-50');
-                } else {
-                    borderWidthContainer.classList.remove('opacity-50');
-                    cornerRadiusContainer.classList.remove('opacity-50');
-                }
+                borderWidthContainer.classList.toggle('opacity-50', isFilm);
+                cornerRadiusContainer.classList.toggle('opacity-50', isFilm);
 
                 loadedImages.forEach(item => {
                     const previewCanvas = item.element.querySelector('canvas');
@@ -380,63 +512,49 @@
                 });
             }
 
-            // Event listeners for dynamic preview
+            // --- EVENT LISTENERS ---
             borderWidthInput.addEventListener('input', () => {
                 const value = Math.max(0, Math.min(1000, parseInt(borderWidthInput.value, 10) || 0));
                 borderWidthInput.value = value;
                 borderWidthSlider.value = value;
-                if (processedImages.length > 0) {
-                    resetToPreviewMode();
-                }
+                if (processedImages.length > 0) resetToPreviewMode();
                 updateAllPreviews();
             });
             borderWidthSlider.addEventListener('input', () => {
                 borderWidthInput.value = borderWidthSlider.value;
-                if (processedImages.length > 0) {
-                    resetToPreviewMode();
-                }
+                if (processedImages.length > 0) resetToPreviewMode();
                 updateAllPreviews();
             });
             borderColorRadios.forEach(radio => radio.addEventListener('change', () => {
-                if (processedImages.length > 0) {
-                    resetToPreviewMode();
-                }
+                if (processedImages.length > 0) resetToPreviewMode();
                 updateAllPreviews();
             }));
             cornerRadiusInput.addEventListener('input', () => {
                 cornerRadiusNumberInput.value = cornerRadiusInput.value;
-                if (processedImages.length > 0) {
-                    resetToPreviewMode();
-                }
+                if (processedImages.length > 0) resetToPreviewMode();
                 updateAllPreviews();
             });
-
             cornerRadiusNumberInput.addEventListener('input', () => {
                 const value = Math.max(0, Math.min(500, parseInt(cornerRadiusNumberInput.value, 10) || 0));
                 cornerRadiusNumberInput.value = value;
                 cornerRadiusInput.value = value;
-                if (processedImages.length > 0) {
-                    resetToPreviewMode();
-                }
+                if (processedImages.length > 0) resetToPreviewMode();
                 updateAllPreviews();
             });
 
-            // Event listener for file selection
             fileInput.addEventListener('change', (event) => {
                 selectedFiles = Array.from(event.target.files);
-                loadedImages.length = 0; // Clear previous images
-                processedImages.length = 0; // Clear previous processed images
+                loadedImages.length = 0;
+                processedImages.length = 0;
                 imageOutput.innerHTML = '';
                 messageContainer.textContent = '';
                 downloadAllButton.disabled = true;
                 downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
                 downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
                 
-                // Keep reset button disabled until files are selected
                 resetButton.disabled = true;
                 resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
                 resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-
 
                 if (selectedFiles.length > 0) {
                     fileCount.textContent = `${selectedFiles.length} image(s) selected.`;
@@ -444,21 +562,17 @@
                     processButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
                     processButton.classList.add('bg-green-500', 'hover:bg-green-600');
                     
-                    // Enable reset button now that there are images
                     resetButton.disabled = false;
                     resetButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
                     resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
 
                     initialLoadComplete = false;
 
-                    // Display previews of uploaded files
                     selectedFiles.forEach(file => {
                         const container = document.createElement('div');
                         container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
-
                         const canvas = document.createElement('canvas');
                         canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
-                        
                         const name = document.createElement('p');
                         name.className = 'text-xs truncate text-gray-700 dark:text-gray-300';
                         name.textContent = file.name;
@@ -476,9 +590,7 @@
                             }
                         };
                         const reader = new FileReader();
-                        reader.onload = (e) => {
-                            img.src = e.target.result;
-                        };
+                        reader.onload = (e) => img.src = e.target.result;
                         reader.readAsDataURL(file);
                     });
                 } else {
@@ -489,14 +601,12 @@
                 }
             });
 
-            // Loading Animation
+            // --- PROCESSING & UI ---
             function startLoadingAnimation() {
                 let dots = 1;
                 loadingText.classList.remove('hidden');
                 loadingInterval = setInterval(() => {
-                    let text = 'Loading ';
-                    text += '. '.repeat(dots);
-                    loadingText.textContent = text;
+                    loadingText.textContent = 'Loading ' + '. '.repeat(dots);
                     dots = (dots % 3) + 1;
                 }, 400);
             }
@@ -504,35 +614,27 @@
             function stopLoadingAnimation() {
                 clearInterval(loadingInterval);
                 loadingText.classList.add('hidden');
-                loadingText.textContent = '';
             }
 
-            // Event listener for processing button
             processButton.addEventListener('click', () => {
                 if (selectedFiles.length === 0) {
                     showMessage('Please select at least one image.', 'text-red-500');
                     return;
                 }
-
                 const borderWidth = parseInt(borderWidthInput.value, 10);
                 if (isNaN(borderWidth) || borderWidth < 0) {
-                    showMessage('Please enter a valid border width (a non-negative number).', 'text-red-500');
+                    showMessage('Please enter a valid border width.', 'text-red-500');
                     return;
                 }
-                
-                messageContainer.textContent = ''; // Clear any previous messages
-                
+                messageContainer.textContent = '';
                 processButton.disabled = true;
                 startLoadingAnimation();
-
                 processedImages = [];
                 processImagesSequentially(0);
             });
 
-            // Function to process images one by one to avoid freezing the browser
             function processImagesSequentially(index) {
                 if (index >= loadedImages.length) {
-                    // All images processed, finalize the UI
                     displayProcessedImages();
                     showMessage('Images processed successfully!', 'text-green-500');
                     downloadAllButton.disabled = false;
@@ -545,120 +647,99 @@
                     resetButton.classList.add('bg-red-600', 'hover:bg-red-700');
                     return;
                 }
-
                 const item = loadedImages[index];
                 const borderWidth = parseInt(borderWidthInput.value, 10);
                 const cornerRadius = parseInt(cornerRadiusInput.value, 10);
                 const borderColor = document.querySelector('input[name="border-color"]:checked').value;
 
-                processImage(item.img, item.file.name, borderWidth, borderColor, cornerRadius, (dataUrl) => {
+                processImage(item.img, (dataUrl) => {
                     const originalName = item.file.name.split('.')[0];
                     const newName = `${originalName}_framed.jpg`;
                     processedImages.push({ name: newName, url: dataUrl });
-
-                    // Use setTimeout to process the next image, giving the browser time to update
-                    setTimeout(() => {
-                        processImagesSequentially(index + 1);
-                    }, 0);
-                });
+                    setTimeout(() => processImagesSequentially(index + 1), 0);
+                }, borderWidth, borderColor, cornerRadius);
             }
 
-            // Function to handle full-size image processing and display
-            function processImage(img, fileName, borderWidth, borderColor, cornerRadius, callback) {
+            function processImage(img, callback, borderWidth, borderColor, cornerRadius) {
                 const originalWidth = img.naturalWidth;
                 const originalHeight = img.naturalHeight;
+                const isPortrait = originalWidth < originalHeight;
                 
                 if (borderColor === 'film') {
-                    const finalImageRatio = 1.5; // Target ratio of the film frame itself (3:2)
+                    const finalImageRatio = isPortrait ? 2/3 : 3/2;
                     let filmWidth, filmHeight;
-                    const sideBorderPercentage = 0.02; // very thin 2%
-                    const stripHeightPercentage = 0.15;
+                    const sidePercentage = 0.02; 
+                    const stripPercentage = 0.15;
 
-                    const originalRatio = originalWidth / originalHeight;
-
-                    // Calculate the final canvas size based on the original image dimensions
-                    if (originalRatio > finalImageRatio) {
-                         filmWidth = Math.round(originalWidth / (1 - 2 * sideBorderPercentage));
-                         filmHeight = Math.round(filmWidth / finalImageRatio);
+                    if (isPortrait) {
+                        filmHeight = Math.round(originalHeight / (1 - 2 * sidePercentage));
+                        filmWidth = Math.round(filmHeight * finalImageRatio);
                     } else {
-                         filmHeight = Math.round(originalHeight / (1 - 2 * stripHeightPercentage));
-                         filmWidth = Math.round(filmHeight * finalImageRatio);
+                        filmWidth = Math.round(originalWidth / (1 - 2 * sidePercentage));
+                        filmHeight = Math.round(filmWidth / finalImageRatio);
                     }
-
-
+                    
                     const canvas = document.createElement('canvas');
                     canvas.width = filmWidth;
                     canvas.height = filmHeight;
                     const ctx = canvas.getContext('2d');
                     
-                    drawFilmFrame(ctx, filmWidth, filmHeight, img);
+                    if (isPortrait) {
+                        drawVerticalFilmFrame(ctx, filmWidth, filmHeight, img);
+                    } else {
+                        drawHorizontalFilmFrame(ctx, filmWidth, filmHeight, img);
+                    }
                     callback(canvas.toDataURL('image/jpeg', 0.9));
                     return;
                 }
 
                 const framedWidth = originalWidth + 2 * borderWidth;
                 const framedHeight = originalHeight + 2 * borderWidth;
-
-                // Create a canvas that is the exact size of the final framed image
                 const canvas = document.createElement('canvas');
                 canvas.width = framedWidth;
                 canvas.height = framedHeight;
                 const ctx = canvas.getContext('2d');
 
-                if (borderColor === 'average') {
-                    getAverageColor(img).then(avgColor => {
-                        ctx.fillStyle = avgColor;
-                        ctx.fillRect(0, 0, framedWidth, framedHeight);
-                        
-                        ctx.save();
-                        drawRoundedRect(ctx, borderWidth, borderWidth, originalWidth, originalHeight, cornerRadius);
-                        ctx.clip();
-                        ctx.drawImage(img, borderWidth, borderWidth);
-                        ctx.restore();
-                        
-                        callback(canvas.toDataURL('image/jpeg', 0.9));
-                    });
-                } else {
-                    ctx.fillStyle = borderColor;
+                const drawFinalImage = (frameColor) => {
+                    ctx.fillStyle = frameColor;
                     ctx.fillRect(0, 0, framedWidth, framedHeight);
-                    
                     ctx.save();
                     drawRoundedRect(ctx, borderWidth, borderWidth, originalWidth, originalHeight, cornerRadius);
                     ctx.clip();
                     ctx.drawImage(img, borderWidth, borderWidth);
                     ctx.restore();
-
                     callback(canvas.toDataURL('image/jpeg', 0.9));
+                };
+
+                if (borderColor === 'average') {
+                    getAverageColor(img).then(drawFinalImage);
+                } else {
+                    drawFinalImage(borderColor);
                 }
             }
             
-            // Function to display processed images and download links
             function displayProcessedImages() {
                 imageOutput.innerHTML = '';
                 processedImages.forEach(item => {
                     const container = document.createElement('div');
                     container.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-2 shadow-sm text-center';
-
-                    // Create a canvas for display to handle centering, just like the previews
                     const canvas = document.createElement('canvas');
                     canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
-                    const maxDimension = 300; // Match preview canvas size
+                    const maxDimension = 300;
                     canvas.width = maxDimension;
                     canvas.height = maxDimension;
                     const ctx = canvas.getContext('2d');
 
                     const img = new Image();
                     img.onload = () => {
-                        // Logic to center the final image in the square canvas
                         const ratio = Math.min(maxDimension / img.width, maxDimension / img.height);
                         const scaledWidth = img.width * ratio;
                         const scaledHeight = img.height * ratio;
                         const offsetX = (maxDimension - scaledWidth) / 2;
                         const offsetY = (maxDimension - scaledHeight) / 2;
-
                         ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
                     };
-                    img.src = item.url; // The src is the perfectly cropped final image
+                    img.src = item.url;
                     
                     const link = document.createElement('a');
                     link.href = item.url;
@@ -666,28 +747,25 @@
                     link.textContent = `Download`;
                     link.className = 'text-blue-500 hover:underline text-base font-semibold';
 
-                    container.appendChild(canvas); // Append canvas instead of img for consistent centering
+                    container.appendChild(canvas);
                     container.appendChild(link);
                     imageOutput.appendChild(container);
                 });
             }
 
-            // Download all button event listener
             downloadAllButton.addEventListener('click', () => {
                 if (processedImages.length === 0) {
                     showMessage('No processed images to download.', 'text-red-500');
                     return;
                 }
                 showMessage('Preparing zip file for download...', 'text-blue-500');
-
                 const zip = new JSZip();
                 processedImages.forEach(item => {
                     const base64Data = item.url.split(',')[1];
                     zip.file(item.name, base64Data, { base64: true });
                 });
-
                 zip.generateAsync({ type: "blob" })
-                    .then(function(content) {
+                    .then(content => {
                         saveAs(content, "framed_images.zip");
                         showMessage('Download started!', 'text-green-500');
                     })
@@ -697,10 +775,7 @@
                     });
             });
 
-            // Reset button event listener
-            resetButton.addEventListener('click', () => {
-                resetApplication();
-            });
+            resetButton.addEventListener('click', () => resetApplication());
 
             function resetApplication() {
                 loadedImages.length = 0;
@@ -716,8 +791,7 @@
                 resetButton.disabled = true;
                 resetButton.classList.add('bg-gray-400', 'cursor-not-allowed');
                 resetButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-                
-                fileInput.value = null; // Clear the selected files from the input
+                fileInput.value = null;
                 fileCount.textContent = 'No images selected';
             }
 
@@ -727,10 +801,7 @@
                 downloadAllButton.disabled = true;
                 downloadAllButton.classList.add('bg-gray-400', 'cursor-not-allowed');
                 downloadAllButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
-                
-                loadedImages.forEach(item => {
-                    imageOutput.appendChild(item.element);
-                });
+                loadedImages.forEach(item => imageOutput.appendChild(item.element));
                 updateAllPreviews();
             }
 
@@ -743,6 +814,4 @@
 
 </body>
 </html>
-
-
 
