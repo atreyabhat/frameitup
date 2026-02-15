@@ -1,855 +1,1931 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frame it Up: Free Online Tool to add simple Photo Borders and 35mm Frames</title>
-    <meta name="description" content="By a photographer, for photographers. The free, ad-free online tool to add simple, elegant frames and 35mm film borders to your pictures for posting or printing.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-        .file-input-container {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-        .file-input-container input[type=file] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-        .bg-pattern {
-            background-color: #0F172A; /* slate-950 */
-            background-image: radial-gradient(circle, #475569 1px, transparent 1px), radial-gradient(circle, #475569 1px, transparent 1px); /* slate-600 */
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
-        }
-        @media (prefers-color-scheme: dark) {
-            .bg-pattern {
-                background-color: #0C0C1E;
-                background-image: radial-gradient(circle, #25254A 1px, transparent 1px), radial-gradient(circle, #25254A 1px, transparent 1px);
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frame it Up - Clean Frames for Social Media</title>
+  <meta
+    name="description"
+    content="Frame it Up is a free tool to add clean photo borders, Instagram-ready 1.91:1 framing, and Fuji-style footer metadata."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #1d2939;
+      --text-muted: #526076;
+      --line: #d7deea;
+      --line-strong: #bfcbdd;
+      --primary: #1f6fff;
+      --primary-hover: #1558d6;
+      --danger: #d84a5c;
+      --danger-hover: #bb3144;
+      --shadow: 0 10px 30px rgba(18, 38, 63, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(31, 111, 255, 0.08), transparent 45%),
+        radial-gradient(circle at top left, rgba(9, 136, 106, 0.07), transparent 38%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 24px 16px 36px;
+    }
+
+    .app {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 8px 8px 2px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.8vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      color: var(--text-muted);
+      font-size: 0.97rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(177, 192, 214, 0.4);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 14px;
+    }
+
+    .control-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    @media (min-width: 720px) {
+      .control-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .control {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .hint {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    select:focus,
+    input[type="number"]:focus,
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 255, 0.16);
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .upload-zone {
+      border: 1.5px dashed var(--line-strong);
+      border-radius: var(--radius);
+      background: linear-gradient(160deg, #fbfcfe, #f6f9ff);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+      text-align: center;
+      transition: border-color 0.18s ease, background 0.18s ease;
+      cursor: pointer;
+    }
+
+    .upload-zone.drag-over {
+      border-color: var(--primary);
+      background: #f1f7ff;
+    }
+
+    .upload-title {
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .upload-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .toggle-left {
+      display: grid;
+      gap: 2px;
+    }
+
+    .toggle-left strong {
+      font-size: 0.9rem;
+    }
+
+    .toggle-left span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      display: inline-block;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #c8d3e5;
+      border-radius: 26px;
+      transition: 0.2s;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      transition: 0.2s;
+      box-shadow: 0 2px 5px rgba(13, 33, 67, 0.25);
+    }
+
+    .switch input:checked + .slider {
+      background: var(--primary);
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .inline-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .range-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      font-size: 0.82rem;
+      color: #314157;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    @media (min-width: 720px) {
+      .actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 600;
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: transform 0.08s ease, background-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .btn-soft {
+      background: #e7edf8;
+      color: #23324d;
+    }
+
+    .btn-soft:hover:not(:disabled) {
+      background: #dce7f7;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-hover);
+    }
+
+    button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      padding: 8px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #344154;
+      user-select: none;
+    }
+
+    .more-options {
+      margin-top: 10px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .status {
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 10px 12px;
+    }
+
+    .status-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.84rem;
+      color: #364861;
+    }
+
+    .progress {
+      width: 100%;
+      height: 7px;
+      background: #dde5f2;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.2s ease;
+    }
+
+    .status-message {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      min-height: 1.2em;
+    }
+
+    .image-grid {
+      margin-top: 2px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    @media (min-width: 620px) {
+      .image-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 980px) {
+      .image-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .image-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      min-height: 150px;
+      border: 1px solid #e2e9f4;
+      border-radius: 10px;
+      background: repeating-conic-gradient(#f6f8fc 0% 25%, #f2f5fa 0% 50%) 50% / 16px 16px;
+      display: grid;
+      place-items: center;
+      padding: 6px;
+    }
+
+    .canvas-wrap canvas,
+    .canvas-wrap img {
+      display: block;
+      max-width: 100%;
+      border-radius: 8px;
+      height: auto;
+    }
+
+    .file-name {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #364861;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-state {
+      margin: 0;
+      font-size: 0.76rem;
+      color: #73839a;
+      min-height: 1.1em;
+    }
+
+    .download-link {
+      justify-self: start;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    footer {
+      text-align: center;
+      color: #5f6f86;
+      font-size: 0.78rem;
+      padding-top: 4px;
+    }
+  </style>
 </head>
-<body class="bg-pattern text-gray-100 dark:text-gray-100 min-h-screen flex flex-col items-center p-4 pt-16">
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>Frame it Up</h1>
+      <p>Professional framing for clean social uploads. No ads. No clutter.</p>
+    </header>
 
-    <div class="bg-gray-900 p-8 pb-12 rounded-xl shadow-lg w-full max-w-6xl min-h-[36rem] flex flex-col relative">
-        <div class="absolute top-4 right-4 flex space-x-2">
-            
+    <section class="panel controls">
+      <div id="upload-zone" class="upload-zone" role="button" tabindex="0" aria-label="Upload images">
+        <div class="upload-title">Drop images here or click to select</div>
+        <div class="upload-sub">Supports multiple files. Only images are processed.</div>
+        <div class="hint" id="file-count">No images selected</div>
+        <input id="file-input" type="file" accept="image/*" multiple class="hidden" />
+      </div>
+
+      <div class="control-grid">
+        <div class="control">
+          <label for="preset-select">Preset</label>
+          <select id="preset-select">
+            <option value="classic-white">Classic White</option>
+            <option value="classic-black">Classic Black</option>
+            <option value="average">Average Color</option>
+            <option value="film-35mm">35mm Film</option>
+            <option value="fuji-style">Fuji Style</option>
+          </select>
+          <span class="hint">Choose the framing style for the whole batch.</span>
         </div>
-        <h1 class="text-3xl font-bold mb-2 text-center text-white dark:text-white">Frame it Up</h1>
-        
-        <!-- Tool Description and Donation Section -->
-        <div class="text-center mb-8 space-y-2">
-            <p class="text-sm text-gray-300 dark:text-gray-400">
-                By a photographer, for photographers. Effortlessly add clean, elegant frames to your images for social media or printing.
-                <br>Simple & ad-free experience.
-            </p>
+
+        <div class="control">
+          <label>Instagram Mode</label>
+          <div class="toggle-row">
+            <div class="toggle-left">
+              <strong>Instagram Mode</strong>
+              <span>For mixed-orientation carousel consistency.</span>
+            </div>
+            <label class="switch" aria-label="Toggle Instagram mode">
+              <input id="instagram-toggle" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
 
-        <div class="space-y-6 flex-grow flex flex-col justify-center">
-            <!-- File Selection -->
-            <div class="flex flex-col items-center">
-                <label for="file-upload" class="sr-only">Choose Images</label>
-                <div class="file-input-container">
-                    <button class="bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors duration-300 shadow-md">
-                        Select Images
-                    </button>
-                    <input id="file-upload" type="file" multiple accept="image/*" />
-                </div>
-                <p id="file-count" class="mt-2 text-sm text-gray-400 dark:text-gray-400">No images selected</p>
-            </div>
-
-            <!-- Border Settings -->
-            <div class="border-t border-gray-700 dark:border-gray-700 pt-6 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Border Width -->
-                    <div id="border-width-container" class="transition-opacity duration-300">
-                        <label for="border-width" class="block text-sm font-medium mb-1">Border Width (%)</label>
-                        <input type="number" id="border-width" value="5" min="0" max="25" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
-                        <input type="range" id="border-width-slider" min="0" max="25" value="5" step="1" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                    
-                    <!-- Border Color -->
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Border Color</label>
-                        <div class="flex flex-wrap gap-x-4 gap-y-2">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="white" checked class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
-                                <span class="ml-2 text-gray-100 dark:text-gray-300">White</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="black" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
-                                <span class="ml-2 text-gray-100 dark:text-gray-300">Black</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="average" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
-                                <span class="ml-2 text-gray-100 dark:text-gray-300">Average Color</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="border-color" value="film" class="form-radio text-purple-600 border-gray-700 dark:border-gray-700 focus:ring-purple-600">
-                                <span class="ml-2 text-gray-100 dark:text-gray-300">35mm Film</span>
-                            </label>
-                        </div>
-                    </div>
-                    <!-- Corner Radius -->
-                    <div id="corner-radius-container" class="transition-opacity duration-300">
-                        <label for="corner-radius-input" class="block text-sm font-medium mb-1">Corner Radius (%)</label>
-                        <input type="number" id="corner-radius-input" value="0" min="0" max="25" class="w-full bg-gray-800 dark:bg-gray-800 border border-gray-700 dark:border-gray-700 rounded-lg p-2.5 text-gray-100 dark:text-gray-100 focus:ring-purple-600 focus:border-purple-600">
-                        <input type="range" id="corner-radius" min="0" max="25" value="0" step="1" class="mt-2 w-full h-2 bg-gray-700 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex justify-center md:justify-between items-center mt-8 space-x-4">
-                <div class="flex items-center gap-4">
-                    <button id="process-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
-                        <span id="process-text">Process Images</span>
-                    </button>
-                    <span id="loading-text" class="hidden text-gray-400 font-semibold text-lg w-32 text-left"></span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button id="download-all-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
-                        Download All (ZIP)
-                    </button>
-                    <button id="reset-button" class="bg-gray-700 text-gray-400 font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 cursor-not-allowed" disabled>
-                        Reset
-                    </button>
-                </div>
-            </div>
-
-            <!-- Message & Output -->
-            <div id="message-container" class="mt-16 text-center"></div>
+        <div id="instagram-aspect-wrap" class="control hidden">
+          <label for="instagram-aspect">Instagram Aspect</label>
+          <select id="instagram-aspect">
+            <option value="landscape">Landscape 1.91:1 (1080x566)</option>
+            <option value="portrait">Portrait 3:4 (1080x1440)</option>
+          </select>
+          <span class="hint">All processed images use this exact output ratio.</span>
         </div>
-        
-        <!-- Uploaded Images and Processed Images -->
-        <div id="image-output" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="mt-8 text-center text-sm text-gray-400">
-        <p>Copyright © Atreya Bhat. All rights reserved.</p>
-        <p class="mt-2">No cookies. No targeted ads. No BS.</p>
+
+        <div id="fuji-quick-controls" class="control hidden">
+          <label for="fuji-exif-mode">Fuji Style</label>
+          <select id="fuji-exif-mode">
+            <option value="auto">EXIF Source: Auto</option>
+            <option value="manual">EXIF Source: Manual</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="process-button" class="btn-primary" disabled>Process Images</button>
+        <button id="download-all-button" class="btn-soft" disabled>Download All (ZIP)</button>
+        <button id="reset-button" class="btn-danger" disabled>Reset</button>
+      </div>
+
+      <details>
+        <summary>More options</summary>
+        <div class="more-options">
+          <div id="border-controls" class="control range-row">
+            <label for="border-width">Border Width (%)</label>
+            <div class="inline-controls">
+              <input id="border-width" type="range" min="0" max="25" step="1" value="5" />
+              <input id="border-width-input" type="number" min="0" max="25" value="5" />
+            </div>
+          </div>
+
+          <div id="corner-controls" class="control range-row">
+            <label for="corner-radius">Corner Radius (%)</label>
+            <div class="inline-controls">
+              <input id="corner-radius" type="range" min="0" max="25" step="1" value="0" />
+              <input id="corner-radius-input" type="number" min="0" max="25" value="0" />
+            </div>
+          </div>
+
+          <div id="fuji-fields-wrap" class="control hidden">
+            <label>Fuji EXIF Fields</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="camera" checked />Camera</label>
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="focal" checked />Focal Length</label>
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="aperture" checked />Aperture</label>
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="shutter" checked />Shutter Speed</label>
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="iso" checked />ISO</label>
+            </div>
+            <span class="hint">Choose which EXIF items appear in Fuji Style footer.</span>
+          </div>
+
+          <div id="fuji-manual-wrap" class="control hidden">
+            <label for="fuji-manual-exif">Fuji Manual EXIF Fallback</label>
+            <textarea id="fuji-manual-exif" placeholder="Example: X100V | 23mm | f/2 | 1/125 | ISO 400"></textarea>
+            <span class="hint">Used when EXIF is missing (Auto), or always when EXIF Source is set to Manual.</span>
+          </div>
+
+          <div class="control">
+            <label for="export-format">Export Format</label>
+            <select id="export-format">
+              <option value="jpeg">JPEG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </div>
+
+          <div id="quality-wrap" class="control range-row">
+            <label for="export-quality">Export Quality</label>
+            <div class="inline-controls">
+              <input id="export-quality" type="range" min="0.5" max="1" step="0.05" value="0.9" />
+              <input id="export-quality-input" type="number" min="0.5" max="1" step="0.05" value="0.9" />
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="status">
+        <div class="status-head">
+          <span id="status-phase">Idle</span>
+          <span id="status-progress">0/0</span>
+        </div>
+        <div class="progress"><span id="progress-fill"></span></div>
+        <p id="status-message" class="status-message"></p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div id="image-grid" class="image-grid"></div>
+    </section>
+
+    <footer>
+      <p>Copyright &copy; Atreya Bhat. No cookies. No targeted ads.</p>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const fileInput = document.getElementById('file-upload');
-            const fileCount = document.getElementById('file-count');
-            const borderWidthInput = document.getElementById('border-width');
-            const borderWidthSlider = document.getElementById('border-width-slider');
-            const cornerRadiusInput = document.getElementById('corner-radius');
-            const cornerRadiusNumberInput = document.getElementById('corner-radius-input');
-            const processButton = document.getElementById('process-button');
-            const downloadAllButton = document.getElementById('download-all-button');
-            const borderColorRadios = document.getElementsByName('border-color');
-            const imageOutput = document.getElementById('image-output');
-            const messageContainer = document.getElementById('message-container');
-            const resetButton = document.getElementById('reset-button');
-            const processText = document.getElementById('process-text');
-            const loadingText = document.getElementById('loading-text');
-            const borderWidthContainer = document.getElementById('border-width-container');
-            const cornerRadiusContainer = document.getElementById('corner-radius-container');
-            
-            let selectedFiles = [];
-            const loadedImages = [];
-            let processedImages = [];
-            let initialLoadComplete = false;
-            let loadingInterval;
-            
-            function getAverageColor(img) {
-                return new Promise(resolve => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 1;
-                    canvas.height = 1;
-                    ctx.drawImage(img, 0, 0, 1, 1);
-                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-                    resolve(`rgb(${r}, ${g}, ${b})`);
-                });
-            }
-
-            function drawRoundedRect(ctx, x, y, width, height, radius) {
-                ctx.beginPath();
-                ctx.moveTo(x + radius, y);
-                ctx.lineTo(x + width - radius, y);
-                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-                ctx.lineTo(x + width, y + height - radius);
-                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-                ctx.lineTo(x + radius, y + height);
-                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-                ctx.lineTo(x, y + radius);
-                ctx.quadraticCurveTo(x, y, x + radius, y);
-                ctx.closePath();
-            }
-
-            // --- FILM FRAME DRAWING LOGIC ---
-
-            function drawVerticalFilmFrame(ctx, width, height, img) {
-                const originalWidth = img.naturalWidth;
-                const originalHeight = img.naturalHeight;
-
-                const filmStripWidth = width * 0.12;
-                const topBorderHeight = height * 0.02;
-                const imageAreaWidth = width - (2 * filmStripWidth);
-                const imageAreaHeight = height - (2 * topBorderHeight);
-                
-                ctx.fillStyle = 'black';
-                ctx.fillRect(0, 0, width, height);
-
-                const imageRatio = originalWidth / originalHeight;
-                let newImageHeight = imageAreaHeight;
-                let newImageWidth = newImageHeight * imageRatio;
-
-                if (newImageWidth > imageAreaWidth) {
-                    newImageWidth = imageAreaWidth;
-                    newImageHeight = newImageWidth / imageRatio;
-                }
-
-                const imageX = filmStripWidth + (imageAreaWidth - newImageWidth) / 2;
-                const imageY = topBorderHeight + (imageAreaHeight - newImageHeight) / 2;
-                
-                ctx.save();
-                ctx.filter = 'saturate(0.8)';
-                ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
-                ctx.restore();
-
-                // --- Draw Text & Markings (Rotated) ---
-                const drawRotatedContent = (stripX, isLeftStrip) => {
-                    ctx.save();
-                    ctx.translate(stripX, height / 2);
-                    ctx.rotate(isLeftStrip ? Math.PI / 2 : -Math.PI / 2);
-                    
-                    const stripLength = height;
-                    const stripWidth = filmStripWidth;
-                    ctx.fillStyle = '#f59e0b'; // amber-500
-
-                    if (isLeftStrip) { // Draw text and arrows on the left strip
-                        const fontSize = stripWidth * 0.4;
-                        ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        
-                        // Randomize position along the strip
-                        const randomOffset = (Math.random() * 0.7 - 0.35) * stripLength;
-                        ctx.save();
-                        ctx.translate(randomOffset, 0);
-
-                        ctx.fillText('35  MM', 0, 0);
-
-                        const textMetrics = ctx.measureText('35  MM');
-                        const arrowHeight = stripWidth * 0.35;
-                        const arrowWidth = arrowHeight * 1.2;
-                        const arrowOffset = textMetrics.width * 1.8;
-
-                        ctx.beginPath();
-                        ctx.moveTo(arrowOffset, -arrowWidth / 2);
-                        ctx.lineTo(arrowOffset + arrowHeight, 0);
-                        ctx.lineTo(arrowOffset, arrowWidth/2);
-                        ctx.closePath();
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.moveTo(-arrowOffset - arrowHeight, -arrowWidth / 2);
-                        ctx.lineTo(-arrowOffset, 0);
-                        ctx.lineTo(-arrowOffset - arrowHeight, arrowWidth / 2);
-                        ctx.closePath();
-                        ctx.fill();
-                        
-                        ctx.restore();
-                        
-                    } else { // Draw barcode pattern on the right strip
-                        const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
-                        const barThickness = stripWidth * 0.08;
-                        const gapAlongStrip = stripWidth * 0.04;
-                        let currentPosAlongStrip = -stripLength / 2 * 0.95;
-                        const endPosAlongStrip = stripLength / 2 * 0.95;
-                        
-                        const posAcrossStrip = stripWidth * 0.45; // Move to the outer edge
-
-                        while (currentPosAlongStrip < endPosAlongStrip) {
-                            for (let i = 0; i < pattern.length && currentPosAlongStrip < endPosAlongStrip; i++) {
-                                const lengthMultiplier = pattern[i];
-                                if (lengthMultiplier > 0) {
-                                    const barLength = -(stripWidth * 0.5 * lengthMultiplier); // Draw in negative direction for right strip
-                                    ctx.fillRect(currentPosAlongStrip, posAcrossStrip, barThickness, barLength);
-                                }
-                                currentPosAlongStrip += barThickness + gapAlongStrip;
-                            }
-                        }
-                    }
-
-                    ctx.restore();
-                };
-                
-                drawRotatedContent(filmStripWidth / 2, true); // Left strip
-                drawRotatedContent(width - filmStripWidth / 2, false); // Right strip
-
-
-                // --- Draw sprocket holes ---
-                ctx.fillStyle = 'white';
-                const numHoles = 8;
-                const holeHeight = filmStripWidth * 0.5;
-                const holeWidth = holeHeight * 1.6;
-                const holeRadius = holeHeight * 0.25; 
-
-                for (let i = 0; i < numHoles; i++) {
-                    const holeY = (i * (height / numHoles)) + (height / numHoles - holeHeight) / 2;
-                    // Left holes
-                    drawRoundedRect(ctx, (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
-                    ctx.fill();
-                    // Right holes
-                    drawRoundedRect(ctx, width - filmStripWidth + (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
-                    ctx.fill();
-                }
-            }
-
-
-            function drawHorizontalFilmFrame(ctx, width, height, img) {
-                const originalWidth = img.naturalWidth;
-                const originalHeight = img.naturalHeight;
-
-                const filmStripHeight = height * 0.12;
-                const sideBorderWidth = width * 0.02;
-                const imageAreaHeight = height - (2 * filmStripHeight);
-                const imageAreaWidth = width - (2 * sideBorderWidth);
-                
-                ctx.fillStyle = 'black';
-                ctx.fillRect(0, 0, width, height);
-
-                const imageRatio = originalWidth / originalHeight;
-                let newImageWidth = imageAreaWidth;
-                let newImageHeight = newImageWidth / imageRatio;
-
-                if (newImageHeight > imageAreaHeight) {
-                    newImageHeight = imageAreaHeight;
-                    newImageWidth = newImageHeight * imageRatio;
-                }
-
-                const imageX = sideBorderWidth + (imageAreaWidth - newImageWidth) / 2;
-                const imageY = filmStripHeight + (imageAreaHeight - newImageHeight) / 2;
-                
-                ctx.save();
-                ctx.filter = 'saturate(0.8)';
-                ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
-                ctx.restore();
-
-                const drawTopStrip = () => {
-                    ctx.save();
-                    ctx.fillStyle = '#f59e0b'; // amber-500
-                    const fontSize = filmStripHeight * 0.4;
-                    ctx.font = `bold ${fontSize}px "Poppins", sans-serif`;
-                    ctx.textBaseline = 'middle';
-
-                    // Randomize position
-                    const textContent = '35 MM';
-                    const textMetrics = ctx.measureText(textContent);
-                    const arrowHeight = filmStripHeight * 0.35;
-                    const arrowWidth = arrowHeight * 1.2;
-                    const gap = filmStripHeight * 0.8;
-
-                    // Calculate total width of the text + arrows + gaps block
-                    const blockWidth = textMetrics.width + (gap * 2) + (arrowWidth * 2);
-                    const safeAreaWidth = width - blockWidth - (sideBorderWidth * 2);
-                    
-                    const startX = sideBorderWidth + (Math.random() * safeAreaWidth);
-
-                    const textY = filmStripHeight / 2;
-                    const arrowY = filmStripHeight / 2;
-
-                    // Left Arrow (points right)
-                    const arrowXLeft = startX;
-                    ctx.beginPath();
-                    ctx.moveTo(arrowXLeft, arrowY - arrowHeight / 2);
-                    ctx.lineTo(arrowXLeft, arrowY + arrowHeight / 2);
-                    ctx.lineTo(arrowXLeft + arrowWidth, arrowY);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    // Text
-                    ctx.textAlign = 'left';
-                    const textX = arrowXLeft + arrowWidth + gap;
-                    ctx.fillText(textContent, textX, textY);
-
-                    // Right Arrow (points right)
-                    const arrowXRight = textX + textMetrics.width + gap;
-                    ctx.beginPath();
-                    ctx.moveTo(arrowXRight, arrowY - arrowHeight / 2);
-                    ctx.lineTo(arrowXRight, arrowY + arrowHeight / 2);
-                    ctx.lineTo(arrowXRight + arrowWidth, arrowY);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    ctx.restore();
-                };
-                
-                const drawBottomStrip = (y) => {
-                    ctx.save();
-                    ctx.fillStyle = '#f59e0b'; // amber-500
-                    const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
-                    const barWidth = width * 0.008;
-                    const gapWidth = width * 0.004;
-                    let currentX = width * 0.05;
-                    const endX = width * 0.95;
-
-                    while (currentX < endX) {
-                        for (let i = 0; i < pattern.length && currentX < endX; i++) {
-                            const heightMultiplier = pattern[i];
-                            if (heightMultiplier > 0) {
-                                const barHeight = filmStripHeight * 0.5 * heightMultiplier;
-                                const barY = y + (filmStripHeight * 0.5 * (1 - heightMultiplier));
-                                ctx.fillRect(currentX, barY, barWidth, barHeight);
-                            }
-                            currentX += barWidth + gapWidth;
-                        }
-                    }
-                    ctx.restore();
-                };
-
-                drawTopStrip(); // Text and arrows on top strip
-                drawBottomStrip(height - filmStripHeight * 0.7); // Barcodes on bottom strip
-
-
-                ctx.fillStyle = 'white';
-                const numHoles = 8;
-                const holeWidth = filmStripHeight * 0.5;
-                const holeHeight = holeWidth * 1.6;
-                const holeRadius = holeWidth * 0.25; 
-
-                for (let i = 0; i < numHoles; i++) {
-                    const holeX = (i * (width / numHoles)) + (width / numHoles - holeWidth) / 2;
-                    drawRoundedRect(ctx, holeX, (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
-                    ctx.fill();
-                    drawRoundedRect(ctx, holeX, height - filmStripHeight + (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
-                    ctx.fill();
-                }
-            }
-
-            function drawFramedPreview(img, canvas, borderWidthPercent, borderColor, cornerRadiusPercent) {
-                const ctx = canvas.getContext('2d');
-                const originalWidth = img.naturalWidth;
-                const originalHeight = img.naturalHeight;
-                const isPortrait = originalWidth < originalHeight;
-                
-                const maxDimension = 300;
-                canvas.width = maxDimension;
-                canvas.height = maxDimension;
-                ctx.clearRect(0, 0, maxDimension, maxDimension);
-                
-                if (borderColor === 'film') {
-                    const filmRatio = isPortrait ? 2/3 : 3/2;
-                    let filmWidth, filmHeight, offsetX, offsetY;
-
-                    if (isPortrait) {
-                        filmHeight = maxDimension;
-                        filmWidth = maxDimension * filmRatio;
-                        offsetX = (maxDimension - filmWidth) / 2;
-                        offsetY = 0;
-                    } else {
-                        filmWidth = maxDimension;
-                        filmHeight = maxDimension / filmRatio;
-                        offsetX = 0;
-                        offsetY = (maxDimension - filmHeight) / 2;
-                    }
-
-                    ctx.save();
-                    ctx.translate(offsetX, offsetY);
-                    if (isPortrait) {
-                        drawVerticalFilmFrame(ctx, filmWidth, filmHeight, img);
-                    } else {
-                        drawHorizontalFilmFrame(ctx, filmWidth, filmHeight, img);
-                    }
-                    ctx.restore();
-                    return;
-                }
-                
-                const shorterSide = Math.min(originalWidth, originalHeight);
-                const borderWidth = shorterSide * (borderWidthPercent / 100);
-                const cornerRadius = shorterSide * (cornerRadiusPercent / 100);
-
-                const newWidth = originalWidth + 2 * borderWidth;
-                const newHeight = originalHeight + 2 * borderWidth;
-                const ratio = Math.min(maxDimension / newWidth, maxDimension / newHeight);
-                const scaledWidth = newWidth * ratio;
-                const scaledHeight = newHeight * ratio;
-                const offsetX = (maxDimension - scaledWidth) / 2;
-                const offsetY = (maxDimension - scaledHeight) / 2;
-
-                const drawCanvasContents = (frameColor) => {
-                    ctx.fillStyle = frameColor;
-                    ctx.fillRect(offsetX, offsetY, scaledWidth, scaledHeight);
-                    ctx.save();
-                    drawRoundedRect(ctx, borderWidth * ratio + offsetX, borderWidth * ratio + offsetY, (originalWidth * ratio), (originalHeight * ratio), cornerRadius * ratio);
-                    ctx.clip();
-                    ctx.drawImage(img, borderWidth * ratio + offsetX, borderWidth * ratio + offsetY, (originalWidth * ratio), (originalHeight * ratio));
-                    ctx.restore();
-                };
-
-                if (borderColor === 'average') {
-                    if (img.averageColor) {
-                        drawCanvasContents(img.averageColor);
-                    } else {
-                        getAverageColor(img).then(avgColor => {
-                            img.averageColor = avgColor;
-                            drawCanvasContents(avgColor);
-                        });
-                    }
-                } else {
-                    drawCanvasContents(borderColor);
-                }
-            }
-
-            function updateAllPreviews() {
-                const borderWidth = parseInt(borderWidthInput.value, 10);
-                const borderColor = document.querySelector('input[name="border-color"]:checked').value;
-                const cornerRadius = parseInt(cornerRadiusInput.value, 10);
-                
-                const isFilm = borderColor === 'film';
-                borderWidthInput.disabled = isFilm;
-                borderWidthSlider.disabled = isFilm;
-                cornerRadiusInput.disabled = isFilm;
-                cornerRadiusNumberInput.disabled = isFilm;
-
-                borderWidthContainer.classList.toggle('opacity-50', isFilm);
-                cornerRadiusContainer.classList.toggle('opacity-50', isFilm);
-
-                loadedImages.forEach(item => {
-                    const previewCanvas = item.element.querySelector('canvas');
-                    if (item.img.complete && item.img.naturalWidth > 0) {
-                        drawFramedPreview(item.img, previewCanvas, borderWidth, borderColor, cornerRadius);
-                    }
-                });
-            }
-
-            // --- EVENT LISTENERS ---
-            borderWidthInput.addEventListener('input', () => {
-                const value = Math.max(0, Math.min(25, parseInt(borderWidthInput.value, 10) || 0));
-                borderWidthInput.value = value;
-                borderWidthSlider.value = value;
-                if (processedImages.length > 0) resetToPreviewMode();
-                updateAllPreviews();
-            });
-            borderWidthSlider.addEventListener('input', () => {
-                borderWidthInput.value = borderWidthSlider.value;
-                if (processedImages.length > 0) resetToPreviewMode();
-                updateAllPreviews();
-            });
-            borderColorRadios.forEach(radio => radio.addEventListener('change', () => {
-                if (processedImages.length > 0) resetToPreviewMode();
-                updateAllPreviews();
-            }));
-            cornerRadiusInput.addEventListener('input', () => {
-                cornerRadiusNumberInput.value = cornerRadiusInput.value;
-                if (processedImages.length > 0) resetToPreviewMode();
-                updateAllPreviews();
-            });
-            cornerRadiusNumberInput.addEventListener('input', () => {
-                const value = Math.max(0, Math.min(25, parseInt(cornerRadiusNumberInput.value, 10) || 0));
-                cornerRadiusNumberInput.value = value;
-                cornerRadiusInput.value = value;
-                if (processedImages.length > 0) resetToPreviewMode();
-                updateAllPreviews();
-            });
-
-            fileInput.addEventListener('change', (event) => {
-                selectedFiles = Array.from(event.target.files);
-                loadedImages.length = 0;
-                processedImages.length = 0;
-                imageOutput.innerHTML = '';
-                messageContainer.textContent = '';
-                downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-                
-                resetButton.disabled = true;
-                resetButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'text-white');
-
-                if (selectedFiles.length > 0) {
-                    fileCount.textContent = `${selectedFiles.length} image(s) selected.`;
-                    processButton.disabled = false;
-                    processButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    processButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
-                    
-                    resetButton.disabled = false;
-                    resetButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
-
-                    initialLoadComplete = false;
-
-                    selectedFiles.forEach(file => {
-                        const container = document.createElement('div');
-                        container.className = 'bg-gray-800 dark:bg-gray-800 rounded-lg p-2 shadow-sm text-center';
-                        const canvas = document.createElement('canvas');
-                        canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
-                        const name = document.createElement('p');
-                        name.className = 'text-xs truncate text-gray-300 dark:text-gray-300';
-                        name.textContent = file.name;
-
-                        container.appendChild(canvas);
-                        container.appendChild(name);
-                        imageOutput.appendChild(container);
-
-                        const img = new Image();
-                        img.onload = () => {
-                            loadedImages.push({ file, img, element: container });
-                            updateAllPreviews();
-                            if (loadedImages.length === selectedFiles.length) {
-                                initialLoadComplete = true;
-                            }
-                        };
-                        const reader = new FileReader();
-                        reader.onload = (e) => img.src = e.target.result;
-                        reader.readAsDataURL(file);
-                    });
-                } else {
-                    fileCount.textContent = 'No images selected';
-                    processButton.disabled = true;
-                    processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
-                }
-            });
-
-            // --- PROCESSING & UI ---
-            function startLoadingAnimation() {
-                let dots = 1;
-                loadingText.classList.remove('hidden');
-                loadingText.classList.add('text-gray-400');
-                loadingInterval = setInterval(() => {
-                    loadingText.textContent = 'Loading ' + '. '.repeat(dots);
-                    dots = (dots % 3) + 1;
-                }, 400);
-            }
-
-            function stopLoadingAnimation() {
-                clearInterval(loadingInterval);
-                loadingText.classList.add('hidden');
-                loadingText.classList.remove('text-gray-400');
-            }
-
-            processButton.addEventListener('click', () => {
-                if (selectedFiles.length === 0) {
-                    showMessage('Please select at least one image.', 'text-red-500');
-                    return;
-                }
-                const borderWidth = parseInt(borderWidthInput.value, 10);
-                if (isNaN(borderWidth) || borderWidth < 0) {
-                    showMessage('Please enter a valid border width.', 'text-red-500');
-                    return;
-                }
-                messageContainer.textContent = '';
-                processButton.disabled = true;
-                processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
-                startLoadingAnimation();
-                processedImages = [];
-                processImagesSequentially(0);
-            });
-
-            function processImagesSequentially(index) {
-                if (index >= loadedImages.length) {
-                    displayProcessedImages();
-                    showMessage('Images processed successfully!', 'text-green-500');
-                    downloadAllButton.disabled = false;
-                    downloadAllButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    downloadAllButton.classList.add('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-                    processButton.disabled = false;
-                    processButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    processButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
-                    stopLoadingAnimation();
-                    resetButton.disabled = false;
-                    resetButton.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                    resetButton.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
-                    return;
-                }
-                const item = loadedImages[index];
-                const borderWidth = parseInt(borderWidthInput.value, 10);
-                const cornerRadius = parseInt(cornerRadiusInput.value, 10);
-                const borderColor = document.querySelector('input[name="border-color"]:checked').value;
-
-                processImage(item.img, (dataUrl) => {
-                    const originalName = item.file.name.split('.')[0];
-                    const newName = `${originalName}_framed.jpg`;
-                    processedImages.push({ name: newName, url: dataUrl });
-                    setTimeout(() => processImagesSequentially(index + 1), 0);
-                }, borderWidth, borderColor, cornerRadius);
-            }
-
-            function processImage(img, callback, borderWidthPercent, borderColor, cornerRadiusPercent) {
-                const originalWidth = img.naturalWidth;
-                const originalHeight = img.naturalHeight;
-                const isPortrait = originalWidth < originalHeight;
-                
-                if (borderColor === 'film') {
-                    const finalImageRatio = isPortrait ? 2/3 : 3/2;
-                    let filmWidth, filmHeight;
-                    const sidePercentage = 0.02; 
-                    const stripPercentage = 0.08;
-
-                    if (isPortrait) {
-                        filmHeight = Math.round(originalHeight / (1 - 2 * sidePercentage));
-                        filmWidth = Math.round(filmHeight * finalImageRatio);
-                    } else {
-                        filmWidth = Math.round(originalWidth / (1 - 2 * sidePercentage));
-                        filmHeight = Math.round(filmWidth / finalImageRatio);
-                    }
-                    
-                    const canvas = document.createElement('canvas');
-                    canvas.width = filmWidth;
-                    canvas.height = filmHeight;
-                    const ctx = canvas.getContext('2d');
-                    
-                    if (isPortrait) {
-                        drawVerticalFilmFrame(ctx, filmWidth, filmHeight, img);
-                    } else {
-                        drawHorizontalFilmFrame(ctx, filmWidth, filmHeight, img);
-                    }
-                    callback(canvas.toDataURL('image/jpeg', 0.9));
-                    return;
-                }
-                
-                const shorterSide = Math.min(originalWidth, originalHeight);
-                const borderWidth = shorterSide * (borderWidthPercent / 100);
-                const cornerRadius = shorterSide * (cornerRadiusPercent / 100);
-
-                const framedWidth = originalWidth + 2 * borderWidth;
-                const framedHeight = originalHeight + 2 * borderWidth;
-                const canvas = document.createElement('canvas');
-                canvas.width = framedWidth;
-                canvas.height = framedHeight;
-                const ctx = canvas.getContext('2d');
-
-                const drawFinalImage = (frameColor) => {
-                    ctx.fillStyle = frameColor;
-                    ctx.fillRect(0, 0, framedWidth, framedHeight);
-                    ctx.save();
-                    drawRoundedRect(ctx, borderWidth, borderWidth, originalWidth, originalHeight, cornerRadius);
-                    ctx.clip();
-                    ctx.drawImage(img, borderWidth, borderWidth);
-                    ctx.restore();
-                    callback(canvas.toDataURL('image/jpeg', 0.9));
-                };
-
-                if (borderColor === 'average') {
-                    getAverageColor(img).then(drawFinalImage);
-                } else {
-                    drawFinalImage(borderColor);
-                }
-            }
-            
-            function displayProcessedImages() {
-                imageOutput.innerHTML = '';
-                processedImages.forEach(item => {
-                    const container = document.createElement('div');
-                    container.className = 'bg-gray-800 dark:bg-gray-800 rounded-lg p-2 shadow-sm text-center';
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'w-full h-auto rounded mb-2 mx-auto';
-                    const maxDimension = 300;
-                    canvas.width = maxDimension;
-                    canvas.height = maxDimension;
-                    const ctx = canvas.getContext('2d');
-
-                    const img = new Image();
-                    img.onload = () => {
-                        const ratio = Math.min(maxDimension / img.width, maxDimension / img.height);
-                        const scaledWidth = img.width * ratio;
-                        const scaledHeight = img.height * ratio;
-                        const offsetX = (maxDimension - scaledWidth) / 2;
-                        const offsetY = (maxDimension - scaledHeight) / 2;
-                        ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
-                    };
-                    img.src = item.url;
-                    
-                    const link = document.createElement('a');
-                    link.href = item.url;
-                    link.download = item.name;
-                    link.textContent = `Download`;
-                    link.className = 'text-purple-600 hover:underline text-base font-semibold';
-
-                    container.appendChild(canvas);
-                    container.appendChild(link);
-                    imageOutput.appendChild(container);
-                });
-            }
-
-            downloadAllButton.addEventListener('click', () => {
-                if (processedImages.length === 0) {
-                    showMessage('No processed images to download.', 'text-red-500');
-                    return;
-                }
-                showMessage('Preparing zip file for download...', 'text-purple-600');
-                const zip = new JSZip();
-                processedImages.forEach(item => {
-                    const base64Data = item.url.split(',')[1];
-                    zip.file(item.name, base64Data, { base64: true });
-                });
-                zip.generateAsync({ type: "blob" })
-                    .then(content => {
-                        saveAs(content, "framed_images.zip");
-                        showMessage('Download started!', 'text-green-500');
-                    })
-                    .catch(e => {
-                        showMessage('Error creating zip file.', 'text-red-500');
-                        console.error(e);
-                    });
-            });
-
-            resetButton.addEventListener('click', () => resetApplication());
-
-            function resetApplication() {
-                loadedImages.length = 0;
-                processedImages.length = 0;
-                imageOutput.innerHTML = '';
-                messageContainer.textContent = '';
-                processButton.disabled = true;
-                processButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                processButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
-                downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-                resetButton.disabled = true;
-                resetButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                resetButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'text-white');
-                fileInput.value = null;
-                fileCount.textContent = 'No images selected';
-            }
-
-            function resetToPreviewMode() {
-                imageOutput.innerHTML = '';
-                processedImages.length = 0;
-                downloadAllButton.disabled = true;
-                downloadAllButton.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                downloadAllButton.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-                loadedImages.forEach(item => imageOutput.appendChild(item.element));
-                updateAllPreviews();
-            }
-
-            function showMessage(msg, colorClass) {
-                messageContainer.textContent = msg;
-                messageContainer.className = `mt-16 text-center text-lg font-semibold ${colorClass}`;
-            }
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const STORAGE_KEY = "frameitup.settings.v2";
+      const PREVIEW_INSTAGRAM_WIDTH = 382;
+      const PREVIEW_MAX_DIMENSION = 340;
+      const INSTAGRAM_PRESETS = {
+        landscape: { width: 1080, height: 566, label: "Landscape 1.91:1 (1080x566)" },
+        portrait: { width: 1080, height: 1440, label: "Portrait 3:4 (1080x1440)" }
+      };
+
+      const DEFAULT_SETTINGS = {
+        preset: "classic-white",
+        instagramMode: false,
+        instagramAspect: "landscape",
+        instagramWidth: 1080,
+        instagramHeight: 566,
+        borderWidth: 5,
+        cornerRadius: 0,
+        borderColor: "white",
+        fujiExifMode: "auto",
+        fujiExifFields: {
+          camera: true,
+          focal: true,
+          aperture: true,
+          shutter: true,
+          iso: true
+        },
+        fujiManualExifText: "",
+        exportFormat: "jpeg",
+        exportQuality: 0.9
+      };
+
+      const state = {
+        items: [],
+        processed: [],
+        failures: [],
+        mode: "preview",
+        logos: {
+          primary: null,
+          ready: false
+        }
+      };
+
+      const fileInput = document.getElementById("file-input");
+      const uploadZone = document.getElementById("upload-zone");
+      const fileCount = document.getElementById("file-count");
+      const presetSelect = document.getElementById("preset-select");
+      const instagramToggle = document.getElementById("instagram-toggle");
+      const instagramAspectWrap = document.getElementById("instagram-aspect-wrap");
+      const instagramAspectSelect = document.getElementById("instagram-aspect");
+      const processButton = document.getElementById("process-button");
+      const downloadAllButton = document.getElementById("download-all-button");
+      const resetButton = document.getElementById("reset-button");
+      const borderWidthRange = document.getElementById("border-width");
+      const borderWidthInput = document.getElementById("border-width-input");
+      const cornerRadiusRange = document.getElementById("corner-radius");
+      const cornerRadiusInput = document.getElementById("corner-radius-input");
+      const fujiQuickControls = document.getElementById("fuji-quick-controls");
+      const fujiExifMode = document.getElementById("fuji-exif-mode");
+      const fujiFieldsWrap = document.getElementById("fuji-fields-wrap");
+      const fujiExifFieldInputs = Array.from(document.querySelectorAll("[data-exif-field]"));
+      const fujiManualWrap = document.getElementById("fuji-manual-wrap");
+      const fujiManualExif = document.getElementById("fuji-manual-exif");
+      const borderControls = document.getElementById("border-controls");
+      const cornerControls = document.getElementById("corner-controls");
+      const exportFormat = document.getElementById("export-format");
+      const exportQualityRange = document.getElementById("export-quality");
+      const exportQualityInput = document.getElementById("export-quality-input");
+      const qualityWrap = document.getElementById("quality-wrap");
+      const statusPhase = document.getElementById("status-phase");
+      const statusProgress = document.getElementById("status-progress");
+      const statusMessage = document.getElementById("status-message");
+      const progressFill = document.getElementById("progress-fill");
+      const imageGrid = document.getElementById("image-grid");
+
+      let settings = loadSettings();
+      applySettingsToControls();
+      wireEvents();
+      preloadLogos();
+      updateUiFromSettings();
+      updateActionButtons();
+      setStatus("Idle", "0/0", 0, "Select images to get started.");
+
+      function wireEvents() {
+        uploadZone.addEventListener("click", () => fileInput.click());
+        uploadZone.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            fileInput.click();
+          }
         });
-    </script>
 
+        fileInput.addEventListener("change", (event) => {
+          const files = Array.from(event.target.files || []);
+          if (files.length > 0) {
+            ingestFiles(files);
+          }
+        });
+
+        uploadZone.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          uploadZone.classList.add("drag-over");
+        });
+
+        uploadZone.addEventListener("dragleave", () => {
+          uploadZone.classList.remove("drag-over");
+        });
+
+        uploadZone.addEventListener("drop", (event) => {
+          event.preventDefault();
+          uploadZone.classList.remove("drag-over");
+          const files = Array.from(event.dataTransfer.files || []);
+          if (files.length > 0) {
+            ingestFiles(files);
+          }
+        });
+
+        presetSelect.addEventListener("change", () => {
+          settings.preset = presetSelect.value;
+          if (settings.preset === "classic-white") {
+            settings.borderColor = "white";
+          } else if (settings.preset === "classic-black") {
+            settings.borderColor = "black";
+          } else if (settings.preset === "average") {
+            settings.borderColor = "average";
+          } else if (settings.preset === "film-35mm") {
+            settings.borderColor = "film";
+          }
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        instagramToggle.addEventListener("change", () => {
+          settings.instagramMode = instagramToggle.checked;
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        instagramAspectSelect.addEventListener("change", () => {
+          applyInstagramAspect(instagramAspectSelect.value);
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        fujiExifMode.addEventListener("change", () => {
+          settings.fujiExifMode = fujiExifMode.value;
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        fujiExifFieldInputs.forEach((input) => {
+          input.addEventListener("change", () => {
+            const key = input.dataset.exifField;
+            if (!key) return;
+            settings.fujiExifFields[key] = input.checked;
+            persistSettings();
+            onSettingsChanged();
+          });
+        });
+
+        fujiManualExif.addEventListener("input", () => {
+          settings.fujiManualExifText = fujiManualExif.value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        borderWidthRange.addEventListener("input", () => {
+          const value = clampInt(borderWidthRange.value, 0, 25);
+          settings.borderWidth = value;
+          borderWidthInput.value = value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        borderWidthInput.addEventListener("input", () => {
+          const value = clampInt(borderWidthInput.value, 0, 25);
+          settings.borderWidth = value;
+          borderWidthRange.value = value;
+          borderWidthInput.value = value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        cornerRadiusRange.addEventListener("input", () => {
+          const value = clampInt(cornerRadiusRange.value, 0, 25);
+          settings.cornerRadius = value;
+          cornerRadiusInput.value = value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        cornerRadiusInput.addEventListener("input", () => {
+          const value = clampInt(cornerRadiusInput.value, 0, 25);
+          settings.cornerRadius = value;
+          cornerRadiusRange.value = value;
+          cornerRadiusInput.value = value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        exportFormat.addEventListener("change", () => {
+          settings.exportFormat = exportFormat.value;
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        exportQualityRange.addEventListener("input", () => {
+          const value = clampFloat(exportQualityRange.value, 0.5, 1);
+          settings.exportQuality = value;
+          exportQualityInput.value = value.toFixed(2);
+          persistSettings();
+          onSettingsChanged(false);
+        });
+
+        exportQualityInput.addEventListener("input", () => {
+          const value = clampFloat(exportQualityInput.value, 0.5, 1);
+          settings.exportQuality = value;
+          exportQualityRange.value = value;
+          exportQualityInput.value = value.toFixed(2);
+          persistSettings();
+          onSettingsChanged(false);
+        });
+
+        processButton.addEventListener("click", processImagesSequentially);
+        downloadAllButton.addEventListener("click", downloadAll);
+        resetButton.addEventListener("click", resetAll);
+      }
+
+      function loadSettings() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return { ...DEFAULT_SETTINGS };
+          }
+          const parsed = JSON.parse(raw);
+          return sanitizeSettings({ ...DEFAULT_SETTINGS, ...parsed });
+        } catch (error) {
+          return { ...DEFAULT_SETTINGS };
+        }
+      }
+
+      function sanitizeSettings(value) {
+        const safe = { ...value };
+        const presets = ["classic-white", "classic-black", "average", "film-35mm", "fuji-style"];
+        const formats = ["jpeg", "png", "webp"];
+        const fujiModes = ["auto", "manual"];
+        const instagramAspects = Object.keys(INSTAGRAM_PRESETS);
+
+        if (!presets.includes(safe.preset)) safe.preset = DEFAULT_SETTINGS.preset;
+        if (!formats.includes(safe.exportFormat)) safe.exportFormat = DEFAULT_SETTINGS.exportFormat;
+        if (!fujiModes.includes(safe.fujiExifMode)) safe.fujiExifMode = DEFAULT_SETTINGS.fujiExifMode;
+        if (!instagramAspects.includes(safe.instagramAspect)) safe.instagramAspect = DEFAULT_SETTINGS.instagramAspect;
+
+        safe.instagramMode = Boolean(safe.instagramMode);
+        applyInstagramAspect(safe.instagramAspect, safe);
+        safe.borderWidth = clampInt(safe.borderWidth, 0, 25);
+        safe.cornerRadius = clampInt(safe.cornerRadius, 0, 25);
+        safe.exportQuality = clampFloat(safe.exportQuality, 0.5, 1);
+        safe.fujiManualExifText = typeof safe.fujiManualExifText === "string" ? safe.fujiManualExifText : "";
+        safe.fujiExifFields = sanitizeFujiExifFields(safe.fujiExifFields);
+
+        return safe;
+      }
+
+      function sanitizeFujiExifFields(fields) {
+        const source = fields && typeof fields === "object" ? fields : {};
+        return {
+          camera: source.camera !== false,
+          focal: source.focal !== false,
+          aperture: source.aperture !== false,
+          shutter: source.shutter !== false,
+          iso: source.iso !== false
+        };
+      }
+
+      function persistSettings() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      }
+
+      function applySettingsToControls() {
+        presetSelect.value = settings.preset;
+        instagramToggle.checked = settings.instagramMode;
+        instagramAspectSelect.value = settings.instagramAspect;
+        borderWidthRange.value = settings.borderWidth;
+        borderWidthInput.value = settings.borderWidth;
+        cornerRadiusRange.value = settings.cornerRadius;
+        cornerRadiusInput.value = settings.cornerRadius;
+        fujiExifMode.value = settings.fujiExifMode;
+        fujiExifFieldInputs.forEach((input) => {
+          const key = input.dataset.exifField;
+          if (!key) return;
+          input.checked = Boolean(settings.fujiExifFields[key]);
+        });
+        fujiManualExif.value = settings.fujiManualExifText;
+        exportFormat.value = settings.exportFormat;
+        exportQualityRange.value = settings.exportQuality;
+        exportQualityInput.value = settings.exportQuality.toFixed(2);
+      }
+
+      function updateUiFromSettings() {
+        const isFuji = settings.preset === "fuji-style";
+        const isFilm = settings.preset === "film-35mm";
+        const standardPreset = ["classic-white", "classic-black", "average"].includes(settings.preset);
+        const qualityVisible = settings.exportFormat !== "png";
+
+        fujiQuickControls.classList.toggle("hidden", !isFuji);
+        fujiFieldsWrap.classList.toggle("hidden", !isFuji);
+        fujiManualWrap.classList.toggle("hidden", !isFuji);
+        borderControls.classList.toggle("hidden", !standardPreset);
+        cornerControls.classList.toggle("hidden", !standardPreset);
+        qualityWrap.classList.toggle("hidden", !qualityVisible);
+        instagramAspectWrap.classList.toggle("hidden", !settings.instagramMode);
+        fujiExifFieldInputs.forEach((input) => {
+          input.disabled = settings.fujiExifMode === "manual";
+        });
+
+        if (isFilm) {
+          settings.borderColor = "film";
+        }
+      }
+
+      function applyInstagramAspect(aspect, target = settings) {
+        const preset = INSTAGRAM_PRESETS[aspect] || INSTAGRAM_PRESETS.landscape;
+        target.instagramAspect = aspect in INSTAGRAM_PRESETS ? aspect : "landscape";
+        target.instagramWidth = preset.width;
+        target.instagramHeight = preset.height;
+      }
+
+      function onSettingsChanged(resetProcessed = true) {
+        if (resetProcessed && state.processed.length > 0) {
+          invalidateProcessedResults();
+        }
+        renderPreviewGrid();
+      }
+
+      function ingestFiles(files) {
+        const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+        if (imageFiles.length === 0) {
+          setStatus("Idle", "0/0", 0, "Only image files are supported.");
+          return;
+        }
+
+        clearObjectUrls();
+        state.items = [];
+        state.processed = [];
+        state.failures = [];
+        state.mode = "preview";
+        imageGrid.innerHTML = "";
+        fileInput.value = "";
+        fileCount.textContent = `${imageFiles.length} image(s) selected`;
+
+        imageFiles.forEach((file, index) => {
+          const item = {
+            id: `${Date.now()}-${index}`,
+            file,
+            baseName: getBaseName(file.name),
+            img: null,
+            exif: null,
+            averageColor: null,
+            error: null,
+            card: createPreviewCard(file.name)
+          };
+          state.items.push(item);
+          imageGrid.appendChild(item.card.root);
+          loadItemData(item).then(async () => {
+            if (item.img && !item.error) {
+              await renderPreviewCard(item);
+            }
+            updatePreviewLoadStatus();
+            updateActionButtons();
+          });
+        });
+
+        setStatus("Loading", `0/${imageFiles.length}`, 0, "Preparing previews...");
+        updateActionButtons();
+      }
+
+      function updatePreviewLoadStatus() {
+        const total = state.items.length;
+        const ready = state.items.filter((item) => item.img && !item.error).length;
+        const failed = state.items.filter((item) => item.error).length;
+        const completed = ready + failed;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+        const message = failed > 0
+          ? `${failed} file(s) could not be loaded.`
+          : "Adjust settings, then process.";
+
+        setStatus("Preview", `${ready}/${total}`, percent, message);
+      }
+
+      function createPreviewCard(fileName) {
+        const root = document.createElement("article");
+        root.className = "image-card";
+
+        const canvasWrap = document.createElement("div");
+        canvasWrap.className = "canvas-wrap";
+
+        const canvas = document.createElement("canvas");
+        canvas.width = PREVIEW_MAX_DIMENSION;
+        canvas.height = PREVIEW_MAX_DIMENSION;
+        canvasWrap.appendChild(canvas);
+
+        const name = document.createElement("p");
+        name.className = "file-name";
+        name.textContent = fileName;
+
+        const stateEl = document.createElement("p");
+        stateEl.className = "file-state";
+        stateEl.textContent = "Loading...";
+
+        root.appendChild(canvasWrap);
+        root.appendChild(name);
+        root.appendChild(stateEl);
+
+        return { root, canvas, stateEl };
+      }
+
+      async function loadItemData(item) {
+        try {
+          const [img, exif] = await Promise.all([
+            loadImage(item.file),
+            parseExifFromFile(item.file)
+          ]);
+          item.img = img;
+          item.exif = exif;
+          item.error = null;
+          item.card.stateEl.textContent = "Ready";
+        } catch (error) {
+          item.error = "Could not read this image";
+          item.card.stateEl.textContent = item.error;
+        }
+      }
+
+      function loadImage(file) {
+        return new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(file);
+          const img = new Image();
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("Image decode failed"));
+          };
+          img.src = url;
+        });
+      }
+
+      async function parseExifFromFile(file) {
+        if (!window.exifr || typeof window.exifr.parse !== "function") {
+          return null;
+        }
+        try {
+          const data = await window.exifr.parse(file);
+          if (!data) return null;
+
+          const make = cleanValue(data.Make);
+          const model = cleanValue(data.Model);
+          const lens = cleanValue(data.LensModel || data.LensInfo || data.Lens);
+          const focal35 = parseNumber(data.FocalLengthIn35mmFormat);
+          const focal = parseNumber(data.FocalLength);
+          const fNumber = parseNumber(data.FNumber);
+          const exposure = parseNumber(data.ExposureTime);
+          const iso = parseNumber(data.ISO || data.ISOSpeedRatings || data.RecommendedExposureIndex);
+
+          return {
+            camera: [make, model].filter(Boolean).join(" ").trim(),
+            lens,
+            focal35,
+            focal,
+            fNumber,
+            exposure,
+            iso
+          };
+        } catch (error) {
+          return null;
+        }
+      }
+
+      async function renderPreviewGrid() {
+        if (state.mode !== "preview") {
+          return;
+        }
+
+        const total = state.items.length;
+        let ready = 0;
+
+        for (const item of state.items) {
+          if (!item.img || item.error) {
+            continue;
+          }
+          ready += 1;
+          try {
+            await renderPreviewCard(item);
+            item.card.stateEl.textContent = "Ready";
+          } catch (error) {
+            item.card.stateEl.textContent = "Preview failed";
+          }
+        }
+
+        const progress = total === 0 ? 0 : Math.round((ready / total) * 100);
+        setStatus("Preview", `${ready}/${total}`, progress, total > 0 ? "Adjust settings, then process." : "Select images to get started.");
+        updateActionButtons();
+      }
+
+      async function renderPreviewCard(item) {
+        if (!item.img) return;
+
+        const previewCanvas = await renderOutputCanvas(item, true);
+        const target = item.card.canvas;
+        target.width = previewCanvas.width;
+        target.height = previewCanvas.height;
+        const ctx = target.getContext("2d");
+        ctx.clearRect(0, 0, target.width, target.height);
+        ctx.drawImage(previewCanvas, 0, 0);
+      }
+
+      async function renderOutputCanvas(item, previewMode) {
+        let baseCanvas;
+
+        if (["classic-white", "classic-black", "average"].includes(settings.preset)) {
+          baseCanvas = await renderStandardCanvas(item, previewMode);
+        } else if (settings.preset === "film-35mm") {
+          baseCanvas = renderFilmCanvas(item.img, previewMode);
+        } else {
+          baseCanvas = await renderFujiCanvas(item, previewMode);
+        }
+
+        if (settings.instagramMode) {
+          return composeInstagramCanvas(baseCanvas, item, previewMode);
+        }
+        return baseCanvas;
+      }
+
+      async function renderStandardCanvas(item, previewMode) {
+        const img = item.img;
+        const originalWidth = img.naturalWidth;
+        const originalHeight = img.naturalHeight;
+
+        let drawWidth = originalWidth;
+        let drawHeight = originalHeight;
+
+        if (previewMode) {
+          const ratio = PREVIEW_MAX_DIMENSION / Math.max(originalWidth, originalHeight);
+          drawWidth = Math.max(1, Math.round(originalWidth * ratio));
+          drawHeight = Math.max(1, Math.round(originalHeight * ratio));
+        }
+
+        const shorterSide = Math.min(drawWidth, drawHeight);
+        const border = Math.round(shorterSide * (settings.borderWidth / 100));
+        const cornerRadius = Math.round(shorterSide * (settings.cornerRadius / 100));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = drawWidth + border * 2;
+        canvas.height = drawHeight + border * 2;
+        const ctx = canvas.getContext("2d");
+
+        const frameColor = await getStandardFrameColor(item);
+        ctx.fillStyle = frameColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        drawRoundedRect(ctx, border, border, drawWidth, drawHeight, cornerRadius);
+        ctx.clip();
+        ctx.drawImage(img, border, border, drawWidth, drawHeight);
+        ctx.restore();
+
+        return canvas;
+      }
+
+      async function getStandardFrameColor(item) {
+        if (settings.preset === "classic-white") return "#ffffff";
+        if (settings.preset === "classic-black") return "#000000";
+
+        if (item.averageColor) {
+          return item.averageColor;
+        }
+
+        const color = await getAverageColor(item.img);
+        item.averageColor = color;
+        return color;
+      }
+
+      function renderFilmCanvas(img, previewMode) {
+        const originalWidth = img.naturalWidth;
+        const originalHeight = img.naturalHeight;
+        const isPortrait = originalWidth < originalHeight;
+
+        let filmWidth;
+        let filmHeight;
+
+        if (previewMode) {
+          if (isPortrait) {
+            filmHeight = PREVIEW_MAX_DIMENSION;
+            filmWidth = Math.round(filmHeight * (2 / 3));
+          } else {
+            filmWidth = PREVIEW_MAX_DIMENSION;
+            filmHeight = Math.round(filmWidth / (3 / 2));
+          }
+        } else {
+          const sidePercentage = 0.02;
+          const finalRatio = isPortrait ? 2 / 3 : 3 / 2;
+          if (isPortrait) {
+            filmHeight = Math.round(originalHeight / (1 - 2 * sidePercentage));
+            filmWidth = Math.round(filmHeight * finalRatio);
+          } else {
+            filmWidth = Math.round(originalWidth / (1 - 2 * sidePercentage));
+            filmHeight = Math.round(filmWidth / finalRatio);
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = filmWidth;
+        canvas.height = filmHeight;
+        const ctx = canvas.getContext("2d");
+
+        if (isPortrait) {
+          drawVerticalFilmFrame(ctx, filmWidth, filmHeight, img);
+        } else {
+          drawHorizontalFilmFrame(ctx, filmWidth, filmHeight, img);
+        }
+
+        return canvas;
+      }
+
+      async function renderFujiCanvas(item, previewMode) {
+        const img = item.img;
+        const originalWidth = img.naturalWidth;
+        const originalHeight = img.naturalHeight;
+
+        let drawWidth = originalWidth;
+        let drawHeight = originalHeight;
+
+        if (previewMode) {
+          const ratio = PREVIEW_MAX_DIMENSION / Math.max(originalWidth, originalHeight);
+          drawWidth = Math.max(1, Math.round(originalWidth * ratio));
+          drawHeight = Math.max(1, Math.round(originalHeight * ratio));
+        }
+
+        const padding = Math.max(10, Math.round(Math.min(drawWidth, drawHeight) * 0.035));
+        const footerHeight = Math.max(40, Math.round(drawHeight * 0.14));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = drawWidth + padding * 2;
+        canvas.height = drawHeight + padding * 2 + footerHeight;
+        const ctx = canvas.getContext("2d");
+
+        const background = "#ffffff";
+        const foreground = "#111111";
+
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(img, padding, padding, drawWidth, drawHeight);
+
+        const stripY = canvas.height - footerHeight;
+        ctx.strokeStyle = "rgba(0,0,0,0.16)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, stripY);
+        ctx.lineTo(canvas.width, stripY);
+        ctx.stroke();
+
+        await drawFujiFooter(ctx, {
+          x: 0,
+          y: stripY,
+          width: canvas.width,
+          height: footerHeight,
+          foreground,
+          exifText: buildExifLine(item)
+        });
+
+        return canvas;
+      }
+
+      function composeInstagramCanvas(baseCanvas, item, previewMode) {
+        const width = previewMode ? PREVIEW_INSTAGRAM_WIDTH : settings.instagramWidth;
+        const height = previewMode
+          ? Math.round(PREVIEW_INSTAGRAM_WIDTH * (settings.instagramHeight / settings.instagramWidth))
+          : settings.instagramHeight;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = getInstagramBackdropColor(item);
+        ctx.fillRect(0, 0, width, height);
+
+        const fit = getContainRect(baseCanvas.width, baseCanvas.height, width, height);
+        ctx.drawImage(baseCanvas, fit.x, fit.y, fit.width, fit.height);
+
+        return canvas;
+      }
+
+      async function drawFujiFooter(ctx, options) {
+        const { x, y, width, height, foreground, exifText } = options;
+        const padX = Math.round(height * 0.3);
+        const logoMaxHeight = Math.round(height * 0.52);
+        const logoMaxWidth = Math.round(width * 0.26);
+        const logoImage = state.logos.primary;
+        let logoWidth = logoMaxWidth;
+        let logoHeight = logoMaxHeight;
+
+        if (logoImage && logoImage.naturalWidth && logoImage.naturalHeight) {
+          const fitRatio = Math.min(
+            logoMaxWidth / logoImage.naturalWidth,
+            logoMaxHeight / logoImage.naturalHeight
+          );
+          logoWidth = Math.max(1, Math.round(logoImage.naturalWidth * fitRatio));
+          logoHeight = Math.max(1, Math.round(logoImage.naturalHeight * fitRatio));
+        }
+
+        const logoX = x + padX;
+        const logoY = y + Math.round((height - logoHeight) / 2);
+        const logoAreaRight = logoX + logoWidth;
+        const exifAreaLeft = logoAreaRight + Math.round(height * 0.32);
+        const exifAreaRight = x + width - padX;
+        const exifAreaWidth = Math.max(0, exifAreaRight - exifAreaLeft);
+
+        ctx.fillStyle = foreground;
+
+        if (logoImage) {
+          ctx.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
+        } else {
+          ctx.font = `700 ${Math.round(height * 0.32)}px "Plus Jakarta Sans", sans-serif`;
+          ctx.textBaseline = "middle";
+          ctx.textAlign = "left";
+          ctx.fillText("FUJIFILM", x + padX, y + height / 2);
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(exifAreaLeft, y, exifAreaWidth, height);
+        ctx.clip();
+        ctx.font = `500 ${Math.round(height * 0.21)}px "Plus Jakarta Sans", sans-serif`;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "right";
+        const safeExif = fitTextWithEllipsis(ctx, exifText, exifAreaWidth);
+        ctx.fillText(safeExif, exifAreaRight, y + height / 2);
+        ctx.restore();
+      }
+
+      function buildExifLine(item) {
+        const manualText = settings.fujiManualExifText.trim();
+        if (settings.fujiExifMode === "manual") {
+          return manualText || "No EXIF";
+        }
+
+        const data = item.exif;
+        if (!data) {
+          return manualText || "No EXIF";
+        }
+
+        const parts = [];
+
+        if (settings.fujiExifFields.camera && data.camera) parts.push(data.camera);
+        if (settings.fujiExifFields.focal && data.focal) {
+          parts.push(`${formatNumber(data.focal)}mm`);
+        } else if (settings.fujiExifFields.focal && data.focal35) {
+          parts.push(`${formatNumber(data.focal35)}mm`);
+        }
+
+        if (settings.fujiExifFields.aperture && data.fNumber) parts.push(`f/${formatNumber(data.fNumber)}`);
+        if (settings.fujiExifFields.shutter && data.exposure) parts.push(formatExposure(data.exposure));
+        if (settings.fujiExifFields.iso && data.iso) parts.push(`ISO ${formatNumber(data.iso)}`);
+
+        return parts.length > 0 ? parts.join(" | ") : (manualText || "No EXIF");
+      }
+
+      async function processImagesSequentially() {
+        const validItems = state.items.filter((item) => item.img && !item.error);
+        if (validItems.length === 0) {
+          setStatus("Idle", "0/0", 0, "Select at least one valid image first.");
+          return;
+        }
+
+        processButton.disabled = true;
+        downloadAllButton.disabled = true;
+        resetButton.disabled = true;
+
+        clearObjectUrls();
+        state.processed = [];
+        state.failures = [];
+
+        setStatus("Processing", `0/${validItems.length}`, 0, "Rendering frames...");
+
+        for (let index = 0; index < validItems.length; index += 1) {
+          const item = validItems[index];
+          try {
+            const canvas = await renderOutputCanvas(item, false);
+            const { mime, ext } = getExportType();
+            const blob = await canvasToBlob(canvas, mime, settings.exportQuality);
+            const fileName = `${item.baseName}_framed.${ext}`;
+            const url = URL.createObjectURL(blob);
+            state.processed.push({ name: fileName, blob, url });
+            item.card.stateEl.textContent = "Processed";
+          } catch (error) {
+            state.failures.push(item.file.name);
+            item.card.stateEl.textContent = "Failed during processing";
+          }
+
+          const done = index + 1;
+          const percent = Math.round((done / validItems.length) * 100);
+          setStatus("Processing", `${done}/${validItems.length}`, percent, "Rendering frames...");
+        }
+
+        if (state.processed.length > 0) {
+          showProcessedGrid();
+        } else {
+          state.mode = "preview";
+          await renderPreviewGrid();
+        }
+
+        const completeMessage = state.failures.length > 0
+          ? `Done with ${state.failures.length} failure(s). Successful files are still available.`
+          : "Images processed successfully.";
+
+        setStatus("Done", `${validItems.length}/${validItems.length}`, 100, completeMessage);
+        updateActionButtons();
+      }
+
+      function showProcessedGrid() {
+        state.mode = "processed";
+        imageGrid.innerHTML = "";
+
+        for (const item of state.processed) {
+          const card = document.createElement("article");
+          card.className = "image-card";
+
+          const canvasWrap = document.createElement("div");
+          canvasWrap.className = "canvas-wrap";
+
+          const previewImg = document.createElement("img");
+          previewImg.src = item.url;
+          previewImg.alt = item.name;
+          canvasWrap.appendChild(previewImg);
+
+          const name = document.createElement("p");
+          name.className = "file-name";
+          name.textContent = item.name;
+
+          const link = document.createElement("a");
+          link.className = "download-link";
+          link.href = item.url;
+          link.download = item.name;
+          link.textContent = "Download";
+
+          card.appendChild(canvasWrap);
+          card.appendChild(name);
+          card.appendChild(link);
+          imageGrid.appendChild(card);
+        }
+      }
+
+      async function downloadAll() {
+        if (state.processed.length === 0) {
+          setStatus("Idle", "0/0", 0, "No processed files available.");
+          return;
+        }
+
+        setStatus("Packaging", `${state.processed.length}/${state.processed.length}`, 100, "Preparing ZIP download...");
+
+        try {
+          const zip = new JSZip();
+          state.processed.forEach((item) => {
+            zip.file(item.name, item.blob);
+          });
+          const content = await zip.generateAsync({ type: "blob" });
+          saveAs(content, "framed_images.zip");
+          setStatus("Done", `${state.processed.length}/${state.processed.length}`, 100, "ZIP download started.");
+        } catch (error) {
+          setStatus("Error", "0/0", 0, "Could not generate ZIP file.");
+        }
+      }
+
+      async function resetAll() {
+        clearObjectUrls();
+        state.items = [];
+        state.processed = [];
+        state.failures = [];
+        state.mode = "preview";
+        imageGrid.innerHTML = "";
+        fileInput.value = "";
+        fileCount.textContent = "No images selected";
+        setStatus("Idle", "0/0", 0, "Select images to get started.");
+        updateActionButtons();
+      }
+
+      function invalidateProcessedResults() {
+        clearObjectUrls();
+        state.processed = [];
+        state.failures = [];
+        state.mode = "preview";
+        imageGrid.innerHTML = "";
+        state.items.forEach((item) => imageGrid.appendChild(item.card.root));
+        renderPreviewGrid();
+        updateActionButtons();
+      }
+
+      function updateActionButtons() {
+        const validItems = state.items.filter((item) => item.img && !item.error).length;
+        processButton.disabled = validItems === 0;
+        resetButton.disabled = state.items.length === 0;
+        downloadAllButton.disabled = state.processed.length === 0;
+      }
+
+      function setStatus(phase, progress, percent, message) {
+        statusPhase.textContent = phase;
+        statusProgress.textContent = progress;
+        progressFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+        statusMessage.textContent = message;
+      }
+
+      function getExportType() {
+        if (settings.exportFormat === "png") {
+          return { mime: "image/png", ext: "png" };
+        }
+        if (settings.exportFormat === "webp") {
+          return { mime: "image/webp", ext: "webp" };
+        }
+        return { mime: "image/jpeg", ext: "jpg" };
+      }
+
+      function clearObjectUrls() {
+        for (const item of state.processed) {
+          if (item && item.url) {
+            URL.revokeObjectURL(item.url);
+          }
+        }
+      }
+
+      function getInstagramBackdropColor(item) {
+        if (settings.preset === "classic-white") return "#ffffff";
+        if (settings.preset === "classic-black") return "#000000";
+        if (settings.preset === "average") return item.averageColor || "#d9dde7";
+        if (settings.preset === "film-35mm") return "#050505";
+        return "#ffffff";
+      }
+
+      function getContainRect(sourceWidth, sourceHeight, targetWidth, targetHeight) {
+        const ratio = Math.min(targetWidth / sourceWidth, targetHeight / sourceHeight);
+        const width = Math.round(sourceWidth * ratio);
+        const height = Math.round(sourceHeight * ratio);
+        const x = Math.round((targetWidth - width) / 2);
+        const y = Math.round((targetHeight - height) / 2);
+        return { x, y, width, height };
+      }
+
+      function getAverageColor(img) {
+        const sampleCanvas = document.createElement("canvas");
+        sampleCanvas.width = 1;
+        sampleCanvas.height = 1;
+        const ctx = sampleCanvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, 1, 1);
+        const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      function drawRoundedRect(ctx, x, y, width, height, radius) {
+        const r = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function drawVerticalFilmFrame(ctx, width, height, img) {
+        const originalWidth = img.naturalWidth;
+        const originalHeight = img.naturalHeight;
+
+        const filmStripWidth = width * 0.12;
+        const topBorderHeight = height * 0.02;
+        const imageAreaWidth = width - (2 * filmStripWidth);
+        const imageAreaHeight = height - (2 * topBorderHeight);
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, width, height);
+
+        const imageRatio = originalWidth / originalHeight;
+        let newImageHeight = imageAreaHeight;
+        let newImageWidth = newImageHeight * imageRatio;
+
+        if (newImageWidth > imageAreaWidth) {
+          newImageWidth = imageAreaWidth;
+          newImageHeight = newImageWidth / imageRatio;
+        }
+
+        const imageX = filmStripWidth + (imageAreaWidth - newImageWidth) / 2;
+        const imageY = topBorderHeight + (imageAreaHeight - newImageHeight) / 2;
+
+        ctx.save();
+        ctx.filter = "saturate(0.8)";
+        ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
+        ctx.restore();
+
+        const drawRotatedContent = (stripX, isLeftStrip) => {
+          ctx.save();
+          ctx.translate(stripX, height / 2);
+          ctx.rotate(isLeftStrip ? Math.PI / 2 : -Math.PI / 2);
+
+          const stripLength = height;
+          const stripWidth = filmStripWidth;
+          ctx.fillStyle = "#f59e0b";
+
+          if (isLeftStrip) {
+            const fontSize = stripWidth * 0.4;
+            ctx.font = `bold ${fontSize}px "Plus Jakarta Sans", sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("35 MM", 0, 0);
+
+            const textMetrics = ctx.measureText("35 MM");
+            const arrowHeight = stripWidth * 0.35;
+            const arrowWidth = arrowHeight * 1.2;
+            const arrowOffset = textMetrics.width * 1.6;
+
+            ctx.beginPath();
+            ctx.moveTo(arrowOffset, -arrowWidth / 2);
+            ctx.lineTo(arrowOffset + arrowHeight, 0);
+            ctx.lineTo(arrowOffset, arrowWidth / 2);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(-arrowOffset - arrowHeight, -arrowWidth / 2);
+            ctx.lineTo(-arrowOffset, 0);
+            ctx.lineTo(-arrowOffset - arrowHeight, arrowWidth / 2);
+            ctx.closePath();
+            ctx.fill();
+          } else {
+            const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
+            const barThickness = stripWidth * 0.08;
+            const gapAlongStrip = stripWidth * 0.04;
+            let currentPosAlongStrip = -stripLength / 2 * 0.95;
+            const endPosAlongStrip = stripLength / 2 * 0.95;
+            const posAcrossStrip = stripWidth * 0.45;
+
+            while (currentPosAlongStrip < endPosAlongStrip) {
+              for (let i = 0; i < pattern.length && currentPosAlongStrip < endPosAlongStrip; i += 1) {
+                const lengthMultiplier = pattern[i];
+                if (lengthMultiplier > 0) {
+                  const barLength = -(stripWidth * 0.5 * lengthMultiplier);
+                  ctx.fillRect(currentPosAlongStrip, posAcrossStrip, barThickness, barLength);
+                }
+                currentPosAlongStrip += barThickness + gapAlongStrip;
+              }
+            }
+          }
+
+          ctx.restore();
+        };
+
+        drawRotatedContent(filmStripWidth / 2, true);
+        drawRotatedContent(width - filmStripWidth / 2, false);
+
+        ctx.fillStyle = "white";
+        const numHoles = 8;
+        const holeHeight = filmStripWidth * 0.5;
+        const holeWidth = holeHeight * 1.6;
+        const holeRadius = holeHeight * 0.25;
+
+        for (let i = 0; i < numHoles; i += 1) {
+          const holeY = (i * (height / numHoles)) + (height / numHoles - holeHeight) / 2;
+          drawRoundedRect(ctx, (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
+          ctx.fill();
+          drawRoundedRect(ctx, width - filmStripWidth + (filmStripWidth - holeWidth) / 2, holeY, holeWidth, holeHeight, holeRadius);
+          ctx.fill();
+        }
+      }
+
+      function drawHorizontalFilmFrame(ctx, width, height, img) {
+        const originalWidth = img.naturalWidth;
+        const originalHeight = img.naturalHeight;
+
+        const filmStripHeight = height * 0.12;
+        const sideBorderWidth = width * 0.02;
+        const imageAreaHeight = height - (2 * filmStripHeight);
+        const imageAreaWidth = width - (2 * sideBorderWidth);
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, width, height);
+
+        const imageRatio = originalWidth / originalHeight;
+        let newImageWidth = imageAreaWidth;
+        let newImageHeight = newImageWidth / imageRatio;
+
+        if (newImageHeight > imageAreaHeight) {
+          newImageHeight = imageAreaHeight;
+          newImageWidth = newImageHeight * imageRatio;
+        }
+
+        const imageX = sideBorderWidth + (imageAreaWidth - newImageWidth) / 2;
+        const imageY = filmStripHeight + (imageAreaHeight - newImageHeight) / 2;
+
+        ctx.save();
+        ctx.filter = "saturate(0.8)";
+        ctx.drawImage(img, imageX, imageY, newImageWidth, newImageHeight);
+        ctx.restore();
+
+        const drawTopStrip = () => {
+          ctx.save();
+          ctx.fillStyle = "#f59e0b";
+          const fontSize = filmStripHeight * 0.4;
+          ctx.font = `bold ${fontSize}px "Plus Jakarta Sans", sans-serif`;
+          ctx.textBaseline = "middle";
+
+          const textContent = "35 MM";
+          const textMetrics = ctx.measureText(textContent);
+          const arrowHeight = filmStripHeight * 0.35;
+          const arrowWidth = arrowHeight * 1.2;
+          const gap = filmStripHeight * 0.8;
+
+          const blockWidth = textMetrics.width + (gap * 2) + (arrowWidth * 2);
+          const startX = Math.max(sideBorderWidth + 8, (width - blockWidth) / 2);
+
+          const textY = filmStripHeight / 2;
+          const arrowY = filmStripHeight / 2;
+
+          const arrowXLeft = startX;
+          ctx.beginPath();
+          ctx.moveTo(arrowXLeft, arrowY - arrowHeight / 2);
+          ctx.lineTo(arrowXLeft, arrowY + arrowHeight / 2);
+          ctx.lineTo(arrowXLeft + arrowWidth, arrowY);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.textAlign = "left";
+          const textX = arrowXLeft + arrowWidth + gap;
+          ctx.fillText(textContent, textX, textY);
+
+          const arrowXRight = textX + textMetrics.width + gap;
+          ctx.beginPath();
+          ctx.moveTo(arrowXRight, arrowY - arrowHeight / 2);
+          ctx.lineTo(arrowXRight, arrowY + arrowHeight / 2);
+          ctx.lineTo(arrowXRight + arrowWidth, arrowY);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.restore();
+        };
+
+        const drawBottomStrip = (y) => {
+          ctx.save();
+          ctx.fillStyle = "#f59e0b";
+          const pattern = [0.6, 0.3, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.6, 0.3, 0.6, 0.3, 0.9, 0.3, 0.6, 0.3, 0.6, 0, 0, 0.9, 0.3, 0.3, 0.6];
+          const barWidth = width * 0.008;
+          const gapWidth = width * 0.004;
+          let currentX = width * 0.05;
+          const endX = width * 0.95;
+
+          while (currentX < endX) {
+            for (let i = 0; i < pattern.length && currentX < endX; i += 1) {
+              const heightMultiplier = pattern[i];
+              if (heightMultiplier > 0) {
+                const barHeight = filmStripHeight * 0.5 * heightMultiplier;
+                const barY = y + (filmStripHeight * 0.5 * (1 - heightMultiplier));
+                ctx.fillRect(currentX, barY, barWidth, barHeight);
+              }
+              currentX += barWidth + gapWidth;
+            }
+          }
+          ctx.restore();
+        };
+
+        drawTopStrip();
+        drawBottomStrip(height - filmStripHeight * 0.7);
+
+        ctx.fillStyle = "white";
+        const numHoles = 8;
+        const holeWidth = filmStripHeight * 0.5;
+        const holeHeight = holeWidth * 1.6;
+        const holeRadius = holeWidth * 0.25;
+
+        for (let i = 0; i < numHoles; i += 1) {
+          const holeX = (i * (width / numHoles)) + (width / numHoles - holeWidth) / 2;
+          drawRoundedRect(ctx, holeX, (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
+          ctx.fill();
+          drawRoundedRect(ctx, holeX, height - filmStripHeight + (filmStripHeight - holeHeight) / 2, holeWidth, holeHeight, holeRadius);
+          ctx.fill();
+        }
+      }
+
+      function preloadLogos() {
+        loadLogoImage("assets/fujifilm-logo.svg").then((logo) => {
+          state.logos.primary = logo;
+          state.logos.ready = true;
+          if (settings.preset === "fuji-style") {
+            renderPreviewGrid();
+          }
+        }).catch(() => {
+          state.logos.ready = false;
+        });
+      }
+
+      function loadLogoImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+      }
+
+      function canvasToBlob(canvas, mimeType, quality) {
+        return new Promise((resolve, reject) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Failed to encode image"));
+            }
+          }, mimeType, mimeType === "image/png" ? undefined : quality);
+        });
+      }
+
+      function clampInt(value, min, max) {
+        const number = Number.parseInt(value, 10);
+        if (Number.isNaN(number)) return min;
+        return Math.max(min, Math.min(max, number));
+      }
+
+      function clampFloat(value, min, max) {
+        const number = Number.parseFloat(value);
+        if (Number.isNaN(number)) return min;
+        return Math.max(min, Math.min(max, number));
+      }
+
+      function parseNumber(value) {
+        if (Array.isArray(value) && value.length > 0) {
+          return parseNumber(value[0]);
+        }
+        if (typeof value === "number" && Number.isFinite(value)) {
+          return value;
+        }
+        if (typeof value === "string") {
+          const parsed = Number.parseFloat(value);
+          return Number.isFinite(parsed) ? parsed : null;
+        }
+        if (value && typeof value === "object" && "numerator" in value && "denominator" in value && value.denominator) {
+          return value.numerator / value.denominator;
+        }
+        return null;
+      }
+
+      function formatNumber(value) {
+        if (!Number.isFinite(value)) return "";
+        if (value >= 100) return String(Math.round(value));
+        if (value >= 10) return (Math.round(value * 10) / 10).toString();
+        return (Math.round(value * 100) / 100).toString();
+      }
+
+      function formatExposure(exposure) {
+        if (!Number.isFinite(exposure) || exposure <= 0) {
+          return "";
+        }
+        if (exposure >= 1) {
+          return `${formatNumber(exposure)}s`;
+        }
+        const denominator = Math.round(1 / exposure);
+        return denominator > 0 ? `1/${denominator}` : "";
+      }
+
+      function cleanValue(value) {
+        if (typeof value !== "string") return "";
+        return value
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function fitTextWithEllipsis(ctx, text, maxWidth) {
+        if (!text || maxWidth <= 0) return "";
+        if (ctx.measureText(text).width <= maxWidth) return text;
+        const ellipsis = "...";
+        let output = text;
+        while (output.length > 0 && ctx.measureText(output + ellipsis).width > maxWidth) {
+          output = output.slice(0, -1);
+        }
+        return output.length > 0 ? output + ellipsis : ellipsis;
+      }
+
+      function getBaseName(fileName) {
+        const lastDot = fileName.lastIndexOf(".");
+        if (lastDot <= 0) {
+          return fileName.replace(/\s+/g, "_");
+        }
+        return fileName.slice(0, lastDot).replace(/\s+/g, "_");
+      }
+    });
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
