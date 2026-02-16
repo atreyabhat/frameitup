@@ -4,8 +4,9 @@ Frameitup is a client-side web app to add clean borders and stylized frames to p
 
 ## What is new in v2
 
-- Professional light UI with a simple workflow: upload, choose preset, process, download.
-- Instagram Mode toggle that forces all exports to a fixed `1.91:1` landscape canvas at `1080x566`.
+- Professional filmic UI with a simple workflow: upload, choose preset, process, download.
+- Light/Dark theme toggle with persistent preference.
+- Instagram Mode toggle that forces all exports to one fixed selected aspect ratio.
 - Instagram Mode aspect selector:
   - `Landscape 1.91:1` -> `1080x566`
   - `Portrait 3:4` -> `1080x1440`
@@ -14,6 +15,8 @@ Frameitup is a client-side web app to add clean borders and stylized frames to p
   - Bottom-right compact EXIF line
   - White-only background/border style for a clean consistent look
   - Checkbox controls to include/exclude EXIF fields (camera, focal length, aperture, shutter, ISO)
+  - Optional custom note checkbox + text (example: `30 frames stacked`)
+  - EXIF font-size slider for footer text tuning
 - Drag-and-drop upload support.
 - Per-file failure isolation in batch processing.
 - Settings persistence in localStorage with key `frameitup.settings.v2`.
@@ -36,12 +39,20 @@ When Instagram Mode is enabled:
 - Portrait and landscape images are both contain-fitted (never cropped).
 - Mixed-orientation batches produce consistent dimensions for carousel posting.
 
+## iPhone usage
+
+- Open the site in Safari.
+- Tap the upload area, then choose `Photo Library`, `Take Photo`, or `Browse`.
+- Select your preset and (optionally) turn on Instagram Mode.
+- In Instagram Mode, choose `Landscape` or `Portrait` so all outputs share one aspect ratio.
+- Tap `Process Images`, then `Download` on each card or `Download All (ZIP)`.
+
 ## Fuji Style EXIF behavior
 
 - `EXIF Source: Auto` tries to read metadata from each uploaded image.
 - If EXIF data is missing, manual fallback text is used (if provided).
 - `EXIF Source: Manual` always uses the manual EXIF text.
-- If no EXIF/manual data is available, footer text shows `No EXIF`.
+- If no EXIF/manual data is available, footer text is left blank.
 
 ## Tech notes
 

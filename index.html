@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,600&display=swap"
     rel="stylesheet"
   />
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -19,19 +19,106 @@
   <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
   <style>
     :root {
-      --bg: #f3f5f8;
-      --panel: #ffffff;
-      --panel-soft: #f8fafc;
-      --text: #1d2939;
-      --text-muted: #526076;
-      --line: #d7deea;
-      --line-strong: #bfcbdd;
-      --primary: #1f6fff;
-      --primary-hover: #1558d6;
-      --danger: #d84a5c;
-      --danger-hover: #bb3144;
-      --shadow: 0 10px 30px rgba(18, 38, 63, 0.08);
-      --radius: 14px;
+      --bg: #ece8e0;
+      --bg-glow-a: rgba(27, 93, 134, 0.17);
+      --bg-glow-b: rgba(151, 116, 58, 0.1);
+      --bg-sheen-a: rgba(255, 255, 255, 0.35);
+      --bg-sheen-b: rgba(236, 232, 224, 0.4);
+      --panel: #fffdf9;
+      --panel-soft: #f7f1e7;
+      --input-bg: #fffefb;
+      --input-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      --checkbox-bg: #fffefb;
+      --status-bg-a: #fffefb;
+      --status-bg-b: #f8f4ed;
+      --canvas-checker-a: #f6f2ea;
+      --canvas-checker-b: #f2ece1;
+      --text: #202631;
+      --heading: #1e2633;
+      --link: #1b5d86;
+      --text-muted: #5e6675;
+      --line: #d8cec0;
+      --line-strong: #bba991;
+      --panel-border: rgba(174, 156, 131, 0.34);
+      --toggle-track: #c1c9d4;
+      --toggle-row-a: #fffefb;
+      --toggle-row-b: #f5eee3;
+      --focus-ring: rgba(27, 93, 134, 0.18);
+      --primary: #1b5d86;
+      --primary-hover: #144a6b;
+      --danger: #b84a58;
+      --danger-hover: #a03e4b;
+      --btn-soft-bg: #e7e2d9;
+      --btn-soft-hover: #ddd6cb;
+      --btn-soft-text: #2a313f;
+      --upload-grad-a: rgba(255, 255, 255, 0.86);
+      --upload-grad-b: rgba(248, 239, 226, 0.8);
+      --upload-pattern-a: rgba(255, 255, 255, 0.32);
+      --upload-pattern-b: rgba(255, 255, 255, 0.12);
+      --upload-drag-a: rgba(255, 255, 255, 0.9);
+      --upload-drag-b: rgba(232, 243, 251, 0.78);
+      --upload-drag-pattern-a: rgba(255, 255, 255, 0.34);
+      --upload-drag-pattern-b: rgba(255, 255, 255, 0.15);
+      --theme-switch-bg: #ede3d6;
+      --theme-switch-border: #d8cab8;
+      --theme-chip-bg: transparent;
+      --theme-chip-text: #445067;
+      --theme-chip-hover: rgba(255, 255, 255, 0.55);
+      --theme-chip-active-bg: #fffefb;
+      --theme-chip-active-text: #1f2a3a;
+      --shadow: 0 16px 44px rgba(39, 35, 29, 0.12);
+      --radius: 16px;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #13171d;
+      --bg-glow-a: rgba(67, 128, 170, 0.27);
+      --bg-glow-b: rgba(178, 129, 62, 0.15);
+      --bg-sheen-a: rgba(30, 38, 48, 0.32);
+      --bg-sheen-b: rgba(18, 25, 33, 0.46);
+      --panel: #1a2028;
+      --panel-soft: #232d37;
+      --input-bg: #1d2430;
+      --input-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --checkbox-bg: #1f2733;
+      --status-bg-a: #1d2430;
+      --status-bg-b: #202a35;
+      --canvas-checker-a: #222b37;
+      --canvas-checker-b: #1d2530;
+      --text: #e8edf5;
+      --heading: #f5f7fb;
+      --link: #93c6e6;
+      --text-muted: #aab5c6;
+      --line: #334252;
+      --line-strong: #4d6076;
+      --panel-border: rgba(94, 114, 137, 0.4);
+      --toggle-track: #5f738a;
+      --toggle-row-a: #273241;
+      --toggle-row-b: #1f2935;
+      --focus-ring: rgba(147, 198, 230, 0.25);
+      --primary: #7db9dd;
+      --primary-hover: #6caacc;
+      --danger: #d36d7b;
+      --danger-hover: #c15d6b;
+      --btn-soft-bg: #2a3542;
+      --btn-soft-hover: #323f4f;
+      --btn-soft-text: #dbe5f3;
+      --upload-grad-a: rgba(35, 45, 58, 0.8);
+      --upload-grad-b: rgba(26, 35, 46, 0.86);
+      --upload-pattern-a: rgba(126, 152, 180, 0.1);
+      --upload-pattern-b: rgba(111, 139, 168, 0.04);
+      --upload-drag-a: rgba(41, 57, 72, 0.84);
+      --upload-drag-b: rgba(26, 47, 64, 0.88);
+      --upload-drag-pattern-a: rgba(155, 187, 216, 0.14);
+      --upload-drag-pattern-b: rgba(124, 157, 188, 0.06);
+      --theme-switch-bg: #202832;
+      --theme-switch-border: #3a4a5d;
+      --theme-chip-bg: transparent;
+      --theme-chip-text: #b8c4d6;
+      --theme-chip-hover: rgba(125, 185, 221, 0.16);
+      --theme-chip-active-bg: #2d3a4a;
+      --theme-chip-active-text: #f3f7ff;
+      --shadow: 0 16px 46px rgba(7, 10, 15, 0.52);
     }
 
     * {
@@ -42,19 +129,21 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at top right, rgba(31, 111, 255, 0.08), transparent 45%),
-        radial-gradient(circle at top left, rgba(9, 136, 106, 0.07), transparent 38%),
+        radial-gradient(circle at top right, var(--bg-glow-a), transparent 40%),
+        radial-gradient(circle at top left, var(--bg-glow-b), transparent 36%),
+        linear-gradient(165deg, var(--bg-sheen-a), var(--bg-sheen-b)),
         var(--bg);
       color: var(--text);
-      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      padding: 24px 16px 36px;
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: calc(18px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));
+      -webkit-text-size-adjust: 100%;
     }
 
     .app {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
       display: grid;
-      gap: 18px;
+      gap: 16px;
     }
 
     .hero {
@@ -62,25 +151,36 @@
       padding: 8px 8px 2px;
     }
 
+    .hero-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     .hero h1 {
       margin: 0;
-      font-size: clamp(1.7rem, 3.8vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: "Newsreader", "Times New Roman", serif;
+      font-size: clamp(2rem, 4.1vw, 2.85rem);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--heading);
     }
 
     .hero p {
       margin: 10px 0 0;
       color: var(--text-muted);
-      font-size: 0.97rem;
+      font-size: 0.94rem;
+      font-weight: 500;
     }
 
     .panel {
       background: var(--panel);
-      border: 1px solid rgba(177, 192, 214, 0.4);
-      border-radius: 18px;
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
       box-shadow: var(--shadow);
-      padding: 18px;
+      padding: 18px 19px;
     }
 
     .controls {
@@ -92,6 +192,7 @@
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(1, minmax(0, 1fr));
+      align-items: start;
     }
 
     @media (min-width: 720px) {
@@ -103,11 +204,12 @@
     .control {
       display: grid;
       gap: 6px;
+      align-content: start;
     }
 
     label {
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text);
     }
 
@@ -122,12 +224,14 @@
     textarea {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
+      border-radius: 11px;
+      background: var(--input-bg);
       color: var(--text);
       font: inherit;
-      padding: 10px 12px;
+      padding: 12px;
       outline: none;
+      min-height: 44px;
+      box-shadow: var(--input-inset);
     }
 
     select:focus,
@@ -135,7 +239,7 @@
     input[type="text"]:focus,
     textarea:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(31, 111, 255, 0.16);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     textarea {
@@ -146,23 +250,29 @@
     .upload-zone {
       border: 1.5px dashed var(--line-strong);
       border-radius: var(--radius);
-      background: linear-gradient(160deg, #fbfcfe, #f6f9ff);
-      padding: 18px;
+      background:
+        linear-gradient(145deg, var(--upload-grad-a), var(--upload-grad-b)),
+        repeating-linear-gradient(45deg, var(--upload-pattern-a) 0 8px, var(--upload-pattern-b) 8px 16px);
+      padding: 21px 14px;
       display: grid;
       gap: 10px;
       text-align: center;
-      transition: border-color 0.18s ease, background 0.18s ease;
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
       cursor: pointer;
     }
 
     .upload-zone.drag-over {
       border-color: var(--primary);
-      background: #f1f7ff;
+      background:
+        linear-gradient(145deg, var(--upload-drag-a), var(--upload-drag-b)),
+        repeating-linear-gradient(45deg, var(--upload-drag-pattern-a) 0 8px, var(--upload-drag-pattern-b) 8px 16px);
+      transform: translateY(-1px);
     }
 
     .upload-title {
-      font-weight: 600;
-      font-size: 0.98rem;
+      font-weight: 800;
+      font-size: 1.04rem;
+      color: var(--heading);
     }
 
     .upload-sub {
@@ -176,8 +286,8 @@
       justify-content: space-between;
       gap: 12px;
       border: 1px solid var(--line);
-      background: var(--panel-soft);
-      border-radius: 10px;
+      background: linear-gradient(180deg, var(--toggle-row-a), var(--toggle-row-b));
+      border-radius: 12px;
       padding: 10px 12px;
     }
 
@@ -188,6 +298,35 @@
 
     .toggle-left strong {
       font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .instagram-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .instagram-logo {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #feda75, #d62976 52%, #4f5bd5);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+      flex: 0 0 auto;
+    }
+
+    .instagram-logo svg {
+      width: 11px;
+      height: 11px;
+      stroke: #ffffff;
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .toggle-left span {
@@ -200,6 +339,7 @@
       width: 46px;
       height: 26px;
       display: inline-block;
+      flex: 0 0 auto;
     }
 
     .switch input {
@@ -211,7 +351,7 @@
     .slider {
       position: absolute;
       inset: 0;
-      background: #c8d3e5;
+      background: var(--toggle-track);
       border-radius: 26px;
       transition: 0.2s;
     }
@@ -230,7 +370,7 @@
     }
 
     .switch input:checked + .slider {
-      background: var(--primary);
+      background: linear-gradient(120deg, var(--primary), #2e759f);
     }
 
     .switch input:checked + .slider:before {
@@ -262,9 +402,9 @@
       padding: 8px 10px;
       border: 1px solid var(--line);
       border-radius: 10px;
-      background: #fff;
+      background: var(--checkbox-bg);
       font-size: 0.82rem;
-      color: #314157;
+      color: var(--text);
     }
 
     .checkbox-item input[type="checkbox"] {
@@ -272,6 +412,13 @@
       width: 16px;
       height: 16px;
       accent-color: var(--primary);
+    }
+
+    .custom-field-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: center;
     }
 
     input[type="range"] {
@@ -297,12 +444,13 @@
 
     button {
       border: none;
-      border-radius: 10px;
+      border-radius: 11px;
       font: inherit;
-      font-weight: 600;
-      padding: 11px 14px;
+      font-weight: 700;
+      padding: 12px 14px;
       cursor: pointer;
       transition: transform 0.08s ease, background-color 0.2s ease, opacity 0.2s ease;
+      min-height: 46px;
     }
 
     button:active {
@@ -310,25 +458,26 @@
     }
 
     .btn-primary {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), #2d6f96);
       color: #fff;
+      box-shadow: 0 7px 15px rgba(27, 93, 134, 0.2);
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
+      background: linear-gradient(135deg, var(--primary-hover), #235a7e);
     }
 
     .btn-soft {
-      background: #e7edf8;
-      color: #23324d;
+      background: var(--btn-soft-bg);
+      color: var(--btn-soft-text);
     }
 
     .btn-soft:hover:not(:disabled) {
-      background: #dce7f7;
+      background: var(--btn-soft-hover);
     }
 
     .btn-danger {
-      background: var(--danger);
+      background: linear-gradient(135deg, var(--danger), #c65b68);
       color: #fff;
     }
 
@@ -343,7 +492,7 @@
 
     details {
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 12px;
       background: var(--panel-soft);
       padding: 8px 12px;
     }
@@ -352,7 +501,7 @@
       cursor: pointer;
       font-size: 0.86rem;
       font-weight: 600;
-      color: #344154;
+      color: var(--text);
       user-select: none;
     }
 
@@ -366,8 +515,8 @@
       display: grid;
       gap: 8px;
       border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fbfdff;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--status-bg-a), var(--status-bg-b));
       padding: 10px 12px;
     }
 
@@ -377,7 +526,7 @@
       align-items: center;
       gap: 12px;
       font-size: 0.84rem;
-      color: #364861;
+      color: var(--text);
     }
 
     .progress {
@@ -424,9 +573,9 @@
 
     .image-card {
       border: 1px solid var(--line);
-      background: #fff;
+      background: var(--input-bg);
       border-radius: var(--radius);
-      padding: 10px;
+      padding: 11px;
       display: grid;
       gap: 8px;
     }
@@ -434,9 +583,9 @@
     .canvas-wrap {
       width: 100%;
       min-height: 150px;
-      border: 1px solid #e2e9f4;
+      border: 1px solid var(--line);
       border-radius: 10px;
-      background: repeating-conic-gradient(#f6f8fc 0% 25%, #f2f5fa 0% 50%) 50% / 16px 16px;
+      background: repeating-conic-gradient(var(--canvas-checker-a) 0% 25%, var(--canvas-checker-b) 0% 50%) 50% / 16px 16px;
       display: grid;
       place-items: center;
       padding: 6px;
@@ -453,7 +602,7 @@
     .file-name {
       margin: 0;
       font-size: 0.82rem;
-      color: #364861;
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -462,7 +611,7 @@
     .file-state {
       margin: 0;
       font-size: 0.76rem;
-      color: #73839a;
+      color: var(--text-muted);
       min-height: 1.1em;
     }
 
@@ -471,21 +620,123 @@
       text-decoration: none;
       font-size: 0.82rem;
       font-weight: 600;
-      color: var(--primary);
+      color: var(--link);
     }
 
     footer {
       text-align: center;
-      color: #5f6f86;
+      color: var(--text-muted);
       font-size: 0.78rem;
       padding-top: 4px;
+    }
+
+    .theme-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--theme-switch-border);
+      border-radius: 999px;
+      background: var(--theme-switch-bg);
+    }
+
+    .theme-chip {
+      min-height: 36px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--theme-chip-bg);
+      color: var(--theme-chip-text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    .theme-chip:hover:not(:disabled) {
+      background: var(--theme-chip-hover);
+    }
+
+    .theme-chip.is-active {
+      background: var(--theme-chip-active-bg);
+      color: var(--theme-chip-active-text);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.15);
+    }
+
+    .mobile-tip {
+      display: none;
+      margin-top: 2px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        gap: 12px;
+      }
+
+      .panel {
+        border-radius: 14px;
+        padding: 12px;
+      }
+
+      .hero h1 {
+        font-size: 1.6rem;
+      }
+
+      .hero p {
+        font-size: 0.88rem;
+      }
+
+      .theme-chip {
+        min-height: 34px;
+        padding: 6px 11px;
+      }
+
+      .toggle-row {
+        padding: 10px;
+      }
+
+      .toggle-left strong {
+        font-size: 0.86rem;
+      }
+
+      .toggle-left span {
+        font-size: 0.76rem;
+      }
+
+      .inline-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status-head {
+        font-size: 0.8rem;
+      }
+
+      .canvas-wrap {
+        min-height: 120px;
+      }
+
+      .mobile-tip {
+        display: block;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <header class="hero">
-      <h1>Frame it Up</h1>
+      <div class="hero-head">
+        <h1>Frame it Up</h1>
+        <div class="theme-switch" role="group" aria-label="Color theme">
+          <button id="theme-light" class="theme-chip" type="button" aria-pressed="true">Light</button>
+          <button id="theme-dark" class="theme-chip" type="button" aria-pressed="false">Dark</button>
+        </div>
+      </div>
       <p>Professional framing for clean social uploads. No ads. No clutter.</p>
     </header>
 
@@ -496,6 +747,7 @@
         <div class="hint" id="file-count">No images selected</div>
         <input id="file-input" type="file" accept="image/*" multiple class="hidden" />
       </div>
+      <div class="mobile-tip">iPhone: tap above, then choose Photo Library, Take Photo, or Browse.</div>
 
       <div class="control-grid">
         <div class="control">
@@ -514,7 +766,16 @@
           <label>Instagram Mode</label>
           <div class="toggle-row">
             <div class="toggle-left">
-              <strong>Instagram Mode</strong>
+              <strong class="instagram-title">
+                <span class="instagram-logo" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <rect x="3.7" y="3.7" width="16.6" height="16.6" rx="4.5"></rect>
+                    <circle cx="12" cy="12" r="3.8"></circle>
+                    <circle cx="17.6" cy="6.5" r="0.9" fill="#ffffff" stroke="none"></circle>
+                  </svg>
+                </span>
+                Enable
+              </strong>
               <span>For mixed-orientation carousel consistency.</span>
             </div>
             <label class="switch" aria-label="Toggle Instagram mode">
@@ -576,7 +837,20 @@
               <label class="checkbox-item"><input type="checkbox" data-exif-field="shutter" checked />Shutter Speed</label>
               <label class="checkbox-item"><input type="checkbox" data-exif-field="iso" checked />ISO</label>
             </div>
+            <div class="custom-field-row">
+              <label class="checkbox-item"><input type="checkbox" data-exif-field="custom" />Custom Note</label>
+              <input id="fuji-custom-info" type="text" placeholder="e.g., 30 frames stacked" disabled />
+            </div>
             <span class="hint">Choose which EXIF items appear in Fuji Style footer.</span>
+          </div>
+
+          <div id="fuji-font-wrap" class="control range-row hidden">
+            <label for="fuji-exif-font-range">Fuji EXIF Font Size (%)</label>
+            <div class="inline-controls">
+              <input id="fuji-exif-font-range" type="range" min="70" max="130" step="1" value="100" />
+              <input id="fuji-exif-font-input" type="number" min="70" max="130" step="1" value="100" />
+            </div>
+            <span class="hint">Adjust footer EXIF text size for Fuji Style.</span>
           </div>
 
           <div id="fuji-manual-wrap" class="control hidden">
@@ -609,7 +883,6 @@
           <span id="status-phase">Idle</span>
           <span id="status-progress">0/0</span>
         </div>
-        <div class="progress"><span id="progress-fill"></span></div>
         <p id="status-message" class="status-message"></p>
       </div>
     </section>
@@ -626,6 +899,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const STORAGE_KEY = "frameitup.settings.v2";
+      const THEME_STORAGE_KEY = "frameitup.theme.v1";
       const PREVIEW_INSTAGRAM_WIDTH = 382;
       const PREVIEW_MAX_DIMENSION = 340;
       const INSTAGRAM_PRESETS = {
@@ -648,8 +922,11 @@
           focal: true,
           aperture: true,
           shutter: true,
-          iso: true
+          iso: true,
+          custom: false
         },
+        fujiCustomInfo: "",
+        fujiExifFontPercent: 100,
         fujiManualExifText: "",
         exportFormat: "jpeg",
         exportQuality: 0.9
@@ -669,6 +946,8 @@
       const fileInput = document.getElementById("file-input");
       const uploadZone = document.getElementById("upload-zone");
       const fileCount = document.getElementById("file-count");
+      const themeLightButton = document.getElementById("theme-light");
+      const themeDarkButton = document.getElementById("theme-dark");
       const presetSelect = document.getElementById("preset-select");
       const instagramToggle = document.getElementById("instagram-toggle");
       const instagramAspectWrap = document.getElementById("instagram-aspect-wrap");
@@ -684,6 +963,10 @@
       const fujiExifMode = document.getElementById("fuji-exif-mode");
       const fujiFieldsWrap = document.getElementById("fuji-fields-wrap");
       const fujiExifFieldInputs = Array.from(document.querySelectorAll("[data-exif-field]"));
+      const fujiCustomInfo = document.getElementById("fuji-custom-info");
+      const fujiFontWrap = document.getElementById("fuji-font-wrap");
+      const fujiExifFontRange = document.getElementById("fuji-exif-font-range");
+      const fujiExifFontInput = document.getElementById("fuji-exif-font-input");
       const fujiManualWrap = document.getElementById("fuji-manual-wrap");
       const fujiManualExif = document.getElementById("fuji-manual-exif");
       const borderControls = document.getElementById("border-controls");
@@ -698,6 +981,7 @@
       const progressFill = document.getElementById("progress-fill");
       const imageGrid = document.getElementById("image-grid");
 
+      applyTheme(loadThemePreference());
       let settings = loadSettings();
       applySettingsToControls();
       wireEvents();
@@ -706,7 +990,37 @@
       updateActionButtons();
       setStatus("Idle", "0/0", 0, "Select images to get started.");
 
+      function loadThemePreference() {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme === "light" || savedTheme === "dark") {
+          return savedTheme;
+        }
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+        return "light";
+      }
+
+      function applyTheme(theme) {
+        const normalizedTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", normalizedTheme);
+
+        const isLight = normalizedTheme === "light";
+        themeLightButton.classList.toggle("is-active", isLight);
+        themeDarkButton.classList.toggle("is-active", !isLight);
+        themeLightButton.setAttribute("aria-pressed", isLight ? "true" : "false");
+        themeDarkButton.setAttribute("aria-pressed", isLight ? "false" : "true");
+      }
+
+      function setTheme(theme) {
+        applyTheme(theme);
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+      }
+
       function wireEvents() {
+        themeLightButton.addEventListener("click", () => setTheme("light"));
+        themeDarkButton.addEventListener("click", () => setTheme("dark"));
+
         uploadZone.addEventListener("click", () => fileInput.click());
         uploadZone.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -783,8 +1097,32 @@
             if (!key) return;
             settings.fujiExifFields[key] = input.checked;
             persistSettings();
+            updateUiFromSettings();
             onSettingsChanged();
           });
+        });
+
+        fujiCustomInfo.addEventListener("input", () => {
+          settings.fujiCustomInfo = fujiCustomInfo.value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        fujiExifFontRange.addEventListener("input", () => {
+          const value = clampInt(fujiExifFontRange.value, 70, 130);
+          settings.fujiExifFontPercent = value;
+          fujiExifFontInput.value = value;
+          persistSettings();
+          onSettingsChanged();
+        });
+
+        fujiExifFontInput.addEventListener("input", () => {
+          const value = clampInt(fujiExifFontInput.value, 70, 130);
+          settings.fujiExifFontPercent = value;
+          fujiExifFontRange.value = value;
+          fujiExifFontInput.value = value;
+          persistSettings();
+          onSettingsChanged();
         });
 
         fujiManualExif.addEventListener("input", () => {
@@ -886,6 +1224,8 @@
         safe.borderWidth = clampInt(safe.borderWidth, 0, 25);
         safe.cornerRadius = clampInt(safe.cornerRadius, 0, 25);
         safe.exportQuality = clampFloat(safe.exportQuality, 0.5, 1);
+        safe.fujiExifFontPercent = clampInt(safe.fujiExifFontPercent, 70, 130);
+        safe.fujiCustomInfo = typeof safe.fujiCustomInfo === "string" ? safe.fujiCustomInfo : "";
         safe.fujiManualExifText = typeof safe.fujiManualExifText === "string" ? safe.fujiManualExifText : "";
         safe.fujiExifFields = sanitizeFujiExifFields(safe.fujiExifFields);
 
@@ -899,7 +1239,8 @@
           focal: source.focal !== false,
           aperture: source.aperture !== false,
           shutter: source.shutter !== false,
-          iso: source.iso !== false
+          iso: source.iso !== false,
+          custom: source.custom === true
         };
       }
 
@@ -921,6 +1262,9 @@
           if (!key) return;
           input.checked = Boolean(settings.fujiExifFields[key]);
         });
+        fujiCustomInfo.value = settings.fujiCustomInfo;
+        fujiExifFontRange.value = settings.fujiExifFontPercent;
+        fujiExifFontInput.value = settings.fujiExifFontPercent;
         fujiManualExif.value = settings.fujiManualExifText;
         exportFormat.value = settings.exportFormat;
         exportQualityRange.value = settings.exportQuality;
@@ -935,6 +1279,7 @@
 
         fujiQuickControls.classList.toggle("hidden", !isFuji);
         fujiFieldsWrap.classList.toggle("hidden", !isFuji);
+        fujiFontWrap.classList.toggle("hidden", !isFuji);
         fujiManualWrap.classList.toggle("hidden", !isFuji);
         borderControls.classList.toggle("hidden", !standardPreset);
         cornerControls.classList.toggle("hidden", !standardPreset);
@@ -943,6 +1288,7 @@
         fujiExifFieldInputs.forEach((input) => {
           input.disabled = settings.fujiExifMode === "manual";
         });
+        fujiCustomInfo.disabled = settings.fujiExifMode === "manual" || !settings.fujiExifFields.custom;
 
         if (isFilm) {
           settings.borderColor = "film";
@@ -1354,7 +1700,7 @@
         if (logoImage) {
           ctx.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
         } else {
-          ctx.font = `700 ${Math.round(height * 0.32)}px "Plus Jakarta Sans", sans-serif`;
+          ctx.font = `700 ${Math.round(height * 0.32)}px "Manrope", sans-serif`;
           ctx.textBaseline = "middle";
           ctx.textAlign = "left";
           ctx.fillText("FUJIFILM", x + padX, y + height / 2);
@@ -1364,28 +1710,52 @@
         ctx.beginPath();
         ctx.rect(exifAreaLeft, y, exifAreaWidth, height);
         ctx.clip();
-        ctx.font = `500 ${Math.round(height * 0.21)}px "Plus Jakarta Sans", sans-serif`;
+        const baseExifFontSize = Math.round(height * 0.21 * (settings.fujiExifFontPercent / 100));
+        const isInstagramPortrait = settings.instagramMode && settings.instagramAspect === "portrait";
+        const portraitAdjustedSize = isInstagramPortrait
+          ? Math.round(baseExifFontSize * 0.8)
+          : baseExifFontSize;
+        const exifFontSize = Math.max(10, portraitAdjustedSize);
+        ctx.font = `500 ${exifFontSize}px "Manrope", sans-serif`;
         ctx.textBaseline = "middle";
         ctx.textAlign = "right";
-        const safeExif = fitTextWithEllipsis(ctx, exifText, exifAreaWidth);
-        ctx.fillText(safeExif, exifAreaRight, y + height / 2);
+        const exifLines = fitExifToLines(ctx, exifText, exifAreaWidth, isInstagramPortrait ? 2 : 1);
+        if (exifLines.length === 1) {
+          ctx.fillText(exifLines[0], exifAreaRight, y + height / 2);
+        } else {
+          const lineStep = Math.max(12, Math.round(exifFontSize * 1.15));
+          const firstLineY = y + (height / 2) - (lineStep / 2);
+          const secondLineY = y + (height / 2) + (lineStep / 2);
+          ctx.fillText(exifLines[0], exifAreaRight, firstLineY);
+          ctx.fillText(exifLines[1], exifAreaRight, secondLineY);
+        }
         ctx.restore();
       }
 
       function buildExifLine(item) {
         const manualText = settings.fujiManualExifText.trim();
+        const customNote = settings.fujiExifFields.custom ? settings.fujiCustomInfo.trim() : "";
         if (settings.fujiExifMode === "manual") {
-          return manualText || "No EXIF";
+          const manualParts = [];
+          if (manualText) manualParts.push(manualText);
+          if (customNote) manualParts.push(customNote);
+          return manualParts.length > 0 ? manualParts.join(" | ") : "";
         }
 
         const data = item.exif;
         if (!data) {
-          return manualText || "No EXIF";
+          const fallbackParts = [];
+          if (manualText) fallbackParts.push(manualText);
+          if (customNote) fallbackParts.push(customNote);
+          return fallbackParts.length > 0 ? fallbackParts.join(" | ") : "";
         }
 
         const parts = [];
 
-        if (settings.fujiExifFields.camera && data.camera) parts.push(data.camera);
+        if (settings.fujiExifFields.camera && data.camera) {
+          const cameraText = normalizeFujiCameraLabel(data.camera);
+          if (cameraText) parts.push(cameraText);
+        }
         if (settings.fujiExifFields.focal && data.focal) {
           parts.push(`${formatNumber(data.focal)}mm`);
         } else if (settings.fujiExifFields.focal && data.focal35) {
@@ -1395,8 +1765,12 @@
         if (settings.fujiExifFields.aperture && data.fNumber) parts.push(`f/${formatNumber(data.fNumber)}`);
         if (settings.fujiExifFields.shutter && data.exposure) parts.push(formatExposure(data.exposure));
         if (settings.fujiExifFields.iso && data.iso) parts.push(`ISO ${formatNumber(data.iso)}`);
+        if (customNote) parts.push(customNote);
 
-        return parts.length > 0 ? parts.join(" | ") : (manualText || "No EXIF");
+        if (parts.length === 0) {
+          return manualText || "";
+        }
+        return parts.join(" | ");
       }
 
       async function processImagesSequentially() {
@@ -1539,7 +1913,9 @@
       function setStatus(phase, progress, percent, message) {
         statusPhase.textContent = phase;
         statusProgress.textContent = progress;
-        progressFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+        if (progressFill) {
+          progressFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+        }
         statusMessage.textContent = message;
       }
 
@@ -1643,7 +2019,7 @@
 
           if (isLeftStrip) {
             const fontSize = stripWidth * 0.4;
-            ctx.font = `bold ${fontSize}px "Plus Jakarta Sans", sans-serif`;
+            ctx.font = `bold ${fontSize}px "Manrope", sans-serif`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("35 MM", 0, 0);
@@ -1740,7 +2116,7 @@
           ctx.save();
           ctx.fillStyle = "#f59e0b";
           const fontSize = filmStripHeight * 0.4;
-          ctx.font = `bold ${fontSize}px "Plus Jakarta Sans", sans-serif`;
+          ctx.font = `bold ${fontSize}px "Manrope", sans-serif`;
           ctx.textBaseline = "middle";
 
           const textContent = "35 MM";
@@ -1899,6 +2275,19 @@
         return denominator > 0 ? `1/${denominator}` : "";
       }
 
+      function normalizeFujiCameraLabel(cameraText) {
+        if (typeof cameraText !== "string") return "";
+        const compact = cameraText.replace(/\s+/g, " ").trim();
+        if (!compact) return "";
+        if (!/fujifilm/i.test(compact)) return compact;
+
+        return compact
+          .replace(/\bFUJIFILM\b/ig, "")
+          .replace(/\s+/g, " ")
+          .replace(/^[\-\|]+|[\-\|]+$/g, "")
+          .trim();
+      }
+
       function cleanValue(value) {
         if (typeof value !== "string") return "";
         return value
@@ -1916,6 +2305,40 @@
           output = output.slice(0, -1);
         }
         return output.length > 0 ? output + ellipsis : ellipsis;
+      }
+
+      function fitExifToLines(ctx, text, maxWidth, maxLines) {
+        if (!text || maxWidth <= 0) return [""];
+        if (maxLines <= 1 || ctx.measureText(text).width <= maxWidth) {
+          return [fitTextWithEllipsis(ctx, text, maxWidth)];
+        }
+
+        const chunks = text.split(" | ").filter(Boolean);
+        if (chunks.length === 0) {
+          return [fitTextWithEllipsis(ctx, text, maxWidth)];
+        }
+
+        let line1 = "";
+        let line2 = "";
+
+        for (const chunk of chunks) {
+          const nextLine1 = line1 ? `${line1} | ${chunk}` : chunk;
+          if (ctx.measureText(nextLine1).width <= maxWidth || !line1) {
+            line1 = nextLine1;
+            continue;
+          }
+
+          const nextLine2 = line2 ? `${line2} | ${chunk}` : chunk;
+          line2 = nextLine2;
+        }
+
+        if (!line2) {
+          return [fitTextWithEllipsis(ctx, line1, maxWidth)];
+        }
+
+        line1 = fitTextWithEllipsis(ctx, line1, maxWidth);
+        line2 = fitTextWithEllipsis(ctx, line2, maxWidth);
+        return [line1, line2];
       }
 
       function getBaseName(fileName) {
