@@ -847,8 +847,8 @@
           <div id="fuji-font-wrap" class="control range-row hidden">
             <label for="fuji-exif-font-range">Fuji EXIF Font Size (1-10)</label>
             <div class="inline-controls">
-              <input id="fuji-exif-font-range" type="range" min="1" max="10" step="1" value="6" />
-              <input id="fuji-exif-font-input" type="number" min="1" max="10" step="1" value="6" />
+              <input id="fuji-exif-font-range" type="range" min="1" max="10" step="1" value="3" />
+              <input id="fuji-exif-font-input" type="number" min="1" max="10" step="1" value="3" />
             </div>
             <span class="hint">10 fixed steps. Same value gives uniform EXIF size across orientations.</span>
           </div>
@@ -935,7 +935,7 @@
           custom: false
         },
         fujiCustomInfo: "",
-        fujiExifFontStep: 6,
+        fujiExifFontStep: 3,
         fujiManualExifText: "",
         nonInstagramScale: 1,
         exportFormat: "jpeg",
@@ -1658,10 +1658,14 @@
           drawHeight = Math.max(1, Math.round(originalHeight * ratio));
         }
 
-        const padding = Math.max(10, Math.round(Math.min(drawWidth, drawHeight) * 0.035));
-        const footerHeight = Math.max(40, Math.round(drawHeight * 0.14));
+        const geometryBase = settings.instagramMode
+          ? Math.max(drawWidth, drawHeight)
+          : Math.min(drawWidth, drawHeight);
+        const padding = Math.max(10, Math.round(geometryBase * 0.03));
+        const footerGap = Math.max(8, Math.round(geometryBase * 0.012));
+        const footerHeight = Math.max(40, Math.round(geometryBase * 0.1));
         const outputWidth = drawWidth + padding * 2;
-        const outputHeight = drawHeight + padding * 2 + footerHeight;
+        const outputHeight = padding + drawHeight + footerGap + footerHeight;
         const renderScale = previewMode ? 1 : 2;
 
         const canvas = document.createElement("canvas");
@@ -1682,7 +1686,7 @@
 
         ctx.drawImage(img, padding, padding, drawWidth, drawHeight);
 
-        const stripY = outputHeight - footerHeight;
+        const stripY = padding + drawHeight + footerGap;
         ctx.strokeStyle = "rgba(0,0,0,0.16)";
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -1738,8 +1742,9 @@
       async function drawFujiFooter(ctx, options) {
         const { x, y, width, height, foreground, exifText } = options;
         const padX = Math.round(height * 0.3);
-        const logoMaxHeight = Math.round(height * 0.52);
-        const logoMaxWidth = Math.round(width * 0.26);
+        const logoScale = 0.8;
+        const logoMaxHeight = Math.round(height * 0.52 * logoScale);
+        const logoMaxWidth = Math.round(width * 0.26 * logoScale);
         const logoImage = state.logos.primary;
         let logoWidth = logoMaxWidth;
         let logoHeight = logoMaxHeight;
