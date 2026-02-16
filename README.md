@@ -16,7 +16,10 @@ Frameitup is a client-side web app to add clean borders and stylized frames to p
   - White-only background/border style for a clean consistent look
   - Checkbox controls to include/exclude EXIF fields (camera, focal length, aperture, shutter, ISO)
   - Optional custom note checkbox + text (example: `30 frames stacked`)
-  - EXIF font-size slider for footer text tuning
+  - EXIF font-size slider with 10 fixed discrete steps
+  - EXIF text auto-wraps to up to 2 lines when needed (all modes)
+- 2x internal supersampling for final Fuji/Instagram renders to improve edge smoothness.
+- Non-Instagram resolution option (`Original` or `2x`) for sharper zoomed-in exports.
 - Drag-and-drop upload support.
 - Per-file failure isolation in batch processing.
 - Settings persistence in localStorage with key `frameitup.settings.v2`.

@@ -845,12 +845,12 @@
           </div>
 
           <div id="fuji-font-wrap" class="control range-row hidden">
-            <label for="fuji-exif-font-range">Fuji EXIF Font Size (%)</label>
+            <label for="fuji-exif-font-range">Fuji EXIF Font Size (1-10)</label>
             <div class="inline-controls">
-              <input id="fuji-exif-font-range" type="range" min="70" max="130" step="1" value="100" />
-              <input id="fuji-exif-font-input" type="number" min="70" max="130" step="1" value="100" />
+              <input id="fuji-exif-font-range" type="range" min="1" max="10" step="1" value="6" />
+              <input id="fuji-exif-font-input" type="number" min="1" max="10" step="1" value="6" />
             </div>
-            <span class="hint">Adjust footer EXIF text size for Fuji Style.</span>
+            <span class="hint">10 fixed steps. Same value gives uniform EXIF size across orientations.</span>
           </div>
 
           <div id="fuji-manual-wrap" class="control hidden">
@@ -866,6 +866,15 @@
               <option value="png">PNG</option>
               <option value="webp">WebP</option>
             </select>
+          </div>
+
+          <div id="non-instagram-scale-wrap" class="control">
+            <label for="non-instagram-scale">Non-Instagram Resolution</label>
+            <select id="non-instagram-scale">
+              <option value="1">Original</option>
+              <option value="2">2x (sharper overlays)</option>
+            </select>
+            <span class="hint">Used only when Instagram Mode is off.</span>
           </div>
 
           <div id="quality-wrap" class="control range-row">
@@ -926,8 +935,9 @@
           custom: false
         },
         fujiCustomInfo: "",
-        fujiExifFontPercent: 100,
+        fujiExifFontStep: 6,
         fujiManualExifText: "",
+        nonInstagramScale: 1,
         exportFormat: "jpeg",
         exportQuality: 0.9
       };
@@ -972,6 +982,8 @@
       const borderControls = document.getElementById("border-controls");
       const cornerControls = document.getElementById("corner-controls");
       const exportFormat = document.getElementById("export-format");
+      const nonInstagramScaleWrap = document.getElementById("non-instagram-scale-wrap");
+      const nonInstagramScaleSelect = document.getElementById("non-instagram-scale");
       const exportQualityRange = document.getElementById("export-quality");
       const exportQualityInput = document.getElementById("export-quality-input");
       const qualityWrap = document.getElementById("quality-wrap");
@@ -1109,16 +1121,16 @@
         });
 
         fujiExifFontRange.addEventListener("input", () => {
-          const value = clampInt(fujiExifFontRange.value, 70, 130);
-          settings.fujiExifFontPercent = value;
+          const value = clampInt(fujiExifFontRange.value, 1, 10);
+          settings.fujiExifFontStep = value;
           fujiExifFontInput.value = value;
           persistSettings();
           onSettingsChanged();
         });
 
         fujiExifFontInput.addEventListener("input", () => {
-          const value = clampInt(fujiExifFontInput.value, 70, 130);
-          settings.fujiExifFontPercent = value;
+          const value = clampInt(fujiExifFontInput.value, 1, 10);
+          settings.fujiExifFontStep = value;
           fujiExifFontRange.value = value;
           fujiExifFontInput.value = value;
           persistSettings();
@@ -1167,6 +1179,13 @@
 
         exportFormat.addEventListener("change", () => {
           settings.exportFormat = exportFormat.value;
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        nonInstagramScaleSelect.addEventListener("change", () => {
+          settings.nonInstagramScale = nonInstagramScaleSelect.value === "2" ? 2 : 1;
           persistSettings();
           updateUiFromSettings();
           onSettingsChanged();
@@ -1224,12 +1243,24 @@
         safe.borderWidth = clampInt(safe.borderWidth, 0, 25);
         safe.cornerRadius = clampInt(safe.cornerRadius, 0, 25);
         safe.exportQuality = clampFloat(safe.exportQuality, 0.5, 1);
-        safe.fujiExifFontPercent = clampInt(safe.fujiExifFontPercent, 70, 130);
+        safe.nonInstagramScale = safe.nonInstagramScale === 2 ? 2 : 1;
+        safe.fujiExifFontStep = normalizeFujiFontStep(safe);
         safe.fujiCustomInfo = typeof safe.fujiCustomInfo === "string" ? safe.fujiCustomInfo : "";
         safe.fujiManualExifText = typeof safe.fujiManualExifText === "string" ? safe.fujiManualExifText : "";
         safe.fujiExifFields = sanitizeFujiExifFields(safe.fujiExifFields);
 
         return safe;
+      }
+
+      function normalizeFujiFontStep(source) {
+        if (Number.isFinite(source.fujiExifFontStep)) {
+          return clampInt(source.fujiExifFontStep, 1, 10);
+        }
+        if (Number.isFinite(source.fujiExifFontPercent)) {
+          const mapped = Math.round((source.fujiExifFontPercent - 70) / 6.6667) + 1;
+          return clampInt(mapped, 1, 10);
+        }
+        return DEFAULT_SETTINGS.fujiExifFontStep;
       }
 
       function sanitizeFujiExifFields(fields) {
@@ -1263,10 +1294,11 @@
           input.checked = Boolean(settings.fujiExifFields[key]);
         });
         fujiCustomInfo.value = settings.fujiCustomInfo;
-        fujiExifFontRange.value = settings.fujiExifFontPercent;
-        fujiExifFontInput.value = settings.fujiExifFontPercent;
+        fujiExifFontRange.value = settings.fujiExifFontStep;
+        fujiExifFontInput.value = settings.fujiExifFontStep;
         fujiManualExif.value = settings.fujiManualExifText;
         exportFormat.value = settings.exportFormat;
+        nonInstagramScaleSelect.value = settings.nonInstagramScale === 2 ? "2" : "1";
         exportQualityRange.value = settings.exportQuality;
         exportQualityInput.value = settings.exportQuality.toFixed(2);
       }
@@ -1285,6 +1317,7 @@
         cornerControls.classList.toggle("hidden", !standardPreset);
         qualityWrap.classList.toggle("hidden", !qualityVisible);
         instagramAspectWrap.classList.toggle("hidden", !settings.instagramMode);
+        nonInstagramScaleWrap.classList.toggle("hidden", settings.instagramMode);
         fujiExifFieldInputs.forEach((input) => {
           input.disabled = settings.fujiExifMode === "manual";
         });
@@ -1506,6 +1539,10 @@
         if (settings.instagramMode) {
           return composeInstagramCanvas(baseCanvas, item, previewMode);
         }
+
+        if (!previewMode && settings.nonInstagramScale > 1) {
+          return upscaleCanvas(baseCanvas, settings.nonInstagramScale);
+        }
         return baseCanvas;
       }
 
@@ -1612,15 +1649,30 @@
           const ratio = PREVIEW_MAX_DIMENSION / Math.max(originalWidth, originalHeight);
           drawWidth = Math.max(1, Math.round(originalWidth * ratio));
           drawHeight = Math.max(1, Math.round(originalHeight * ratio));
+        } else if (settings.instagramMode) {
+          // Keep Fuji base canvas close to Instagram output scale so footer text size
+          // stays visually consistent between preview and final export.
+          const targetLongEdge = Math.round(Math.max(settings.instagramWidth, settings.instagramHeight) * 0.88);
+          const ratio = targetLongEdge / Math.max(originalWidth, originalHeight);
+          drawWidth = Math.max(1, Math.round(originalWidth * ratio));
+          drawHeight = Math.max(1, Math.round(originalHeight * ratio));
         }
 
         const padding = Math.max(10, Math.round(Math.min(drawWidth, drawHeight) * 0.035));
         const footerHeight = Math.max(40, Math.round(drawHeight * 0.14));
+        const outputWidth = drawWidth + padding * 2;
+        const outputHeight = drawHeight + padding * 2 + footerHeight;
+        const renderScale = previewMode ? 1 : 2;
 
         const canvas = document.createElement("canvas");
-        canvas.width = drawWidth + padding * 2;
-        canvas.height = drawHeight + padding * 2 + footerHeight;
+        canvas.width = outputWidth * renderScale;
+        canvas.height = outputHeight * renderScale;
         const ctx = canvas.getContext("2d");
+        if (!previewMode) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.scale(renderScale, renderScale);
+        }
 
         const background = "#ffffff";
         const foreground = "#111111";
@@ -1630,36 +1682,46 @@
 
         ctx.drawImage(img, padding, padding, drawWidth, drawHeight);
 
-        const stripY = canvas.height - footerHeight;
+        const stripY = outputHeight - footerHeight;
         ctx.strokeStyle = "rgba(0,0,0,0.16)";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(0, stripY);
-        ctx.lineTo(canvas.width, stripY);
+        ctx.lineTo(outputWidth, stripY);
         ctx.stroke();
 
         await drawFujiFooter(ctx, {
           x: 0,
           y: stripY,
-          width: canvas.width,
+          width: outputWidth,
           height: footerHeight,
           foreground,
           exifText: buildExifLine(item)
         });
 
+        if (!previewMode && renderScale > 1) {
+          return downsampleCanvas(canvas, outputWidth, outputHeight);
+        }
         return canvas;
       }
 
       function composeInstagramCanvas(baseCanvas, item, previewMode) {
-        const width = previewMode ? PREVIEW_INSTAGRAM_WIDTH : settings.instagramWidth;
-        const height = previewMode
+        const targetWidth = previewMode ? PREVIEW_INSTAGRAM_WIDTH : settings.instagramWidth;
+        const targetHeight = previewMode
           ? Math.round(PREVIEW_INSTAGRAM_WIDTH * (settings.instagramHeight / settings.instagramWidth))
           : settings.instagramHeight;
+        const renderScale = previewMode ? 1 : 2;
+        const width = targetWidth * renderScale;
+        const height = targetHeight * renderScale;
 
         const canvas = document.createElement("canvas");
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
+        if (!previewMode) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+        }
 
         ctx.fillStyle = getInstagramBackdropColor(item);
         ctx.fillRect(0, 0, width, height);
@@ -1667,6 +1729,9 @@
         const fit = getContainRect(baseCanvas.width, baseCanvas.height, width, height);
         ctx.drawImage(baseCanvas, fit.x, fit.y, fit.width, fit.height);
 
+        if (!previewMode && renderScale > 1) {
+          return downsampleCanvas(canvas, targetWidth, targetHeight);
+        }
         return canvas;
       }
 
@@ -1710,20 +1775,18 @@
         ctx.beginPath();
         ctx.rect(exifAreaLeft, y, exifAreaWidth, height);
         ctx.clip();
-        const baseExifFontSize = Math.round(height * 0.21 * (settings.fujiExifFontPercent / 100));
-        const isInstagramPortrait = settings.instagramMode && settings.instagramAspect === "portrait";
-        const portraitAdjustedSize = isInstagramPortrait
-          ? Math.round(baseExifFontSize * 0.8)
-          : baseExifFontSize;
-        const exifFontSize = Math.max(10, portraitAdjustedSize);
+        const exifFontSize = exifFontStepToPx(settings.fujiExifFontStep, width);
         ctx.font = `500 ${exifFontSize}px "Manrope", sans-serif`;
         ctx.textBaseline = "middle";
         ctx.textAlign = "right";
-        const exifLines = fitExifToLines(ctx, exifText, exifAreaWidth, isInstagramPortrait ? 2 : 1);
+        const exifLines = fitExifToLines(ctx, exifText, exifAreaWidth, 2);
         if (exifLines.length === 1) {
           ctx.fillText(exifLines[0], exifAreaRight, y + height / 2);
         } else {
-          const lineStep = Math.max(12, Math.round(exifFontSize * 1.15));
+          const lineStep = Math.min(
+            Math.max(8, Math.round(height * 0.36)),
+            Math.max(8, Math.round(exifFontSize * 1.15))
+          );
           const firstLineY = y + (height / 2) - (lineStep / 2);
           const secondLineY = y + (height / 2) + (lineStep / 2);
           ctx.fillText(exifLines[0], exifAreaRight, firstLineY);
@@ -2228,6 +2291,33 @@
         });
       }
 
+      function downsampleCanvas(sourceCanvas, targetWidth, targetHeight) {
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(sourceCanvas, 0, 0, targetWidth, targetHeight);
+        return canvas;
+      }
+
+      function upscaleCanvas(sourceCanvas, desiredScale) {
+        const maxEdge = 9000;
+        const sourceMaxEdge = Math.max(sourceCanvas.width, sourceCanvas.height);
+        const cappedScale = Math.min(desiredScale, Math.max(1, Math.floor(maxEdge / sourceMaxEdge)));
+        if (cappedScale <= 1) return sourceCanvas;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = sourceCanvas.width * cappedScale;
+        canvas.height = sourceCanvas.height * cappedScale;
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+        return canvas;
+      }
+
       function clampInt(value, min, max) {
         const number = Number.parseInt(value, 10);
         if (Number.isNaN(number)) return min;
@@ -2339,6 +2429,17 @@
         line1 = fitTextWithEllipsis(ctx, line1, maxWidth);
         line2 = fitTextWithEllipsis(ctx, line2, maxWidth);
         return [line1, line2];
+      }
+
+      function exifFontStepToPx(step, outputWidth) {
+        const normalized = clampInt(step, 1, 10);
+        const minPxAt1080 = 16;
+        const maxPxAt1080 = 42;
+        const ratio = (normalized - 1) / 9;
+        const basePx = minPxAt1080 + ((maxPxAt1080 - minPxAt1080) * ratio);
+        const width = Number.isFinite(outputWidth) ? Math.max(260, outputWidth) : 1080;
+        const scaled = basePx * (width / 1080);
+        return Math.max(4, Math.min(160, Math.round(scaled)));
       }
 
       function getBaseName(fileName) {
