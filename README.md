@@ -14,10 +14,11 @@ Frameitup is a client-side web app to add clean borders and stylized frames to p
   - Bottom-left logo
   - Bottom-right compact EXIF line
   - White-only background/border style for a clean consistent look
-  - Checkbox controls to include/exclude EXIF fields (camera, focal length, aperture, shutter, ISO)
+  - Metadata fields controls (camera, focal length, aperture, shutter, ISO)
   - Optional custom note checkbox + text (example: `30 frames stacked`)
-  - EXIF font-size slider with 10 fixed discrete steps
+  - Metadata font-size slider with 10 fixed discrete steps
   - EXIF text auto-wraps to up to 2 lines when needed (all modes)
+- Optional metadata footer for non-Fuji presets.
 - 2x internal supersampling for final Fuji/Instagram renders to improve edge smoothness.
 - Non-Instagram resolution option (`Original` or `2x`) for sharper zoomed-in exports.
 - Drag-and-drop upload support.
@@ -50,11 +51,11 @@ When Instagram Mode is enabled:
 - In Instagram Mode, choose `Landscape` or `Portrait` so all outputs share one aspect ratio.
 - Tap `Process Images`, then `Download` on each card or `Download All (ZIP)`.
 
-## Fuji Style EXIF behavior
+## Metadata behavior
 
-- `EXIF Source: Auto` tries to read metadata from each uploaded image.
+- `Metadata Source: Auto` tries to read metadata from each uploaded image.
 - If EXIF data is missing, manual fallback text is used (if provided).
-- `EXIF Source: Manual` always uses the manual EXIF text.
+- `Metadata Source: Manual` always uses the manual text.
 - If no EXIF/manual data is available, footer text is left blank.
 
 ## Tech notes

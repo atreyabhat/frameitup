@@ -795,10 +795,10 @@
         </div>
 
         <div id="fuji-quick-controls" class="control hidden">
-          <label for="fuji-exif-mode">Fuji Style</label>
+          <label for="fuji-exif-mode">Metadata</label>
           <select id="fuji-exif-mode">
-            <option value="auto">EXIF Source: Auto</option>
-            <option value="manual">EXIF Source: Manual</option>
+            <option value="auto">Metadata Source: Auto</option>
+            <option value="manual">Metadata Source: Manual</option>
           </select>
         </div>
       </div>
@@ -828,8 +828,13 @@
             </div>
           </div>
 
+          <div id="metadata-enable-wrap" class="control">
+            <label class="checkbox-item"><input id="metadata-footer-enable" type="checkbox" />Show Metadata Footer</label>
+            <span class="hint">Adds metadata footer for non-logo styles. Fuji Style always includes footer.</span>
+          </div>
+
           <div id="fuji-fields-wrap" class="control hidden">
-            <label>Fuji EXIF Fields</label>
+            <label>Metadata Fields</label>
             <div class="checkbox-grid">
               <label class="checkbox-item"><input type="checkbox" data-exif-field="camera" checked />Camera</label>
               <label class="checkbox-item"><input type="checkbox" data-exif-field="focal" checked />Focal Length</label>
@@ -841,11 +846,11 @@
               <label class="checkbox-item"><input type="checkbox" data-exif-field="custom" />Custom Note</label>
               <input id="fuji-custom-info" type="text" placeholder="e.g., 30 frames stacked" disabled />
             </div>
-            <span class="hint">Choose which EXIF items appear in Fuji Style footer.</span>
+            <span class="hint">Choose which EXIF items appear in the footer.</span>
           </div>
 
           <div id="fuji-font-wrap" class="control range-row hidden">
-            <label for="fuji-exif-font-range">Fuji EXIF Font Size (1-10)</label>
+            <label for="fuji-exif-font-range">Metadata Font Size (1-10)</label>
             <div class="inline-controls">
               <input id="fuji-exif-font-range" type="range" min="1" max="10" step="1" value="3" />
               <input id="fuji-exif-font-input" type="number" min="1" max="10" step="1" value="3" />
@@ -854,9 +859,9 @@
           </div>
 
           <div id="fuji-manual-wrap" class="control hidden">
-            <label for="fuji-manual-exif">Fuji Manual EXIF Fallback</label>
+            <label for="fuji-manual-exif">Manual Metadata Fallback</label>
             <textarea id="fuji-manual-exif" placeholder="Example: X100V | 23mm | f/2 | 1/125 | ISO 400"></textarea>
-            <span class="hint">Used when EXIF is missing (Auto), or always when EXIF Source is set to Manual.</span>
+            <span class="hint">Used when EXIF is missing (Auto), or always when Metadata Source is set to Manual.</span>
           </div>
 
           <div class="control">
@@ -937,6 +942,7 @@
         fujiCustomInfo: "",
         fujiExifFontStep: 3,
         fujiManualExifText: "",
+        metadataFooterEnabled: false,
         nonInstagramScale: 1,
         exportFormat: "jpeg",
         exportQuality: 0.9
@@ -971,6 +977,7 @@
       const cornerRadiusInput = document.getElementById("corner-radius-input");
       const fujiQuickControls = document.getElementById("fuji-quick-controls");
       const fujiExifMode = document.getElementById("fuji-exif-mode");
+      const metadataFooterEnable = document.getElementById("metadata-footer-enable");
       const fujiFieldsWrap = document.getElementById("fuji-fields-wrap");
       const fujiExifFieldInputs = Array.from(document.querySelectorAll("[data-exif-field]"));
       const fujiCustomInfo = document.getElementById("fuji-custom-info");
@@ -1098,6 +1105,13 @@
 
         fujiExifMode.addEventListener("change", () => {
           settings.fujiExifMode = fujiExifMode.value;
+          persistSettings();
+          updateUiFromSettings();
+          onSettingsChanged();
+        });
+
+        metadataFooterEnable.addEventListener("change", () => {
+          settings.metadataFooterEnabled = metadataFooterEnable.checked;
           persistSettings();
           updateUiFromSettings();
           onSettingsChanged();
@@ -1243,6 +1257,7 @@
         safe.borderWidth = clampInt(safe.borderWidth, 0, 25);
         safe.cornerRadius = clampInt(safe.cornerRadius, 0, 25);
         safe.exportQuality = clampFloat(safe.exportQuality, 0.5, 1);
+        safe.metadataFooterEnabled = Boolean(safe.metadataFooterEnabled);
         safe.nonInstagramScale = safe.nonInstagramScale === 2 ? 2 : 1;
         safe.fujiExifFontStep = normalizeFujiFontStep(safe);
         safe.fujiCustomInfo = typeof safe.fujiCustomInfo === "string" ? safe.fujiCustomInfo : "";
@@ -1288,6 +1303,7 @@
         cornerRadiusRange.value = settings.cornerRadius;
         cornerRadiusInput.value = settings.cornerRadius;
         fujiExifMode.value = settings.fujiExifMode;
+        metadataFooterEnable.checked = settings.metadataFooterEnabled;
         fujiExifFieldInputs.forEach((input) => {
           const key = input.dataset.exifField;
           if (!key) return;
@@ -1307,12 +1323,13 @@
         const isFuji = settings.preset === "fuji-style";
         const isFilm = settings.preset === "film-35mm";
         const standardPreset = ["classic-white", "classic-black", "average"].includes(settings.preset);
+        const metadataControlsVisible = isFuji || settings.metadataFooterEnabled;
         const qualityVisible = settings.exportFormat !== "png";
 
-        fujiQuickControls.classList.toggle("hidden", !isFuji);
-        fujiFieldsWrap.classList.toggle("hidden", !isFuji);
-        fujiFontWrap.classList.toggle("hidden", !isFuji);
-        fujiManualWrap.classList.toggle("hidden", !isFuji);
+        fujiQuickControls.classList.toggle("hidden", !metadataControlsVisible);
+        fujiFieldsWrap.classList.toggle("hidden", !metadataControlsVisible);
+        fujiFontWrap.classList.toggle("hidden", !metadataControlsVisible);
+        fujiManualWrap.classList.toggle("hidden", !metadataControlsVisible);
         borderControls.classList.toggle("hidden", !standardPreset);
         cornerControls.classList.toggle("hidden", !standardPreset);
         qualityWrap.classList.toggle("hidden", !qualityVisible);
@@ -1536,6 +1553,13 @@
           baseCanvas = await renderFujiCanvas(item, previewMode);
         }
 
+        if (settings.preset !== "fuji-style" && settings.metadataFooterEnabled) {
+          const exifText = buildExifLine(item);
+          if (exifText) {
+            baseCanvas = await renderMetadataFooterCanvas(baseCanvas, exifText, previewMode);
+          }
+        }
+
         if (settings.instagramMode) {
           return composeInstagramCanvas(baseCanvas, item, previewMode);
         }
@@ -1694,13 +1718,69 @@
         ctx.lineTo(outputWidth, stripY);
         ctx.stroke();
 
-        await drawFujiFooter(ctx, {
+        await drawMetadataFooter(ctx, {
           x: 0,
           y: stripY,
           width: outputWidth,
           height: footerHeight,
           foreground,
-          exifText: buildExifLine(item)
+          exifText: buildExifLine(item),
+          showLogo: true
+        });
+
+        if (!previewMode && renderScale > 1) {
+          return downsampleCanvas(canvas, outputWidth, outputHeight);
+        }
+        return canvas;
+      }
+
+      async function renderMetadataFooterCanvas(contentCanvas, exifText, previewMode) {
+        const drawWidth = contentCanvas.width;
+        const drawHeight = contentCanvas.height;
+        const geometryBase = settings.instagramMode
+          ? Math.max(drawWidth, drawHeight)
+          : Math.min(drawWidth, drawHeight);
+        const padding = Math.max(10, Math.round(geometryBase * 0.03));
+        const footerGap = Math.max(8, Math.round(geometryBase * 0.012));
+        const footerHeight = Math.max(40, Math.round(geometryBase * 0.1));
+        const outputWidth = drawWidth + padding * 2;
+        const outputHeight = padding + drawHeight + footerGap + footerHeight;
+        const renderScale = previewMode ? 1 : 2;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = outputWidth * renderScale;
+        canvas.height = outputHeight * renderScale;
+        const ctx = canvas.getContext("2d");
+        if (!previewMode) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.scale(renderScale, renderScale);
+        }
+
+        const isBlackStyle = settings.preset === "classic-black";
+        const background = isBlackStyle ? "#000000" : "#ffffff";
+        const foreground = isBlackStyle ? "#f2f2f2" : "#111111";
+
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(contentCanvas, padding, padding, drawWidth, drawHeight);
+
+        const stripY = padding + drawHeight + footerGap;
+        ctx.strokeStyle = isBlackStyle ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.16)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, stripY);
+        ctx.lineTo(outputWidth, stripY);
+        ctx.stroke();
+
+        await drawMetadataFooter(ctx, {
+          x: 0,
+          y: stripY,
+          width: outputWidth,
+          height: footerHeight,
+          foreground,
+          exifText,
+          showLogo: false
         });
 
         if (!previewMode && renderScale > 1) {
@@ -1739,13 +1819,13 @@
         return canvas;
       }
 
-      async function drawFujiFooter(ctx, options) {
-        const { x, y, width, height, foreground, exifText } = options;
+      async function drawMetadataFooter(ctx, options) {
+        const { x, y, width, height, foreground, exifText, showLogo } = options;
         const padX = Math.round(height * 0.3);
         const logoScale = 0.8;
         const logoMaxHeight = Math.round(height * 0.52 * logoScale);
         const logoMaxWidth = Math.round(width * 0.26 * logoScale);
-        const logoImage = state.logos.primary;
+        const logoImage = showLogo ? state.logos.primary : null;
         let logoWidth = logoMaxWidth;
         let logoHeight = logoMaxHeight;
 
@@ -1761,7 +1841,7 @@
         const logoX = x + padX;
         const logoY = y + Math.round((height - logoHeight) / 2);
         const logoAreaRight = logoX + logoWidth;
-        const exifAreaLeft = logoAreaRight + Math.round(height * 0.32);
+        const exifAreaLeft = showLogo ? logoAreaRight + Math.round(height * 0.32) : x + padX;
         const exifAreaRight = x + width - padX;
         const exifAreaWidth = Math.max(0, exifAreaRight - exifAreaLeft);
 
@@ -1769,7 +1849,7 @@
 
         if (logoImage) {
           ctx.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
-        } else {
+        } else if (showLogo) {
           ctx.font = `700 ${Math.round(height * 0.32)}px "Manrope", sans-serif`;
           ctx.textBaseline = "middle";
           ctx.textAlign = "left";
@@ -1821,7 +1901,7 @@
         const parts = [];
 
         if (settings.fujiExifFields.camera && data.camera) {
-          const cameraText = normalizeFujiCameraLabel(data.camera);
+          const cameraText = normalizeCameraLabel(data.camera, settings.preset === "fuji-style");
           if (cameraText) parts.push(cameraText);
         }
         if (settings.fujiExifFields.focal && data.focal) {
@@ -2370,11 +2450,11 @@
         return denominator > 0 ? `1/${denominator}` : "";
       }
 
-      function normalizeFujiCameraLabel(cameraText) {
+      function normalizeCameraLabel(cameraText, stripFujifilmBrand = false) {
         if (typeof cameraText !== "string") return "";
         const compact = cameraText.replace(/\s+/g, " ").trim();
         if (!compact) return "";
-        if (!/fujifilm/i.test(compact)) return compact;
+        if (!stripFujifilmBrand || !/fujifilm/i.test(compact)) return compact;
 
         return compact
           .replace(/\bFUJIFILM\b/ig, "")
