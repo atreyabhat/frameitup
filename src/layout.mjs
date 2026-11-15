@@ -7,7 +7,7 @@ export const RATIOS = {
 
 export const DEFAULTS = {
   ratio: 'portrait', layout: 'auto', style: 'classic-white', border: 5,
-  filmBackground: 'none', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
+  filmBackground: 'black', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
   metadataMode: 'auto', manual: '', note: '', fontStep: 3,
   fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true },
 };
@@ -21,8 +21,8 @@ export function sanitizeSettings(value = {}) {
     ratio: choices(value.ratio, [...Object.keys(RATIOS), 'adaptive'], DEFAULTS.ratio),
     layout: choices(value.layout, ['auto', 'single', '2', '3'], 'auto'),
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
-    filmBackground: choices(value.filmBackground, ['none', 'white', 'black'], 'none'),
-    border: number(value.border, 5, 0, 16), corners: number(value.corners, 0, 0, 25),
+    filmBackground: choices(value.filmBackground, ['white', 'black'], 'black'),
+    border: number(value.border, value.style === 'film-35mm' ? 0 : 5, 0, 16), corners: number(value.corners, 0, 0, 25),
     overview: true, export: choices(value.export, ['native', 'instagram'], DEFAULTS.export),
     jpegQuality: number(value.jpegQuality, 0.9, 0.1, 1),
     instagramReady: value.instagramReady !== false,
@@ -71,9 +71,7 @@ export function recommendCount(width, height, q) {
 export function frameInsets(q, settings, hasMetadata) {
   let x = settings.border / 100;
   let y = x;
-  if (settings.style === 'film-35mm' && settings.filmBackground === 'none') {
-    x = y = 0;
-  }
+  if (settings.style === 'film-35mm' && q === 1) x = 0;
   const footer = settings.metadata && hasMetadata ? 0.13 : 0;
   return { x, y, footer, innerWidth: 1 - 2 * x, innerHeight: 1 / q - 2 * y - footer };
 }
@@ -114,8 +112,8 @@ export function photoRect(item, slide, plan, settings) {
 export function filmBox(width, height) {
   const mm = Math.min(width, height) / 24;
   const vertical = width < height;
-  const rail = 5.5 * mm, end = 0.85 * mm;
-  return { width: width + 2 * (vertical ? rail : end), height: height + 2 * (vertical ? end : rail), vertical, mm };
+  const rail = 5.5 * mm;
+  return { width: width + 2 * (vertical ? rail : 0), height: height + 2 * (vertical ? 0 : rail), vertical, mm };
 }
 
 export function instagramSettings(settings, item = {}) {
@@ -130,4 +128,23 @@ export function exportName(fileName, photoIndex, slideIndex, slide, format) {
 
 export function patchPhotoSettings(items, selectedId, patch, all = false) {
   for (const item of items) if (all || item.id === selectedId) item.settings = sanitizeSettings({ ...item.settings, ...patch });
+}
+
+
+// Copy presentation settings once; each photo retains its camera data and edited text.
+export function applySharedSettings(items, selectedId) {
+  const source = items.find(item => item.id === selectedId);
+  if (!source) return;
+  const settings = sanitizeSettings(source.settings);
+  const keys = ['ratio','layout','style','filmBackground','border','corners','export','jpegQuality','instagramReady','fontStep'];
+  const patch = Object.fromEntries(keys.map(key => [key, settings[key]]));
+  patchPhotoSettings(items, selectedId, patch, true);
+}
+
+export function aspectRatioLabel(width, height) {
+  let a = width, b = height;
+  while (b) [a, b] = [b, a % b];
+  const w = width / a, h = height / a;
+  if (Math.max(w, h) <= 100) return `${w}:${h}`;
+  return width >= height ? `≈${(width / height).toFixed(2)}:1` : `≈1:${(height / width).toFixed(2)}`;
 }

@@ -158,7 +158,7 @@ export function importSettings(exif, preferences) {
   const available = hasCameraMetadata(exif);
   const settings = { ...preferences, border: 5, export: 'instagram', jpegQuality: 0.9, instagramReady: true, ratio: 'portrait', layout: 'auto', metadata: false, metadataMode: 'auto', manual: '', note: '', fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true } };
   if (!available) settings.style = 'film-35mm';
-  if (settings.style === 'film-35mm') settings.ratio = 'square';
+  if (settings.style === 'film-35mm') { settings.ratio = 'square'; settings.border = 0; }
   settings.manual = metadataLine({ exif }, settings);
   return settings;
 }

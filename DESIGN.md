@@ -228,7 +228,7 @@ Quiet panes and compact controls keep photographs central. Exact values use edit
 **Key Characteristics:**
 - One fixed light palette; no theme switch.
 - Serif identity and system-font controls.
-- Per-photo settings with independent batch-scope checkboxes.
+- Per-photo settings with one explicit, one-time bulk apply action.
 - Soft field edges, restrained shadows, and visible numeric values.
 
 ## Colors
@@ -269,12 +269,12 @@ Tonal panes and fine borders provide structure. The photograph uses a soft offse
 
 ## Shapes
 
-Photograph thumbnails retain nearly square corners. The preview and numeric stepper use softly rounded corners; fields and split groups use their own slightly smaller radius. The larger trash button has a distinct radius and visible border. Photograph rounding remains an explicit user setting. Film rails rotate with source orientation. The 35mm label position is chosen once per imported photo and stays stable across previews and exports.
+Photograph thumbnails retain nearly square corners. The preview and numeric stepper use softly rounded corners; fields and split groups use their own slightly smaller radius. The larger trash button has a distinct radius and visible border. Photograph rounding remains an explicit user setting. Film rails rotate with source orientation. The 35MM label position is chosen once per imported photo and stays stable across previews and exports.
 
 ## Components
 
 - **Actions:** Add photos is charcoal; export is the functional accent. Main buttons have a (44px) minimum height. Contextual text actions reveal an underline on hover. Trash is larger, outlined, and uses a (22px) icon; hover changes its fill and ink to the accent treatment. Disabled buttons use opacity (.4).
-- **Auto format and Canvas shape:** separate native selects. Each has its own adjacent Apply to all photos checkbox, unchecked by default. Selecting a profile changes the current photo unless its scope checkbox is checked. Canvas changes retain the chosen resolution profile. Auto format batch scope copies the selected profile, ratio, and split; canvas batch scope copies only ratio.
+All edits affect the selected photo. One Apply settings to all photos action copies layout, frame and export settings once; later edits remain individual. Camera metadata, footer visibility and edited metadata text stay with each photo.
 - **Precision controls:** border width, rounded corners, and metadata text size use decrement / editable number / increment. Buttons are (38px × 40px); numeric input is (42px × 36px). Border is bounded (0–16), corners (0–25), and text size (1–10), with step (1). The current value is always visible. Film only hides the border row; White and Black film backgrounds expose it.
 - **Quality:** File format offers PNG and JPG independently of resolution profile. The output-quality slider spans (10–100%) in steps of (1), with its value shown beside the label. PNG disables it and identifies the encoding as Lossless in the quality description. A warm neutral track and pale round thumb keep it subordinate to the photograph.
 - **Metadata:** Frame details contains a footer checkbox, prefilled directly editable textarea, and text-size stepper. Footer starts off. When camera metadata is unavailable, its checkbox is disabled and a concise explanation appears. There is no source-mode selector, field-toggle group, or custom-note field.
@@ -291,20 +291,22 @@ Control choices are informed by Apple’s HIG: [steppers](https://developer.appl
 - Do preserve the fixed cream, sand, gray, and coral world.
 - Do use system typography for controls and Source Serif 4 for identity and invitation.
 - Do show the current value beside decrement and increment actions, with direct numeric entry.
-- Do keep Auto format and Canvas shape scope independent.
+- Do keep edits individual after a bulk apply.
 - Do keep visible focus and reduced-motion behavior.
 
 ### Don't:
 
 - Don't reintroduce dark/light themes, marketing copy, or preloaded photographs.
 - Don't describe file encoding as a resolution choice; JPG/PNG and Instagram/Custom are independent.
-- Don't add film counters or barcodes; 35mm is the only film lettering.
+- Don't add film counters or barcodes; 35MM is the only film lettering.
 - Don't add source-mode selectors, metadata field toggles, or custom-note controls.
 
 Film-framed or detected-film photos always use one full-photo slide. Split-count buttons are disabled for these photos; Auto and Single remain available. Detection persists when a user changes the frame.
 
 ### Bounded editing workspace
 
-The editor occupies the viewport; only the left library scrolls. Preview and export actions stay in place. Layout, Frame and Export tabs expose one inspector section at a time, with arrow-key navigation. Frame details replace the basic frame controls while open, keeping metadata editing within the same space. Individual download recovery links sit in the scrollable library rather than extending the preview. The slide strip fits at most four thumbnails without a second scrollbar. Small screens retain a vertical library beside the preview and a compact tabbed inspector below it.
+The editor occupies the viewport. The left library and right settings panel scroll independently; preview and export actions stay fixed. Layout and Frame share one scrollable Layout & frame tab, with Export as the other tab. Expanded frame details remain in the same flow. Original aspect ratio appears beside the filename.
 
 The quality slider fills its leading segment in muted amber. Film defaults square, uses uppercase `35MM`, and has seeded amber edge patina confined to the stock. See tests/film-review.md for sources.
+
+Film background offers Black and White only. Legacy Film only settings map to Black. Film border defaults to 0; non-film imports retain border 5.

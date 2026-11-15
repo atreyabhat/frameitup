@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULTS, sanitizeSettings, migrateSettings, recommendCount, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings } from '../src/layout.mjs';
+import { DEFAULTS, sanitizeSettings, migrateSettings, recommendCount, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings, applySharedSettings, aspectRatioLabel } from '../src/layout.mjs';
 
 test('auto keeps portraits and squares whole; chooses two or three landscape parts', () => {
   assert.equal(recommendCount(4000, 6000, 0.75), 1);
@@ -135,4 +135,23 @@ test('Instagram format defaults detected film square even after changing its fra
  assert.equal(instagramSettings(original).ratio,'portrait');
  const explicit=sanitizeSettings({...film,ratio:'classic'});
  assert.equal(planPhoto({width:1800,height:1200,detectedFilm:true},explicit).slides[0].height,1350);
+});
+
+
+test('bulk application is a one-time copy and retains each photo metadata',()=>{
+ const items=Array.from({length:3},(_,i)=>({id:String(i),detectedFilm:i===2,settings:sanitizeSettings({manual:`Camera ${i}`,metadata:i===1})}));
+ items[0].settings=sanitizeSettings({...items[0].settings,ratio:'square',border:8,filmBackground:'white',export:'native'});
+ applySharedSettings(items,'0');
+ assert(items.every(i=>i.settings.ratio==='square'&&i.settings.border===8&&i.settings.export==='native'));
+ assert.deepEqual(items.map(i=>i.settings.manual),['Camera 0','Camera 1','Camera 2']);
+ assert.equal(items[1].settings.metadata,true);
+ patchPhotoSettings(items,'2',{ratio:'portrait',border:2,instagramReady:false});
+ assert.deepEqual(items.map(i=>i.settings.ratio),['square','square','portrait']);
+ assert.deepEqual(items.map(i=>i.settings.border),[8,8,2]);
+ assert.deepEqual(items.map(i=>i.settings.instagramReady),[true,true,false]);
+ assert.equal(items[2].detectedFilm,true);
+});
+
+test('original aspect ratios use reduced fractions and mark approximations',()=>{
+ for(const [w,h,label] of [[6000,4000,'3:2'],[4000,6000,'2:3'],[1400,1400,'1:1'],[4032,3024,'4:3'],[2400,800,'3:1'],[6000,4001,'≈1.50:1'],[4001,6000,'≈1:1.50']]) assert.equal(aspectRatioLabel(w,h),label);
 });

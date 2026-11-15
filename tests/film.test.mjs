@@ -41,7 +41,7 @@ test('five photo shapes retain their image and film within all supported layouts
     for(const ratio of ['portrait','classic','square','landscape','adaptive'])
     for(const layout of ['auto','single','2','3'])
     for(const format of ['native','instagram'])
-    for(const filmBackground of ['none','white','black'])
+    for(const filmBackground of ['white','black'])
     for(const border of [0,4,16])
     for(const metadata of [false,true]) {
       const settings=sanitizeSettings({instagramReady:false, style:'film-35mm',ratio,layout,export:format,filmBackground,border,metadata});
@@ -63,12 +63,40 @@ test('five photo shapes retain their image and film within all supported layouts
 });
 
 test('film background is validated and white or black mats use the border control', () => {
-  assert.equal(sanitizeSettings({instagramReady:false, filmBackground:'invalid'}).filmBackground,'none');
+  assert.equal(sanitizeSettings({instagramReady:false, filmBackground:'invalid'}).filmBackground,'black');
   const item={width:1800,height:1200};
-  const only=planPhoto(item,sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',filmBackground:'none',border:8}));
+  const only=planPhoto(item,sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',filmBackground:'black',border:0}));
+  assert.equal(sanitizeSettings({filmBackground:'none'}).filmBackground,'black');
+  assert.equal(sanitizeSettings({style:'film-35mm'}).border,0);
   for(const filmBackground of ['white','black']) {
     const mat=planPhoto(item,sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',filmBackground,border:8}));
     assert(mat.slides[0].width>only.slides[0].width);
     assert.equal(mat.insets.x,.08);
   }
+});
+
+
+test('film removes end stock and reaches the sides when geometry permits',()=>{
+ for(const filmBackground of ['white','black']) {
+  const item={width:2400,height:800};
+  const settings=sanitizeSettings({style:'film-35mm',ratio:'square',filmBackground,border:5});
+  const plan=planPhoto(item,settings),r=photoRect(item,plan.slides[0],plan,settings);
+  assert.equal(plan.insets.x,0);
+  assert.equal(plan.film.width,item.width);
+  assert.equal(r.x,0);assert.equal(r.width,1080);
+  assert(r.y>=0&&r.y+r.height<=1080);
+ }
+ const portrait={width:1200,height:1800};
+ const s=sanitizeSettings({style:'film-35mm',ratio:'square'}),p=planPhoto(portrait,s);
+ assert(p.film.vertical);assert(p.film.width>portrait.width,'Portrait side sprockets must remain intact');
+});
+
+
+test('film stock ends exactly at the photograph on the non-perforated edges',()=>{
+ for(const [width,height] of [[1800,1200],[1200,1800],[1400,1400],[2400,800]]) {
+  const item={width,height},settings=sanitizeSettings({style:'film-35mm',border:0,ratio:'square'});
+  const plan=planPhoto(item,settings);
+  if(width<height) assert.equal(plan.film.height,height);
+  else assert.equal(plan.film.width,width);
+ }
 });

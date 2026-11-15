@@ -20,6 +20,8 @@ The digital frame uses these proportions as a visual model. Its length adapts to
 
 Reference: [Lomography's full-border scanning examples](https://www.lomography.com/school/how-to-scan-sprocket-holes-and-film-borders-at-home-fa-q2evqbl3), [ILFORD processing defects](https://www.ilfordphoto.com/common-film-processing-problems/), and [a photographer's actual negative scans](https://forums.negativelabpro.com/t/light-leaks-from-sprocket-holes-in-digital-camera-scan/5481). The discussion distinguishes edge exposure, pressure marks and processing artifacts; these are not all caused by development.
 
-The rendering is a restrained interpretation: three uneven amber edge blooms, fine edge wear and stock grain. It is not a copied scan overlay. All marks use the existing per-photo random seed, rotate with the stock orientation, and are clipped to the film outside the image aperture. Perforations are drawn afterwards so the cutouts stay clear. White and black mats stay clean. Lettering reads `35MM`.
+The rendering is a restrained interpretation: two to four uneven amber edge blooms with varied spread, intensity and angle, plus stock grain. It is not a copied scan overlay. All marks use the existing per-photo random seed, rotate with the stock orientation, and are clipped to the film outside the image aperture. Perforations are drawn afterwards so the cutouts stay clear. White and black mats stay clean. Lettering reads `35MM`.
 
 Film imports and switching into Film default to square. This is a default, not a forced aspect ratio; explicit canvas choices remain available. The never-split film rule remains unchanged.
+
+Follow-up: removed straight abrasion strokes and the uniform aperture outline. Film border defaults to zero, and non-perforated ends are flush with the photograph for every orientation. Native decoded image pixels remain unchanged across five source shapes, three mat choices and square/adaptive canvases.

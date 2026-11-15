@@ -16,9 +16,9 @@ Frame complete photographs and make landscapes readable as two or three continuo
 
 ## Capabilities and Constraints
 
-Static local processing, four frame styles, editable metadata footers, individual downloads, and numbered ZIPs. Initial settings are Instagram sizing, 3:4, automatic split, border 5, metadata off, and JPG at quality 90%. PNG is lossless and disables the quality slider. JPG quality is adjustable from 10–100%. File encoding is separate from Instagram 1080-pixel sizing or Custom source resolution.
+Static local processing, four frame styles, editable metadata footers, individual downloads, and numbered ZIPs. Initial digital settings are Instagram sizing, 3:4, automatic split, border 5, metadata off, and JPG at quality 90%. Film imports or selecting Film default to square, border 0, and no splitting. PNG is lossless and disables the quality slider. JPG quality is adjustable from 10–100%. File encoding is separate from Instagram 1080-pixel sizing or Custom source resolution.
 
-Each photo retains its resolution profile, canvas, split, frame, footer text, encoding, and quality. Auto format and Canvas shape have independent apply-all checkboxes; canvas changes preserve the resolution profile. Format batch scope copies profile, ratio, and split; canvas batch scope copies only ratio. The overview always precedes parts. No 20-slide application batch cap applies; platform posting limits are separate.
+All edits affect the selected photo. One Apply settings to all photos action copies layout, frame and export settings once; later edits remain individual. Camera metadata, footer visibility and edited metadata text stay with each photo.
 
 Photos without camera metadata default to Film with a disabled footer control. Other photos offer prefilled directly editable text. There is no metadata source-mode selector, field-toggle group, or separate custom note.
 
@@ -28,7 +28,7 @@ No fixed 80-megapixel import cutoff. Above 24 megapixels, supported browsers kee
 
 Keep Frame It Up and one cream (#eae7dc), sand (#d8c3a5), gray (#8e8d8a), coral (#e98074/#e85a4f) world, with darker functional variants for contrast. Source Serif 4 anchors the identity; the editor uses system typography with Source Sans 3 fallback. Keep language functional, one Add photos action, no theme toggle, and no preloaded photos. Use numeric steppers for border, corners, and footer text size; reserve the quality slider for JPG. Keep panes quiet and the trash action easy to identify.
 
-Four styles: White, Black, Color, Film. Film uses only a 35mm label, randomized once per imported photo and stable across previews and exports, with optional white/black surround and width control. No counters or barcodes.
+Four styles: White, Black, Color, Film. Film uses only a 35MM label, randomized once per imported photo and stable across previews and exports, with optional white/black surround and width control. No counters or barcodes.
 
 ## Evidence on Hand
 
@@ -47,7 +47,11 @@ Actual Instagram account support for Mixed orientation, hosting configuration, a
 
 Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Automatic, explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos continue to split automatically only when occupancy improves by at least 15 percentage points.
 
-- Keep the preview and export controls in view. Only the left photograph library scrolls; the inspector uses tabs, and frame details replace basic frame controls while expanded.
+The editor occupies the viewport. The left library and right settings panel scroll independently; preview and export actions stay fixed. Layout and Frame share one scrollable Layout & frame tab, with Export as the other tab. Expanded frame details remain in the same flow. Original aspect ratio appears beside the filename.
 - Film detection or selecting Film defaults to Square; users can explicitly choose another shape. Film remains unsplit.
 - Film stock includes slight stable amber edge fog and wear outside the picture, with uppercase `35MM` lettering.
 - The output quality track distinguishes the filled segment. Remove the posting guide.
+
+Film stock has no end padding on non-perforated edges. Aspect-ratio padding remains only as required to fit the complete photograph and sprockets. Amber edge blooms vary in count, spread, intensity and angle; straight simulated scratch lines are removed.
+
+Film background offers Black and White only. Legacy Film only settings map to Black. Film border defaults to 0; non-film imports retain border 5.

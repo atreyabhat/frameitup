@@ -7,7 +7,7 @@ test('missing camera metadata selects film and disables footer without carrying 
  for(const exif of [null,{}, {camera:'',focal:null}]){
   assert.equal(hasCameraMetadata(exif),false);
   const settings=importSettings(exif,sanitizeSettings({metadata:true,manual:'Other camera',note:'Other note'}));
-  assert.equal(settings.style,'film-35mm');assert.equal(settings.ratio,'square');assert.equal(settings.metadata,false);assert.equal(settings.manual,'');assert.equal(settings.note,'');
+  assert.equal(settings.style,'film-35mm');assert.equal(settings.ratio,'square');assert.equal(settings.border,0);assert.equal(settings.metadata,false);assert.equal(settings.manual,'');assert.equal(settings.note,'');
  }
 });
 test('metadata initializes from each source and manual lens corrections replace the rendered text',()=>{
@@ -31,7 +31,7 @@ test('every import resets posting and quality defaults even after another photo 
 
 test('imports with a selected film frame default square even with camera EXIF',()=>{
  const s=importSettings({camera:'FUJIFILM X-T5'},sanitizeSettings({style:'film-35mm',ratio:'portrait'}));
- assert.equal(s.ratio,'square');
+ assert.equal(s.ratio,'square');assert.equal(s.border,0);
  const digital=importSettings({camera:'Camera'},sanitizeSettings({style:'classic-white',ratio:'square'}));
  assert.equal(digital.ratio,'portrait');
 });

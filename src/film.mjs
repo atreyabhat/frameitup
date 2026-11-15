@@ -30,16 +30,18 @@ export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   let seed = seedPosition >>> 0;
   const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
   // Uneven amber edge fog, scaled with the stock and stable for this photo.
-  for (let i = 0; i < 3; i++) {
+  const blooms = 2 + Math.floor(random() * 3);
+  for (let i = 0; i < blooms; i++) {
     const along = random(), side = random() > 0.5;
     const x = geometry.vertical ? (side ? fx + fw : fx) : fx + along * fw;
     const y = geometry.vertical ? fy + along * fh : (side ? fy + fh : fy);
     const reach = geometry.unit * (3 + random() * 3);
-    ctx.save(); ctx.translate(x, y);
-    ctx.scale(geometry.vertical ? 1 : 3.5, geometry.vertical ? 3.5 : 1);
+    const spread = 2.2 + random() * 2.6, strength = 0.28 + random() * 0.26;
+    ctx.save(); ctx.translate(x, y); ctx.rotate((random() - 0.5) * 0.3);
+    ctx.scale(geometry.vertical ? 1 : spread, geometry.vertical ? spread : 1);
     const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, reach);
-    glow.addColorStop(0, 'rgba(190,98,35,0.48)');
-    glow.addColorStop(0.35, 'rgba(135,55,22,0.28)');
+    glow.addColorStop(0, `rgba(190,98,35,${strength})`);
+    glow.addColorStop(0.25 + random() * 0.25, `rgba(135,55,22,${strength * 0.55})`);
     glow.addColorStop(1, 'rgba(95,37,17,0)');
     ctx.fillStyle = glow; ctx.fillRect(-reach, -reach, reach * 2, reach * 2); ctx.restore();
   }
@@ -48,18 +50,6 @@ export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
     const size = geometry.unit * (0.025 + random() * 0.035);
     ctx.fillRect(fx + random() * fw, fy + random() * fh, size, size);
   }
-  // Fine wear follows the length of the film, never crossing the image aperture.
-  ctx.strokeStyle = 'rgba(213,170,104,0.16)'; ctx.lineWidth = geometry.unit * 0.035;
-  for (let i = 0; i < 14; i++) {
-    const side = random() > 0.5, along = random(), inset = random() * geometry.unit * 0.55;
-    const x = geometry.vertical ? (side ? fx + fw - inset : fx + inset) : fx + along * fw;
-    const y = geometry.vertical ? fy + along * fh : (side ? fy + fh - inset : fy + inset);
-    const length = geometry.unit * (0.5 + random() * 2);
-    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x + (geometry.vertical ? 0 : length), y + (geometry.vertical ? length : 0)); ctx.stroke();
-  }
-  const edge = geometry.unit * 0.045;
-  ctx.strokeStyle = '#51432e'; ctx.lineWidth = edge;
-  ctx.strokeRect(rect.x - edge, rect.y - edge, rect.width + edge * 2, rect.height + edge * 2);
   ctx.fillStyle = background === '#ffffff' ? '#ffffff' : '#f0e8d8';
   for (const hole of geometry.holes) {
     ctx.beginPath(); ctx.roundRect(hole.x, hole.y, hole.width, hole.height, FILM.radius * geometry.unit); ctx.fill();

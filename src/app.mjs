@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto } from './layout.mjs?v=6';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=6';
-import { renderSlide, encodeCanvas } from './render.mjs?v=6';
+import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel } from './layout.mjs?v=7';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=7';
+import { renderSlide, encodeCanvas } from './render.mjs?v=7';
 
 const $ = id => document.getElementById(id);
 const storage = {
@@ -37,14 +37,14 @@ function invalidateOutputs() {
   $('result-list').replaceChildren();
 }
 
-function updateSetting(key, value, global = false) {
+function updateSetting(key, value) {
   if (state.exporting) return;
   const item = selected();
   const patch = { [key]: value };
-  if (key === 'style' && value === 'film-35mm' && item?.settings.style !== value) patch.ratio = 'square';
+  if (key === 'style' && value === 'film-35mm' && item?.settings.style !== value) { patch.ratio = 'square'; patch.border = 0; }
   if (key === 'manual') patch.metadataMode = 'manual';
   preferences = sanitizeSettings({ ...preferences, ...patch });
-  patchPhotoSettings(state.items, state.selected, patch, key === 'ratio' && $('canvas-all').checked);
+  patchPhotoSettings(state.items, state.selected, patch);
   savePreferences();
   invalidateOutputs();
   syncControls();
@@ -56,20 +56,21 @@ const controlMap = {
   metadata: ['metadata'], 'manual-metadata': ['manual'],
   'font-step': ['fontStep'], 'export-type': ['export'],
 };
-for (const [id, [key, global]] of Object.entries(controlMap)) {
+for (const [id, [key]] of Object.entries(controlMap)) {
   const input = $(id);
   input.addEventListener(input.tagName === 'TEXTAREA' || input.type === 'range' || input.type === 'number' || input.type === 'text' ? 'input' : 'change', () => {
-    updateSetting(key, input.type === 'checkbox' ? input.checked : input.type === 'range' || input.type === 'number' ? Number(input.value) : input.value, global);
+    updateSetting(key, input.type === 'checkbox' ? input.checked : input.type === 'range' || input.type === 'number' ? Number(input.value) : input.value);
   });
 }
 document.querySelectorAll('[data-layout]').forEach(button => button.addEventListener('click', () => {
   state.slide = 0; updateSetting('layout', button.dataset.layout);
 }));
 document.querySelectorAll('[data-style]').forEach(button => button.addEventListener('click', () => updateSetting('style', button.dataset.style)));
-$('apply-layout').addEventListener('click', () => {
-  const layout = selected() ? settingsFor(selected()).layout : preferences.layout;
-  state.items.forEach(item => { item.settings.layout = layout; });
-  invalidateOutputs(); syncControls(); renderLibrary(); requestPreview(); setStatus('Layout applied to every photograph.');
+$('apply-settings').addEventListener('click', () => {
+  if (!selected() || state.exporting) return;
+  applySharedSettings(state.items, state.selected);
+  invalidateOutputs(); syncControls(); requestPreview();
+  setStatus('Settings applied to all photos. Further edits affect only the selected photo.');
 });
 
 $('auto-format').addEventListener('change', () => {
@@ -77,9 +78,7 @@ $('auto-format').addEventListener('change', () => {
   const current = selected() ? settingsFor(selected()) : preferences;
   const instagram = $('auto-format').value === 'instagram';
   preferences = instagram ? instagramSettings(current, selected()) : sanitizeSettings({ ...current, instagramReady: false });
-  for (const entry of state.items) if ($('format-all').checked || entry.id === state.selected) {
-    entry.settings = instagram ? instagramSettings(entry.settings, entry) : sanitizeSettings({ ...entry.settings, instagramReady: false });
-  }
+  if (selected()) selected().settings = structuredClone(preferences);
   savePreferences(); invalidateOutputs(); state.slide = 0;
   syncControls(); requestPreview();
 });
@@ -106,11 +105,7 @@ function syncControls() {
   $('metadata-hint').hidden = !item || available;
   $('metadata-controls').hidden = !settings.metadata || !available;
   if (item && settings.metadataMode === 'auto') $('manual-metadata').value = metadataLine(item, { ...settings, manual: '', note: '' });
-  const filmOnly = settings.style === 'film-35mm' && settings.filmBackground === 'none';
   $('film-background-control').hidden = settings.style !== 'film-35mm';
-  $('border').disabled = filmOnly;
-  $('border').hidden = filmOnly;
-  $('border-row').hidden = filmOnly;
   $('jpeg-quality').value = Math.round(settings.jpegQuality * 100);
   $('jpeg-quality').style.setProperty('--quality-fill', `${(Math.round(settings.jpegQuality * 100) - 10) / 90 * 100}%`);
   $('jpeg-quality').disabled = settings.export === 'native';
@@ -118,7 +113,7 @@ function syncControls() {
   $('quality-description').textContent = `${settings.export === 'native' ? 'PNG · Lossless' : 'JPG'} · ${settings.instagramReady ? '1080 px' : 'Source resolution'} · sRGB`;
   $('auto-format').value = settings.instagramReady ? 'instagram' : 'custom';
   $('auto-format').disabled = !item || state.exporting;
-  $('ready-hint').textContent = '';
+  $('ratio-hint').hidden = settings.ratio !== 'adaptive';
   $('scope-row').hidden = state.items.length < 2;
   const targets = $('export-all').checked ? state.items : item ? [item] : [];
   const count = targets.reduce((sum, entry) => sum + planFor(entry).slides.length, 0);
@@ -126,10 +121,10 @@ function syncControls() {
   $('export-button').disabled = !count || state.exporting;
   $('export-current').disabled = !item || state.exporting;
   $('remove-photo').disabled = !item || state.exporting;
-  $('move-before').disabled = !item || state.items.indexOf(item) === 0 || state.exporting;
-  $('move-after').disabled = !item || state.items.indexOf(item) === state.items.length - 1 || state.exporting;
-  $('apply-layout').hidden = state.items.length < 2;
-  $('apply-layout').disabled = !item || state.exporting;
+  $('previous-photo').disabled = !item || state.items.indexOf(item) === 0 || state.exporting;
+  $('next-photo').disabled = !item || state.items.indexOf(item) === state.items.length - 1 || state.exporting;
+  $('apply-settings').hidden = state.items.length < 2;
+  $('apply-settings').disabled = !item || state.exporting;
   $('library').hidden = !state.items.length;
 }
 
@@ -173,7 +168,7 @@ async function renderPreview(revision) {
   $('sequence-heading').hidden = $('slide-strip').hidden = !item;
   $('quality-warning').hidden = true;
   if (!item) {
-    $('photo-title').textContent = 'Your photograph'; $('source-info').textContent = 'Add a photograph to start framing.';
+    $('photo-title').textContent = 'Your photograph'; $('source-ratio').textContent = ''; $('source-info').textContent = 'Add a photograph to start framing.';
     $('slide-strip').replaceChildren(); $('output-dimensions').textContent = '—'; $('slide-description').textContent = 'No photo selected';
     $('sequence-summary').textContent = '0 slides'; $('auto-description').textContent = '';
     $('previous-slide').disabled = $('next-slide').disabled = true;
@@ -194,6 +189,7 @@ async function renderPreview(revision) {
   state.lastView = viewKey;
   $('main-canvas').setAttribute('aria-label', `${item.name}, ${slide.kind === 'slice' ? `continuous part ${slide.index + 1} of ${slide.count}` : 'full framed photograph'}`);
   $('photo-title').textContent = item.name;
+  $('source-ratio').textContent = aspectRatioLabel(item.width, item.height);
   $('source-info').textContent = `${item.width} × ${item.height} px · ${item.width > item.height ? 'Landscape' : item.width < item.height ? 'Portrait' : 'Square'}`;
   $('output-dimensions').textContent = `${slide.width} × ${slide.height} px`;
   $('slide-description').textContent = slide.kind === 'slice' ? `Part ${slide.index + 1} of ${slide.count}` : 'Full photo';
@@ -242,7 +238,7 @@ $('preview-stage').addEventListener('touchend', event => {
   if (Math.abs(delta) > 45 && !button.disabled) button.click();
 }, { passive: true });
 $('workspace').addEventListener('keydown', event => {
-  if (event.target.closest('input,textarea,select')) return;
+  if (event.target.closest('input,textarea,select,.photo-actions')) return;
   if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
     const button = $(event.key === 'ArrowRight' ? 'next-slide' : 'previous-slide');
     if (!button.disabled) { event.preventDefault(); button.click(); }
@@ -317,11 +313,18 @@ $('remove-photo').addEventListener('click', () => {
   state.items.splice(index, 1); state.selected = state.items[Math.min(index, state.items.length - 1)]?.id || null; state.slide = 0;
   invalidateOutputs(); renderLibrary(); syncControls(); requestPreview(); setStatus('Photograph removed from this session.');
 });
-for (const [id, direction] of [['move-before', -1], ['move-after', 1]]) $(id).addEventListener('click', () => {
+for (const [id, direction] of [['previous-photo', -1], ['next-photo', 1]]) $(id).addEventListener('click', () => {
   const index = state.items.findIndex(item => item.id === state.selected), destination = index + direction;
   if (destination < 0 || destination >= state.items.length) return;
-  [state.items[index], state.items[destination]] = [state.items[destination], state.items[index]];
-  invalidateOutputs(); renderLibrary(); syncControls(); setStatus('Photograph and its slides moved together.');
+  state.selected = state.items[destination].id; state.slide = 0;
+  renderLibrary(); syncControls(); requestPreview();
+  const active = $('photo-list').querySelector('[aria-pressed=true]');
+  if (active) {
+    const scroll = active.closest('.library-scroll');
+    const row = active.getBoundingClientRect(), bounds = scroll.getBoundingClientRect();
+    if (row.top < bounds.top) scroll.scrollTop += row.top - bounds.top;
+    else if (row.bottom > bounds.bottom) scroll.scrollTop += row.bottom - bounds.bottom;
+  }
 });
 
 function download(blob, name) {
@@ -388,12 +391,6 @@ requestPreview();
 setStatus('Add your photographs to begin.');
 
 $('jpeg-quality').addEventListener('input', () => updateSetting('jpegQuality', Number($('jpeg-quality').value) / 100));
-for (const [id, key] of [['format-all','format'],['canvas-all','ratio']]) $(id).addEventListener('change', () => {
-  if (!$(id).checked || !selected()) return;
-  const settings = settingsFor(selected());
-  const patch = key === 'format' ? { instagramReady: settings.instagramReady, ratio: settings.ratio, layout: settings.layout } : { ratio: settings.ratio };
-  patchPhotoSettings(state.items, state.selected, patch, true); invalidateOutputs(); syncControls(); requestPreview();
-});
 document.querySelectorAll('[data-step]').forEach(button => button.addEventListener('click', () => {
   const input = $(button.dataset.step);
   if (button.dataset.delta === '1') input.stepUp(); else input.stepDown();

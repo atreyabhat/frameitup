@@ -1,9 +1,9 @@
-import { photoRect } from './layout.mjs?v=6';
-import { metadataLine, fitExifToLines } from './metadata.mjs?v=6';
-import { drawFilm } from './film.mjs?v=6';
+import { photoRect } from './layout.mjs?v=7';
+import { metadataLine, fitExifToLines } from './metadata.mjs?v=7';
+import { drawFilm } from './film.mjs?v=7';
 
 export function backgroundFor(item, settings) {
-  if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : settings.filmBackground === 'black' ? '#111110' : '#171410';
+  if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : '#111110';
   if (settings.style === 'classic-black') return '#111110';
   return settings.style === 'average' ? item.average || '#c4bba6' : '#ffffff';
 }

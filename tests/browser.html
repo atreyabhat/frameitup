@@ -39,16 +39,16 @@ try {
     const photo = {image,width:image.naturalWidth,height:image.naturalHeight,average:'#b8a48c',exif:null};
     const original=document.createElement('canvas');original.width=photo.width;original.height=photo.height;original.getContext('2d').drawImage(image,0,0);
     const rgb=original.getContext('2d').getImageData(0,0,photo.width,photo.height).data;
-    for(const filmBackground of ['none','white','black']) {
-      const settings=sanitizeSettings({instagramReady:false, style:'film-35mm',filmBackground,border:8,ratio:'adaptive',layout:'single'});
+    for(const ratio of ['adaptive','square']) for(const filmBackground of ['white','black']) {
+      const settings=sanitizeSettings({instagramReady:false, style:'film-35mm',filmBackground,border:8,ratio,layout:'single'});
       const plan=planPhoto(photo,settings),slide=plan.slides[0],canvas=await renderSlide(photo,slide,plan,settings),r=photoRect(photo,slide,plan,settings);
       const c=canvas.getContext('2d');
-      check(equal(c.getImageData(r.x,r.y,photo.width,photo.height).data,rgb),`${name}/${filmBackground}: film and mat leave decoded photo pixels unchanged`);
-      if(filmBackground!=='none') {
+      check(equal(c.getImageData(r.x,r.y,photo.width,photo.height).data,rgb),`${name}/${ratio}/${filmBackground}: film and mat leave decoded photo pixels unchanged`);
+      {
         const pixel=Array.from(c.getImageData(0,0,1,1).data);
-        check(equal(pixel,filmBackground==='white'?[255,255,255,255]:[17,17,16,255]),`${name}/${filmBackground}: outer mat uses selected background`);
+        check(equal(pixel,filmBackground==='white'?[255,255,255,255]:[17,17,16,255]),`${name}/${ratio}/${filmBackground}: outer mat uses selected background`);
         const hole=filmGeometry(r,plan.film).holes[0];
-        check(equal(Array.from(c.getImageData(Math.round(hole.x+hole.width/2),Math.round(hole.y+hole.height/2),1,1).data),filmBackground==='white'?pixel:[240,232,216,255]),`${name}/${filmBackground}: perforations remain visible against the mat`);
+        check(equal(Array.from(c.getImageData(Math.round(hole.x+hole.width/2),Math.round(hole.y+hole.height/2),1,1).data),filmBackground==='white'?pixel:[240,232,216,255]),`${name}/${ratio}/${filmBackground}: perforations remain visible against the mat`);
       }
       canvas.width=canvas.height=1;
     }
