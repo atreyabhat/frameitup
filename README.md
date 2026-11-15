@@ -92,3 +92,6 @@ The photo library is 25% wider (180px desktop, 200px wide desktop, 140px compact
 Square Film output with border 0 and no metadata footer now adapts its stock to fill the entire square. Landscape rails expand above/below the intact photo; portrait rails expand at the sides. Perforations retain their proportions and pitch; their size reduces for narrow rails. Near-square sources use a minimum visible rail and a continuous film surround. Non-square canvases and explicitly added border/footer space retain their existing mat layout. White/Black selects the perforation background when the stock fills the canvas.
 
 Missing camera metadata still initializes Film, but only the currently selected Film style disables two/three-part splitting. Switching to White, Black, or Color enables split controls and uses the normal Auto format behavior, including for Photoshop exports without EXIF.
+
+
+Photo-library thumbnails show the full source proportions, capped at 280px visual height (180px on mobile), from a 960px maximum long-edge JPEG at quality 0.94. Film perforations anchor near the image edge; adaptive square stock extends outside the holes. See tests/film-review.md for the real-negative reference comparison.

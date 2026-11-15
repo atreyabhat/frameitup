@@ -25,3 +25,12 @@ The rendering is a restrained interpretation: two to four uneven amber edge bloo
 Film imports and switching into Film default to square. This is a default, not a forced aspect ratio; explicit canvas choices remain available. The never-split film rule remains unchanged.
 
 Follow-up: removed straight abrasion strokes and the uniform aperture outline. Film border defaults to zero, and non-perforated ends are flush with the photograph for every orientation. Native decoded image pixels remain unchanged across five source shapes, three mat choices and square/adaptive canvases.
+
+
+## Full-thumbnail and perforation placement correction — November 15, 2026
+
+Rechecked [a photographed 35 mm stills negative](https://www.shutterangle.com/wp-content/uploads/2012/03/stillsframe.jpg), the photographer's [full-border scanning comparison](https://www.exaframe.com/blog/filmborders), [ILFORD's description of 24 × 36 mm capture](https://www.ilfordphoto.com/shooting-sprockets/), and Kodak's perforation table (PDF page 97). The actual negative visibly has a narrow image-side gap and more space outside the holes. The previous renderer incorrectly centered perforations within both physical and expanded rails.
+
+Perforations now anchor to the image with a nominal 0.696 mm inner gap (5.5 mm rail minus 2.01 mm outer margin minus 2.794 mm cross-film hole size). The square-layout adaptation adds stock outside the holes rather than moving them away from the photo. Hole shape, pitch, seeded lettering and film patina remain intact. This is a digital adaptation, especially for panoramic and square sources, rather than an exact model of a particular camera gate.
+
+Reviewed the packaged candidate with five photo shapes. All left-library thumbnails preserve the full source aspect ratio with automatic height and contain fitting; portrait and panoramic sources are not cropped into landscape boxes. Thumbnail generation now caps the long edge at 960 px, does not enlarge small sources, uses high-quality resampling and JPEG quality 0.94. Thumbnail dimensions stay omitted. Renderer checks retain the complete photograph's source pixels and cover both stock orientations and backgrounds.

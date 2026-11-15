@@ -1,6 +1,6 @@
-import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=11';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=11';
-import { renderSlide, encodeCanvas } from './render.mjs?v=11';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=12';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=12';
+import { renderSlide, encodeCanvas } from './render.mjs?v=12';
 
 const $ = id => document.getElementById(id);
 // Native selects can match :focus-visible after mouse clicks; track input intent.
@@ -380,11 +380,11 @@ async function decodeFile(file) {
 
     const item = { id: crypto.randomUUID(), name: file.name, file, image, width: image.naturalWidth, height: image.naturalHeight, settings: structuredClone(preferences.instagramReady ? { ...preferences, layout: 'single', overview: true } : preferences), thumbnail: '', average: '#c4bba6', exif: null };
     const canvas = document.createElement('canvas');
-    const thumbnailScale = 180 / Math.max(item.width, item.height);
+    const thumbnailScale = Math.min(1, 960 / Math.max(item.width, item.height));
     canvas.width = Math.max(1, Math.round(item.width * thumbnailScale));
     canvas.height = Math.max(1, Math.round(item.height * thumbnailScale));
-    const ctx = canvas.getContext('2d', { colorSpace: 'srgb' }); ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    item.thumbnail = canvas.toDataURL('image/jpeg', 0.85);
+    const ctx = canvas.getContext('2d', { colorSpace: 'srgb' }); ctx.imageSmoothingQuality = 'high'; ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    item.thumbnail = canvas.toDataURL('image/jpeg', 0.94);
     canvas.width = canvas.height = 1; ctx.drawImage(image, 0, 0, 1, 1);
     const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
     item.average = `rgb(${r}, ${g}, ${b})`;

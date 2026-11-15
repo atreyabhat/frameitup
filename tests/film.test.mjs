@@ -116,3 +116,15 @@ test('square film stock fills the canvas and retains proportional holes without 
   }
  }
 });
+
+
+test('perforations stay close to the image with more stock outside, including expanded square rails',()=>{
+ for(const ratio of ['adaptive','square','portrait']) for(const [width,height] of [[1800,1200],[1200,1800],[2400,800],[800,2400],[1400,1400],[1401,1400]]) {
+  const item={width,height},s=sanitizeSettings({style:'film-35mm',border:0,ratio});
+  const p=planPhoto(item,s),r=photoRect(item,p.slides[0],p,s),g=filmGeometry(r,p.film);
+  const h=g.holes[0],gap=g.vertical?r.x-h.x-h.width:r.y-h.y-h.height;
+  assert(Math.abs(gap/g.unit-.696)<1e-8);
+  const outside=g.rail-gap-FILM.across*g.unit;
+  assert(outside>gap*2,`${ratio}/${width}x${height}: outside stock should exceed the image-side gap`);
+ }
+});

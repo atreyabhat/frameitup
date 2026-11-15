@@ -172,3 +172,7 @@ body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1f
 .slide-action{display:grid;place-items:center;width:32px;height:30px;border-radius:4px;color:var(--muted)}
 .slide-action svg{width:16px;height:16px}
 @media(max-width:760px){.slide-item{min-width:56px;max-width:92px}.slide-action{width:28px;height:28px}.slide-action svg{width:14px;height:14px}}
+
+/* Library previews show the entire source, preserving portrait and panoramic shapes. */
+.photo-thumb{width:auto;height:auto;max-width:100%;max-height:280px;object-fit:contain;margin-inline:auto}
+@media(max-width:760px){.photo-thumb{height:auto;max-height:180px}}

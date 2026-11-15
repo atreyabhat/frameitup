@@ -10,13 +10,16 @@ export function filmGeometry(rect, film) {
   const pitch = FILM.pitch * unit;
   const count = Math.max(1, Math.floor((length - FILM.along * unit) / pitch) + 1);
   const first = (length - (count - 1) * pitch) / 2;
+  // A nominal 5.5 mm rail has 2.01 mm outside the hole, leaving 0.696 mm at the image.
+  // Keep that inner gap when a square canvas adds extra stock outside the perforations.
+  const innerGap = (FILM.rail - FILM.edge - FILM.across) * unit;
   const holes = [];
   for (let i = 0; i < count; i++) {
     const along = first + i * pitch;
-    const positions = vertical ? [rect.x - rail / 2 - FILM.across * unit / 2, rect.x + rect.width + rail / 2 - FILM.across * unit / 2] : [rect.y - rail / 2 - FILM.across * unit / 2, rect.y + rect.height + rail / 2 - FILM.across * unit / 2];
+    const positions = vertical ? [rect.x - innerGap - FILM.across * unit, rect.x + rect.width + innerGap] : [rect.y - innerGap - FILM.across * unit, rect.y + rect.height + innerGap];
     for (const cross of positions) holes.push(vertical ? { x: cross, y: rect.y + along - FILM.along * unit / 2, width: FILM.across * unit, height: FILM.along * unit } : { x: rect.x + along - FILM.along * unit / 2, y: cross, width: FILM.along * unit, height: FILM.across * unit });
   }
-  return { unit, vertical, rail, length, holes, pitch, count };
+  return { unit, vertical, rail, innerGap, length, holes, pitch, count };
 }
 
 export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
