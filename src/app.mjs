@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings } from './layout.mjs';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs';
-import { renderSlide, encodeCanvas } from './render.mjs';
+import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings } from './layout.mjs?v=2';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=2';
+import { renderSlide, encodeCanvas } from './render.mjs?v=2';
 
 const $ = id => document.getElementById(id);
 const storage = {

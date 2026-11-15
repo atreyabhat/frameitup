@@ -1,6 +1,6 @@
-import { photoRect } from './layout.mjs';
-import { metadataLine, fitExifToLines } from './metadata.mjs';
-import { drawFilm } from './film.mjs';
+import { photoRect } from './layout.mjs?v=2';
+import { metadataLine, fitExifToLines } from './metadata.mjs?v=2';
+import { drawFilm } from './film.mjs?v=2';
 
 export function backgroundFor(item, settings) {
   if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : settings.filmBackground === 'black' ? '#111110' : '#171410';
