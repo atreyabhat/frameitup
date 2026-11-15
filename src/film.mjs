@@ -5,7 +5,7 @@ export const FILM = Object.freeze({ across: 2.794, along: 1.981, pitch: 4.75, ed
 export function filmGeometry(rect, film) {
   const unit = film.mm * rect.scale;
   const vertical = film.vertical;
-  const rail = FILM.rail * unit;
+  const rail = (film.rail ?? FILM.rail * film.mm) * rect.scale;
   const length = vertical ? rect.height : rect.width;
   const pitch = FILM.pitch * unit;
   const count = Math.max(1, Math.floor((length - FILM.along * unit) / pitch) + 1);
@@ -13,7 +13,7 @@ export function filmGeometry(rect, film) {
   const holes = [];
   for (let i = 0; i < count; i++) {
     const along = first + i * pitch;
-    const positions = vertical ? [rect.x - rail + FILM.edge * unit, rect.x + rect.width + rail - (FILM.edge + FILM.across) * unit] : [rect.y - rail + FILM.edge * unit, rect.y + rect.height + rail - (FILM.edge + FILM.across) * unit];
+    const positions = vertical ? [rect.x - rail / 2 - FILM.across * unit / 2, rect.x + rect.width + rail / 2 - FILM.across * unit / 2] : [rect.y - rail / 2 - FILM.across * unit / 2, rect.y + rect.height + rail / 2 - FILM.across * unit / 2];
     for (const cross of positions) holes.push(vertical ? { x: cross, y: rect.y + along - FILM.along * unit / 2, width: FILM.across * unit, height: FILM.along * unit } : { x: rect.x + along - FILM.along * unit / 2, y: cross, width: FILM.along * unit, height: FILM.across * unit });
   }
   return { unit, vertical, rail, length, holes, pitch, count };
@@ -21,8 +21,8 @@ export function filmGeometry(rect, film) {
 
 export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   const geometry = filmGeometry(rect, film);
-  const fw = film.width * rect.scale, fh = film.height * rect.scale;
-  const fx = rect.x + (rect.width - fw) / 2, fy = rect.y + (rect.height - fh) / 2;
+  const fw = rect.filmBounds?.width ?? film.width * rect.scale, fh = rect.filmBounds?.height ?? film.height * rect.scale;
+  const fx = rect.filmBounds?.x ?? rect.x + (rect.width - fw) / 2, fy = rect.filmBounds?.y ?? rect.y + (rect.height - fh) / 2;
   ctx.save();
   // Stock texture and edge ink are clipped away from the photograph itself.
   ctx.beginPath(); ctx.rect(fx, fy, fw, fh); ctx.rect(rect.x, rect.y, rect.width, rect.height); ctx.clip('evenodd');
@@ -63,7 +63,7 @@ export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   ctx.textBaseline = 'middle';
   const position = filmLabelPosition(seedPosition);
   ctx.textAlign = 'center';
-  ctx.fillText('35MM', (3 * u) + position.along * Math.max(0, length - 6 * u), (position.side ? 34.05 : 0.95) * u);
+  ctx.fillText('35MM', (3 * u) + position.along * Math.max(0, length - 6 * u), position.side ? rail + (vertical ? rect.width : rect.height) + rail - 0.95 * u : 0.95 * u);
   ctx.restore();
   ctx.restore();
 }

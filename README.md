@@ -87,3 +87,8 @@ Detail is an explicit choice, including for film photos; film is never automatic
 Each bottom thumbnail has a Duplicate action. Copies appear immediately after their source with a 200ms entrance and maintain independent settings, including metadata on full-photo copies. Copies can be removed separately and remain intact when the original sequence changes. Export numbering follows the visible slide order. Layout controls are omitted for a copy because the copy is one existing slide; frame controls are omitted for copied crop/part slides. Reduced-motion preferences remove the entrance.
 
 The photo library is 25% wider (180px desktop, 200px wide desktop, 140px compact desktop, 95px mobile). Thumbnail dimensions are omitted; source dimensions remain above the main preview. Mouse clicks do not create an outer focus rectangle. Keyboard focus remains visible with a close neutral indicator. Film hides Rounded corners and always preserves square image corners.
+
+
+Square Film output with border 0 and no metadata footer now adapts its stock to fill the entire square. Landscape rails expand above/below the intact photo; portrait rails expand at the sides. Perforations retain their proportions and pitch; their size reduces for narrow rails. Near-square sources use a minimum visible rail and a continuous film surround. Non-square canvases and explicitly added border/footer space retain their existing mat layout. White/Black selects the perforation background when the stock fills the canvas.
+
+Missing camera metadata still initializes Film, but only the currently selected Film style disables two/three-part splitting. Switching to White, Black, or Color enables split controls and uses the normal Auto format behavior, including for Photoshop exports without EXIF.

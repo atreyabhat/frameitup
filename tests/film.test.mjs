@@ -93,10 +93,26 @@ test('film removes end stock and reaches the sides when geometry permits',()=>{
 
 
 test('film stock ends exactly at the photograph on the non-perforated edges',()=>{
- for(const [width,height] of [[1800,1200],[1200,1800],[1400,1400],[2400,800]]) {
+ for(const [width,height] of [[1800,1200],[1200,1800],[2400,800]]) {
   const item={width,height},settings=sanitizeSettings({style:'film-35mm',border:0,ratio:'square'});
   const plan=planPhoto(item,settings);
   if(width<height) assert.equal(plan.film.height,height);
   else assert.equal(plan.film.width,width);
+ }
+});
+
+
+test('square film stock fills the canvas and retains proportional holes without cropping photos',()=>{
+ for(const [width,height] of [[6000,4000],[4000,6000],[9000,3000],[3000,9000],[4000,4000],[4001,4000]])
+ for(const instagramReady of [false,true]) for(const filmBackground of ['white','black']) {
+  const item={width,height},s=sanitizeSettings({style:'film-35mm',ratio:'square',border:0,instagramReady,filmBackground});
+  const p=planPhoto(item,s),slide=p.slides[0],r=photoRect(item,slide,p,s),g=filmGeometry(r,p.film);
+  assert.equal(slide.width,slide.height);assert.equal(p.film.width,p.film.height);
+  assert.deepEqual(r.filmBounds,{x:0,y:0,width:slide.width,height:slide.height});
+  assert(r.x>=0&&r.y>=0&&r.x+r.width<=slide.width&&r.y+r.height<=slide.height);
+  for(const h of g.holes) {
+   assert(h.x>=-1&&h.y>=-1&&h.x+h.width<=slide.width+1&&h.y+h.height<=slide.height+1);
+   assert(Math.abs((g.vertical?h.width/h.height:h.height/h.width)-FILM.across/FILM.along)<1e-8);
+  }
  }
 });

@@ -77,6 +77,15 @@ try {
   const squareFilm=sanitizeSettings({style:'film-35mm',instagramReady:false,corners:25,ratio:'square'});
   const squareFilmPlan=planPhoto(item,squareFilm),squareFilmCanvas=await renderSlide(item,squareFilmPlan.slides[0],squareFilmPlan,squareFilm),squareFilmRect=photoRect(item,squareFilmPlan.slides[0],squareFilmPlan,squareFilm);
   check(equal(squareFilmCanvas.getContext('2d').getImageData(squareFilmRect.x,squareFilmRect.y,item.width,item.height).data,pixels.data),'Film ignores rounded corners and preserves all photo corner pixels');
+  for(const name of ['landscape-valley.jpg','portrait-coast.jpg','square-mountain.jpg','panorama-trees.jpg','tall-snow.jpg']) for(const filmBackground of ['white','black']) {
+    const image=new Image();image.src=`/tests/fixtures/${name}`;await image.decode();
+    const photo={image,width:image.naturalWidth,height:image.naturalHeight};
+    const s=sanitizeSettings({style:'film-35mm',ratio:'square',border:0,instagramReady:false,filmBackground});
+    const p=planPhoto(photo,s),c=await renderSlide(photo,p.slides[0],p,s),context=c.getContext('2d'),r=photoRect(photo,p.slides[0],p,s);
+    const src=document.createElement('canvas');src.width=photo.width;src.height=photo.height;src.getContext('2d').drawImage(image,0,0);
+    check(equal(context.getImageData(r.x,r.y,photo.width,photo.height).data,src.getContext('2d').getImageData(0,0,photo.width,photo.height).data),`${name}/${filmBackground}: square rail adaptation preserves the entire photo`);
+    check([[0,0],[c.width-1,0],[0,c.height-1],[c.width-1,c.height-1]].every(([x,y])=>{const a=context.getImageData(x,y,1,1).data;return a[0]<100&&a[1]<100&&a[2]<100;}),`${name}/${filmBackground}: square corners contain film stock rather than a separate mat`);
+  }
   const fontRenders = new Set();
   for (const metadataFont of METADATA_FONTS) {
     const settings=sanitizeSettings({style:'classic-white',ratio:'square',layout:'single',metadata:true,manual:'FUJIFILM X-T5 | 50mm | f/2.8 | 1/250 | ISO 200',metadataFont,fontStep:8});

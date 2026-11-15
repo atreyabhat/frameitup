@@ -50,7 +50,7 @@ export function migrateSettings(old = {}) {
 }
 
 export function isFilmPhoto(item, settings) {
-  return item.detectedFilm === true || settings.style === 'film-35mm';
+  return settings.style === 'film-35mm';
 }
 
 export function ratioFor(item, settings) {
@@ -77,7 +77,7 @@ export function planPhoto(item, settings, hasMetadata = false) {
   const q = ratio.width / ratio.height;
   const count = isFilmPhoto(item, settings) || ['single', 'detail'].includes(settings.layout) ? 1 : Number(settings.layout);
   const insets = frameInsets(q, settings, hasMetadata);
-  const film = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : null;
+  const film = settings.style === 'film-35mm' ? filmBox(item.width, item.height, q === 1 && settings.border === 0 && !insets.footer) : null;
   const nativeSize = (needed) => {
     const unit = ratio.label === 'Adaptive' || ratio.width > 4 ? 1 : ratio.width;
     const width = Math.ceil(needed / unit) * unit;
@@ -111,7 +111,7 @@ export function photoRect(item, slide, plan, settings) {
   const frame = !sliced && plan.film ? plan.film : item;
   const scale = !settings.instagramReady ? 1 : Math.min(1, area.width / frame.width, area.height / frame.height);
   const width = item.width * scale, height = item.height * scale;
-  return { x: Math.floor(area.x + (area.width - width) / 2) - (sliced ? slide.index * slide.width : 0), y: Math.floor(area.y + (area.height - height) / 2), width, height, scale };
+  return { x: Math.floor(area.x + (area.width - width) / 2) - (sliced ? slide.index * slide.width : 0), y: Math.floor(area.y + (area.height - height) / 2), width, height, scale, ...(plan.film?.square && !sliced ? { filmBounds: { x: area.x, y: area.y, width: area.width, height: area.height } } : {}) };
 }
 
 // Position is normalized over the available travel, so every crop stays in bounds.
@@ -121,11 +121,17 @@ export function detailCrop(item, settings, q = ratioFor(item, settings).width / 
   return { x: Math.round((item.width - width) * settings.detailX), y: Math.round((item.height - height) * settings.detailY), width, height };
 }
 
-export function filmBox(width, height) {
+export function filmBox(width, height, square = false) {
   const mm = Math.min(width, height) / 24;
   const vertical = width < height;
   const rail = 5.5 * mm;
-  return { width: width + 2 * (vertical ? rail : 0), height: height + 2 * (vertical ? 0 : rail), vertical, mm };
+  if (square) {
+    // Fit the untouched photo, keeping a minimum legible rail for near-square sources.
+    const long = Math.max(width, height), short = Math.min(width, height);
+    const side = Math.max(long, short + 2 * Math.min(rail, long * 0.03));
+    return { width: side, height: side, vertical, mm: Math.min(mm, (side - short) / 2 / 5.5), rail: (side - short) / 2, square: true };
+  }
+  return { width: width + 2 * (vertical ? rail : 0), height: height + 2 * (vertical ? 0 : rail), vertical, mm, rail };
 }
 
 export function instagramSettings(settings, item = {}) {

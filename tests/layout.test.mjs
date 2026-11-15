@@ -111,27 +111,27 @@ test('new defaults are Instagram dimensions, border5, footer off and JPEG90',()=
  const s=sanitizeSettings();assert.equal(s.border,5);assert.equal(s.instagramReady,true);assert.equal(s.metadata,false);assert.equal(s.jpegQuality,.9);
 });
 
-test('film frames and detected film always stay whole, including forced and shared layouts',()=>{
+test('only the selected film frame prevents splitting',()=>{
  for(const dimensions of [[6000,4000],[9000,3000],[4000,6000]])
  for(const ratio of [...Object.keys(RATIOS),'adaptive'])
  for(const layout of ['auto','single','2','3'])
  for(const detectedFilm of [false,true]){
   const item={width:dimensions[0],height:dimensions[1],detectedFilm};
-  const settings=sanitizeSettings({style:detectedFilm?'classic-white':'film-35mm',ratio,layout});
+  const settings=sanitizeSettings({style:'film-35mm',ratio,layout});
   const plan=planPhoto(item,settings);
   assert.equal(plan.count,1);assert.equal(plan.slides.length,1);assert.equal(plan.slides[0].kind,'single');
  }
  const digital={width:6000,height:4000,detectedFilm:false};
  assert.equal(planPhoto(digital,sanitizeSettings({style:'classic-white',layout:'2'})).count,2);
  const film={...digital,detectedFilm:true};
- assert.equal(planPhoto(film,sanitizeSettings({style:'classic-black',layout:'3'})).count,1);
+ assert.equal(planPhoto(film,sanitizeSettings({style:'classic-black',layout:'3'})).count,3);
 });
 
 
-test('Instagram format defaults detected film square even after changing its frame',()=>{
+test('Instagram format follows the chosen frame after overriding film detection',()=>{
  const original=sanitizeSettings({style:'classic-white',ratio:'portrait'});
  const film=instagramSettings(original,{detectedFilm:true});
- assert.equal(film.ratio,'square');
+ assert.equal(film.ratio,'portrait');
  assert.equal(instagramSettings(original).ratio,'portrait');
  const explicit=sanitizeSettings({...film,ratio:'classic'});
  assert.equal(planPhoto({width:1800,height:1200,detectedFilm:true},explicit).slides[0].height,1350);
