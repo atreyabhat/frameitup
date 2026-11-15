@@ -1,6 +1,6 @@
-import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=9';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=9';
-import { renderSlide, encodeCanvas } from './render.mjs?v=9';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=10';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=10';
+import { renderSlide, encodeCanvas } from './render.mjs?v=10';
 
 const $ = id => document.getElementById(id);
 // Native selects can match :focus-visible after mouse clicks; track input intent.
@@ -251,7 +251,7 @@ async function renderPreview(revision) {
   $('source-info').textContent = `${item.width} × ${item.height} px · ${item.width > item.height ? 'Landscape' : item.width < item.height ? 'Portrait' : 'Square'}`;
   $('output-dimensions').textContent = `${slide.width} × ${slide.height} px`;
   $('slide-description').textContent = (slide.kind === 'detail' ? 'Detail' : slide.kind === 'slice' ? `Part ${slide.index + 1} of ${slide.count}` : 'Full photo') + (slide.copyId ? ' · copy' : '');
-  $('sequence-summary').textContent = `${plan.slides.length} slide${plan.slides.length === 1 ? '' : 's'} · ${plan.ratio.label.replace('Portrait ', '')}`;
+  $('sequence-summary').textContent = `${plan.slides.length} slide${plan.slides.length === 1 ? '' : 's'} · ${renderPlan.ratio.label.replace('Portrait ', '')}`;
   const sourceScale = photoRect(item, slide, renderPlan, settings).scale;
   const lowResolution = settings.instagramReady && (slide.kind === 'detail' ? sourceScale > 1 : sourceScale === 1);
   $('quality-warning').hidden = !lowResolution;
