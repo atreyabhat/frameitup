@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Frame It Up renderer verification</title><body><h1>Renderer verification</h1><p id="status">Running…</p><ul id="results"></ul><script type="module">
+import {sanitizeSettings, planPhoto, photoRect, instagramSettings} from '/src/layout.mjs';
+import {filmGeometry} from '/src/film.mjs';
+import {renderSlide, encodeCanvas} from '/src/render.mjs';
+const results = document.getElementById('results');
+let passed = 0, failed = 0;
+function check(condition, label) { const li = document.createElement('li'); li.textContent = `${condition ? 'PASS' : 'FAIL'}: ${label}`; results.append(li); condition ? passed++ : failed++; }
+const source = document.createElement('canvas'); source.width = 1001; source.height = 667;
+const ctx = source.getContext('2d', {colorSpace:'srgb'}), pixels = ctx.createImageData(1001,667);
+for(let y=0;y<667;y++)for(let x=0;x<1001;x++){const i=(y*1001+x)*4;pixels.data[i]=x%256;pixels.data[i+1]=y%256;pixels.data[i+2]=(x+y)%256;pixels.data[i+3]=255;}
+ctx.putImageData(pixels,0,0);
+const item = {width:1001,height:667,image:source,average:'#cc8866',exif:null};
+const equal=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
+try {
+  for(const count of ['2','3']) {
+    const settings=sanitizeSettings({layout:count}), plan=planPhoto(item,settings), a=plan.slides[1];
+    const strip=document.createElement('canvas');strip.width=a.width*Number(count);strip.height=a.height;
+    const sc=strip.getContext('2d',{colorSpace:'srgb'});
+    for(let i=0;i<Number(count);i++){const tile=await renderSlide(item,plan.slides[i+1],plan,settings);sc.drawImage(tile,i*a.width,0);}
+    const rect=photoRect(item,a,plan,settings);
+    check(equal(sc.getImageData(rect.x,rect.y,1001,667).data,pixels.data),`${count} slides preserve every source pixel and join without lost or repeated columns`);
+  }
+  for(const style of ['classic-white','classic-black','average','film-35mm']){
+    const settings=sanitizeSettings({layout:'single',style,metadata:true,manual:'Camera | 35mm | f/2.8 | 1/125 | ISO 400'}),plan=planPhoto(item,settings,true),slide=plan.slides[0];
+    const canvas=await renderSlide(item,slide,plan,settings),rect=photoRect(item,slide,plan,settings);
+    check(equal(canvas.getContext('2d').getImageData(rect.x,rect.y,1001,667).data,pixels.data),`${style} keeps the photograph's decoded RGB pixels unchanged`);
+    const blob=await encodeCanvas(canvas,'native');
+    const decoded=await createImageBitmap(blob),again=document.createElement('canvas');again.width=decoded.width;again.height=decoded.height;again.getContext('2d').drawImage(decoded,0,0);decoded.close();
+    check(blob.type==='image/png'&&equal(again.getContext('2d').getImageData(rect.x,rect.y,1001,667).data,pixels.data),`${style} PNG round trip is lossless`);
+  }
+  const settings=sanitizeSettings({export:'instagram',layout:'3'}),plan=planPhoto(item,settings);
+  for(const slide of plan.slides){const canvas=await renderSlide(item,slide,plan,settings),blob=await encodeCanvas(canvas,'instagram'),decoded=await createImageBitmap(blob);check(blob.type==='image/jpeg'&&decoded.width===1080&&decoded.height===1440,`${slide.kind} JPEG is actually 1080 × 1440`);decoded.close();}
+  const ready=instagramSettings(sanitizeSettings()),readyPlan=planPhoto(item,ready);
+  check(readyPlan.slides[0].kind==='overview','Auto format puts the full image first');
+  for(const slide of readyPlan.slides){const canvas=await renderSlide(item,slide,readyPlan,ready),blob=await encodeCanvas(canvas,ready.export);check(blob.type==='image/png'&&canvas.width===1080&&canvas.height===1440,`${slide.kind} Auto format PNG uses 1080 × 1440 without lossy encoding`);}
+  for (const name of ['landscape-valley.jpg','portrait-coast.jpg','square-mountain.jpg','panorama-trees.jpg','tall-snow.jpg']) {
+    const image = new Image(); image.src = `/tests/fixtures/${name}`; await image.decode();
+    const photo = {image,width:image.naturalWidth,height:image.naturalHeight,average:'#b8a48c',exif:null};
+    const original=document.createElement('canvas');original.width=photo.width;original.height=photo.height;original.getContext('2d').drawImage(image,0,0);
+    const rgb=original.getContext('2d').getImageData(0,0,photo.width,photo.height).data;
+    for(const filmBackground of ['none','white','black']) {
+      const settings=sanitizeSettings({style:'film-35mm',filmBackground,border:8,ratio:'adaptive',layout:'single'});
+      const plan=planPhoto(photo,settings),slide=plan.slides[0],canvas=await renderSlide(photo,slide,plan,settings),r=photoRect(photo,slide,plan,settings);
+      const c=canvas.getContext('2d');
+      check(equal(c.getImageData(r.x,r.y,photo.width,photo.height).data,rgb),`${name}/${filmBackground}: film and mat leave decoded photo pixels unchanged`);
+      if(filmBackground!=='none') {
+        const pixel=Array.from(c.getImageData(0,0,1,1).data);
+        check(equal(pixel,filmBackground==='white'?[255,255,255,255]:[17,17,16,255]),`${name}/${filmBackground}: outer mat uses selected background`);
+        const hole=filmGeometry(r,plan.film).holes[0];
+        check(equal(Array.from(c.getImageData(Math.round(hole.x+hole.width/2),Math.round(hole.y+hole.height/2),1,1).data),filmBackground==='white'?pixel:[240,232,216,255]),`${name}/${filmBackground}: perforations remain visible against the mat`);
+      }
+      canvas.width=canvas.height=1;
+    }
+    original.width=original.height=1;
+  }
+  try{await renderSlide(item,{width:20000,height:20000,kind:'single'},plan,settings);check(false,'Oversized exports must fail');}catch{check(true,'Oversized native export fails explicitly instead of silently downsizing');}
+}catch(error){check(false,error.stack);}
+document.getElementById('status').textContent=`${passed} passed, ${failed} failed`;
+</script></body></html>

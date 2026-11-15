@@ -1,0 +1,11 @@
+landscape.jpg: Patrick Hodskins, snow-covered mountain, Unsplash.
+https://unsplash.com/photos/snow-covered-mountain-ciRrbR33UeY
+https://images.unsplash.com/photo-1562639405-52bf68020b5a
+Used only as a development rendering fixture. Excluded from the published app.
+
+Five-photo acceptance fixtures (manual uploads only; excluded from release):
+landscape-valley.jpg: https://images.unsplash.com/photo-1470770841072-f978cf4d019e?fit=crop&w=1800&h=1200&q=95&fm=jpg
+portrait-coast.jpg: https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?fit=crop&w=1200&h=1800&q=95&fm=jpg
+square-mountain.jpg: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?fit=crop&w=1400&h=1400&q=95&fm=jpg
+panorama-trees.jpg: https://images.unsplash.com/photo-1441974231531-c6227db76b6e?fit=crop&w=2400&h=800&q=95&fm=jpg
+tall-snow.jpg: https://images.unsplash.com/photo-1519681393784-d120267933ba?fit=crop&w=900&h=1800&q=95&fm=jpg

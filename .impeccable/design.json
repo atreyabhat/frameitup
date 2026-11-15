@@ -1,0 +1,465 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T06:33:10.795876+00:00",
+  "title": "Design System: Frame It Up",
+  "extensions": {
+    "colorMeta": {
+      "page": {
+        "role": "neutral",
+        "displayName": "Page",
+        "tonalRamp": [
+          "oklch(15% 0.0150 94.21)",
+          "oklch(26% 0.0150 94.21)",
+          "oklch(38% 0.0150 94.21)",
+          "oklch(49% 0.0150 94.21)",
+          "oklch(61% 0.0150 94.21)",
+          "oklch(72% 0.0150 94.21)",
+          "oklch(84% 0.0150 94.21)",
+          "oklch(95% 0.0150 94.21)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "tonalRamp": [
+          "oklch(15% 0.0111 89.72)",
+          "oklch(26% 0.0111 89.72)",
+          "oklch(38% 0.0111 89.72)",
+          "oklch(49% 0.0111 89.72)",
+          "oklch(61% 0.0111 89.72)",
+          "oklch(72% 0.0111 89.72)",
+          "oklch(84% 0.0111 89.72)",
+          "oklch(95% 0.0111 89.72)"
+        ]
+      },
+      "stage": {
+        "role": "neutral",
+        "displayName": "Stage",
+        "tonalRamp": [
+          "oklch(15% 0.0139 93.00)",
+          "oklch(26% 0.0139 93.00)",
+          "oklch(38% 0.0139 93.00)",
+          "oklch(49% 0.0139 93.00)",
+          "oklch(61% 0.0139 93.00)",
+          "oklch(72% 0.0139 93.00)",
+          "oklch(84% 0.0139 93.00)",
+          "oklch(95% 0.0139 93.00)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0072 95.30)",
+          "oklch(26% 0.0072 95.30)",
+          "oklch(38% 0.0072 95.30)",
+          "oklch(49% 0.0072 95.30)",
+          "oklch(61% 0.0072 95.30)",
+          "oklch(72% 0.0072 95.30)",
+          "oklch(84% 0.0072 95.30)",
+          "oklch(95% 0.0072 95.30)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0097 91.57)",
+          "oklch(26% 0.0097 91.57)",
+          "oklch(38% 0.0097 91.57)",
+          "oklch(49% 0.0097 91.57)",
+          "oklch(61% 0.0097 91.57)",
+          "oklch(72% 0.0097 91.57)",
+          "oklch(84% 0.0097 91.57)",
+          "oklch(95% 0.0097 91.57)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15% 0.0174 88.01)",
+          "oklch(26% 0.0174 88.01)",
+          "oklch(38% 0.0174 88.01)",
+          "oklch(49% 0.0174 88.01)",
+          "oklch(61% 0.0174 88.01)",
+          "oklch(72% 0.0174 88.01)",
+          "oklch(84% 0.0174 88.01)",
+          "oklch(95% 0.0174 88.01)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Accent",
+        "tonalRamp": [
+          "oklch(15% 0.1414 27.91)",
+          "oklch(26% 0.1414 27.91)",
+          "oklch(38% 0.1414 27.91)",
+          "oklch(49% 0.1414 27.91)",
+          "oklch(61% 0.1414 27.91)",
+          "oklch(72% 0.1414 27.91)",
+          "oklch(84% 0.1414 27.91)",
+          "oklch(95% 0.1414 27.91)"
+        ]
+      },
+      "coral": {
+        "role": "primary",
+        "displayName": "Coral",
+        "tonalRamp": [
+          "oklch(15% 0.1784 27.51)",
+          "oklch(26% 0.1784 27.51)",
+          "oklch(38% 0.1784 27.51)",
+          "oklch(49% 0.1784 27.51)",
+          "oklch(61% 0.1784 27.51)",
+          "oklch(72% 0.1784 27.51)",
+          "oklch(84% 0.1784 27.51)",
+          "oklch(95% 0.1784 27.51)"
+        ]
+      },
+      "sand": {
+        "role": "secondary",
+        "displayName": "Sand",
+        "tonalRamp": [
+          "oklch(15% 0.0469 76.75)",
+          "oklch(26% 0.0469 76.75)",
+          "oklch(38% 0.0469 76.75)",
+          "oklch(49% 0.0469 76.75)",
+          "oklch(61% 0.0469 76.75)",
+          "oklch(72% 0.0469 76.75)",
+          "oklch(84% 0.0469 76.75)",
+          "oklch(95% 0.0469 76.75)"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Accent Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0312 51.49)",
+          "oklch(26% 0.0312 51.49)",
+          "oklch(38% 0.0312 51.49)",
+          "oklch(49% 0.0312 51.49)",
+          "oklch(61% 0.0312 51.49)",
+          "oklch(72% 0.0312 51.49)",
+          "oklch(84% 0.0312 51.49)",
+          "oklch(95% 0.0312 51.49)"
+        ]
+      },
+      "button-ink": {
+        "role": "neutral",
+        "displayName": "Button Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0096 72.66)",
+          "oklch(26% 0.0096 72.66)",
+          "oklch(38% 0.0096 72.66)",
+          "oklch(49% 0.0096 72.66)",
+          "oklch(61% 0.0096 72.66)",
+          "oklch(72% 0.0096 72.66)",
+          "oklch(84% 0.0096 72.66)",
+          "oklch(95% 0.0096 72.66)"
+        ]
+      },
+      "hover": {
+        "role": "neutral",
+        "displayName": "Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0157 86.43)",
+          "oklch(26% 0.0157 86.43)",
+          "oklch(38% 0.0157 86.43)",
+          "oklch(49% 0.0157 86.43)",
+          "oklch(61% 0.0157 86.43)",
+          "oklch(72% 0.0157 86.43)",
+          "oklch(84% 0.0157 86.43)",
+          "oklch(95% 0.0157 86.43)"
+        ]
+      },
+      "danger": {
+        "role": "neutral",
+        "displayName": "Danger",
+        "tonalRamp": [
+          "oklch(15% 0.1493 28.82)",
+          "oklch(26% 0.1493 28.82)",
+          "oklch(38% 0.1493 28.82)",
+          "oklch(49% 0.1493 28.82)",
+          "oklch(61% 0.1493 28.82)",
+          "oklch(72% 0.1493 28.82)",
+          "oklch(84% 0.1493 28.82)",
+          "oklch(95% 0.1493 28.82)"
+        ]
+      },
+      "swatch-gray": {
+        "role": "neutral",
+        "displayName": "Swatch Gray",
+        "tonalRamp": [
+          "oklch(15% 0.0046 91.47)",
+          "oklch(26% 0.0046 91.47)",
+          "oklch(38% 0.0046 91.47)",
+          "oklch(49% 0.0046 91.47)",
+          "oklch(61% 0.0046 91.47)",
+          "oklch(72% 0.0046 91.47)",
+          "oklch(84% 0.0046 91.47)",
+          "oklch(95% 0.0046 91.47)"
+        ]
+      },
+      "scrollbar": {
+        "role": "neutral",
+        "displayName": "Scrollbar",
+        "tonalRamp": [
+          "oklch(15% 0.0240 87.18)",
+          "oklch(26% 0.0240 87.18)",
+          "oklch(38% 0.0240 87.18)",
+          "oklch(49% 0.0240 87.18)",
+          "oklch(61% 0.0240 87.18)",
+          "oklch(72% 0.0240 87.18)",
+          "oklch(84% 0.0240 87.18)",
+          "oklch(95% 0.0240 87.18)"
+        ]
+      },
+      "upload-hover": {
+        "role": "neutral",
+        "displayName": "Upload Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0122 87.55)",
+          "oklch(26% 0.0122 87.55)",
+          "oklch(38% 0.0122 87.55)",
+          "oklch(49% 0.0122 87.55)",
+          "oklch(61% 0.0122 87.55)",
+          "oklch(72% 0.0122 87.55)",
+          "oklch(84% 0.0122 87.55)",
+          "oklch(95% 0.0122 87.55)"
+        ]
+      },
+      "auto-format-line": {
+        "role": "secondary",
+        "displayName": "Auto Format Line",
+        "tonalRamp": [
+          "oklch(15% 0.0548 78.14)",
+          "oklch(26% 0.0548 78.14)",
+          "oklch(38% 0.0548 78.14)",
+          "oklch(49% 0.0548 78.14)",
+          "oklch(61% 0.0548 78.14)",
+          "oklch(72% 0.0548 78.14)",
+          "oklch(84% 0.0548 78.14)",
+          "oklch(95% 0.0548 78.14)"
+        ]
+      },
+      "export-hover": {
+        "role": "primary",
+        "displayName": "Export Hover",
+        "tonalRamp": [
+          "oklch(15% 0.1228 27.58)",
+          "oklch(26% 0.1228 27.58)",
+          "oklch(38% 0.1228 27.58)",
+          "oklch(49% 0.1228 27.58)",
+          "oklch(61% 0.1228 27.58)",
+          "oklch(72% 0.1228 27.58)",
+          "oklch(84% 0.1228 27.58)",
+          "oklch(95% 0.1228 27.58)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "Serif identity; 24px on mobile and 22px at 380px and below."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Sans-serif photograph filename; 18px on mobile."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Root editor text."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Settings legends."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Counts, source dimensions, thumbnails, and preview descriptions."
+      },
+      "hint": {
+        "displayName": "Hint",
+        "purpose": "Functional guidance."
+      },
+      "text-action": {
+        "displayName": "Text Action",
+        "purpose": "Contextual actions; preview-caption actions use 12px."
+      },
+      "empty-state": {
+        "displayName": "Empty State",
+        "purpose": "Serif invitation; 28px on mobile."
+      }
+    },
+    "shadows": [
+      {
+        "name": "photograph",
+        "value": "0 10px 30px #4d47341c",
+        "purpose": "Soft lift of the fitted photograph."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": ".18s cubic-bezier(.16,1,.3,1)",
+        "purpose": "Background changes; borders, shadows, and transforms use .18s ease."
+      },
+      {
+        "name": "photo-settle",
+        "value": "220ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Changed photograph animates from opacity .7 and translateY(3px). Disabled for reduced motion."
+      },
+      {
+        "name": "press",
+        "value": "translateY(1px)",
+        "purpose": "Enabled main button and Auto format press feedback."
+      },
+      {
+        "name": "slide-hover",
+        "value": "translateY(-2px)",
+        "purpose": "Unselected slide hover."
+      },
+      {
+        "name": "ready-check",
+        "value": ".18s",
+        "purpose": "Pressed check opacity 0 to 1 and scale .75 to 1."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "none",
+        "purpose": "Disable animation, transitions, and smooth scrolling."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "small-phone-max",
+        "value": "380px"
+      },
+      {
+        "name": "stacked-inspector-max",
+        "value": "560px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "760px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1100px"
+      },
+      {
+        "name": "wide-desktop-min",
+        "value": "1500px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Add photos",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Single Add photos action.",
+      "html": "<button class=\"ds-button ds-primary\">Add photos</button>",
+      "css": ".ds-button{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f3f0e8)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-button.ds-primary:hover:not(:disabled){background:#47443d}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary{transition:none!important;animation:none!important}} .ds-button.ds-primary:hover:not(:disabled){background:#47443d}"
+    },
+    {
+      "name": "Export",
+      "kind": "button",
+      "refersTo": "button-export",
+      "description": "Full-width coral export action.",
+      "html": "<button class=\"ds-button ds-primary ds-export\">Export photos</button>",
+      "css": ".ds-button{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f3f0e8)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-export{width:100%;justify-content:space-between;background:var(--accent,#a93f36)!important;border-color:var(--accent,#a93f36)!important}.ds-export:hover:not(:disabled){background:#8c332c!important}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary,.ds-export{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Contextual text action.",
+      "html": "<button class=\"ds-text\">Inspect pixels</button>",
+      "css": ".ds-text{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-text{min-height:44px;padding:6px 0;color:var(--accent,#a93f36);text-align:left;font-size:13px;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}.ds-text:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-text:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-text:disabled{opacity:.4;cursor:default}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}@media(prefers-reduced-motion:reduce){.ds-text{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Icon action",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "Photo ordering or removal action.",
+      "html": "<button class=\"ds-icon\" aria-label=\"Move photo later\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m10 6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-icon{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius,4px)}.ds-icon:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-icon:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-icon:disabled{opacity:.4;cursor:default}.ds-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Auto format",
+      "kind": "button",
+      "refersTo": "auto-format",
+      "description": "Shared canvas and automatic layout setup.",
+      "html": "<button class=\"ds-auto\" aria-pressed=\"true\"><span>Auto format</span><svg class=\"ds-check\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></button>",
+      "css": ".ds-auto{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-auto{display:flex;align-items:center;justify-content:flex-start;gap:9px;width:100%;min-height:44px;background:var(--sand,#d8c3a5);border:1px solid #c0a986;border-radius:var(--radius,4px);padding:9px 11px;font-size:14px;font-weight:600}.ds-auto[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);border-color:var(--accent,#a93f36);color:var(--accent,#a93f36)}.ds-check{width:16px;margin-left:auto;opacity:0;transform:scale(.75);transition:opacity .18s,transform .18s}.ds-auto[aria-pressed=true] .ds-check{opacity:1;transform:scale(1)}.ds-auto:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-auto:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-auto:disabled{opacity:.4;cursor:default}.ds-auto:active:not(:disabled){transform:translateY(1px)}.ds-check{height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-auto,.ds-check{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Manual metadata or custom note field.",
+      "html": "<label class=\"ds-label\">Custom note<input class=\"ds-field\" type=\"text\" /></label>",
+      "css": ".ds-label{display:block;font:13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-field{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:9px;caret-color:var(--accent,#a93f36)}.ds-field:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}"
+    },
+    {
+      "name": "Split segments",
+      "kind": "custom",
+      "refersTo": "layout-segment",
+      "description": "Selected-photo split choice.",
+      "html": "<div class=\"ds-segments\" role=\"group\" aria-label=\"Split this photo\"><button aria-pressed=\"true\">Auto</button><button aria-pressed=\"false\">Single</button><button aria-pressed=\"false\">2 slides</button><button aria-pressed=\"false\">3 slides</button></div>",
+      "css": ".ds-segments{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:3px;gap:2px}.ds-segments button{font-size:12px;min-height:38px;padding:5px 2px;border-radius:2px}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36);font-weight:600}.ds-segments button{font-family:\"Source Sans 3\",sans-serif;border:0;background:none;color:var(--ink,#302f2b);cursor:pointer}.ds-segments button:hover{background:var(--hover,#e5e0d5)}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36)}.ds-segments button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-segments{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Photo navigation",
+      "kind": "nav",
+      "refersTo": "photo-item",
+      "description": "Photo rail selection with filename and source dimensions.",
+      "html": "<nav class=\"ds-rail\" aria-label=\"Photographs\"><button class=\"ds-photo\" aria-pressed=\"true\"><span class=\"ds-thumb\" aria-hidden=\"true\"></span><span class=\"ds-name\">Your photograph</span><span class=\"ds-detail\">1800 × 1200</span></button></nav>",
+      "css": ".ds-photo{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-photo{padding:5px;border:1px solid transparent;border-radius:3px;display:block;width:100%;text-align:left}.ds-photo[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;margin:7px 1px 0}.ds-detail{display:block;font-size:12px;color:var(--muted,#66645e);margin:1px;font-variant-numeric:tabular-nums}.ds-photo:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-photo:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-photo:disabled{opacity:.4;cursor:default}.ds-rail{width:122px}.ds-thumb{display:block;height:87px;background:var(--stage,#dedbd1);border-radius:1px}.ds-photo[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-photo,.ds-name,.ds-detail{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Frame choice",
+      "kind": "custom",
+      "refersTo": "frame-option",
+      "description": "Per-photo frame-style choice.",
+      "html": "<button class=\"ds-frame\" aria-pressed=\"true\"><span class=\"ds-sample ds-white\"><i></i></span><span>White</span></button>",
+      "css": ".ds-frame{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-frame{padding:0 0 5px;border-radius:3px;min-height:65px;font-size:12px;text-align:center;border:1px solid transparent}.ds-frame[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-sample{height:37px;margin:4px;display:block;border:1px solid var(--line,#cdc8bc);padding:5px;position:relative}.ds-sample i{display:block;width:100%;height:100%;background:#8e8d8a}.ds-sample.ds-white{background:#fff}.ds-frame:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-frame:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-frame:disabled{opacity:.4;cursor:default}.ds-frame{width:58px}.ds-frame[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-frame,.ds-sample,.ds-white{transition:none!important;animation:none!important}}"
+    },
+    {
+      "name": "Slide tile",
+      "kind": "custom",
+      "refersTo": "slide-tile",
+      "description": "Ordered full-photo or connected-part selection.",
+      "html": "<button class=\"ds-slide\" aria-pressed=\"true\"><canvas width=\"66\" height=\"88\" aria-label=\"Slide preview\"></canvas><span>01 · Full photo</span></button>",
+      "css": ".ds-slide{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-slide{padding:5px;border:1px solid transparent;border-radius:3px;flex:0 0 auto;scroll-snap-align:center}.ds-slide[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-slide canvas{height:88px;width:auto;display:block;background:var(--stage,#dedbd1)}.ds-slide span{display:block;font-size:12px;text-align:left;margin-top:6px;color:var(--muted,#66645e);font-variant-numeric:tabular-nums}.ds-slide:hover:not([aria-pressed=true]){transform:translateY(-2px)}.ds-slide:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-slide:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-slide:disabled{opacity:.4;cursor:default}.ds-slide[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-slide{transition:none!important;animation:none!important}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Photography Light Table",
+    "overview": "The Photography Light Table uses a single cream and sand visual system, warm gray structure, charcoal text, and restrained coral interaction accents. Source Serif 4 gives the identity a composed serif voice; Source Sans 3 keeps photographs, measurements, and settings readable.\n\nWorking surfaces stay flat and compact. Photograph frames remain separate from the interface palette. The current implementation in styles.css and index.html is normative; the editor uses plain HTML, CSS, and JavaScript.",
+    "keyCharacteristics": [
+      "One fixed light palette; no theme switch.",
+      "Serif identity with sans-serif filenames and controls.",
+      "Fine borders, small corner radii, and restrained selection states."
+    ],
+    "rules": [],
+    "dos": [
+      "Do use the fixed cream, sand, gray, and coral world.",
+      "Do use the darker functional accent for readable actions, selection, and focus.",
+      "Do keep Source Serif 4 for the identity and invitation, and Source Sans 3 for editor controls.",
+      "Do keep visible focus, reduced-motion behavior, and photograph proportions.",
+      "Do keep copy functional and upload access to one Add photos action."
+    ],
+    "donts": [
+      "Don't reintroduce dark/light themes, gold accents, or the previous fonts.",
+      "Don't add preloaded photographs, marketing sentences, or repeated explanatory copy.",
+      "Don't add film counters or barcodes; the film lettering is 35mm only.",
+      "Don't turn photographs or settings into decorative cards or add conspicuous motion."
+    ]
+  }
+}

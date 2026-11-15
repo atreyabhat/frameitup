@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Film border review</title><link rel="stylesheet" href="/styles.css"><style>body{padding:24px}h1{font:32px "Libre Caslon Display";margin-bottom:20px}#grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}figure{margin:0;min-width:0}canvas{width:100%;height:430px;object-fit:contain;background:#201e1a}figcaption{padding:12px 0;color:var(--ink);font-size:13px}p{color:var(--muted);font-size:12px;margin-bottom:24px}@media(max-width:700px){#grid{grid-template-columns:1fr 1fr}canvas{height:300px}}</style><body><h1>Film border review</h1><p>Four source shapes, fitted without cropping. Native geometry rendered through the production renderer.</p><div id="grid"></div><script type="module">
+import {sanitizeSettings,planPhoto} from '/src/layout.mjs';
+import {renderSlide} from '/src/render.mjs';
+const image=new Image();image.src='/tests/fixtures/landscape.jpg';await image.decode();await document.fonts.ready;
+for(const [name,w,h] of [['Landscape 3:2',900,600],['Portrait 2:3',600,900],['Square 1:1',700,700],['Panorama 3:1',1200,400]]){
+ const source=document.createElement('canvas');source.width=w;source.height=h;const c=source.getContext('2d');const r=Math.max(w/image.naturalWidth,h/image.naturalHeight);c.drawImage(image,(w-image.naturalWidth*r)/2,(h-image.naturalHeight*r)/2,image.naturalWidth*r,image.naturalHeight*r);
+ const item={width:w,height:h,image:source,exif:null};const settings=sanitizeSettings({style:'film-35mm',layout:'single',ratio:'adaptive'}),plan=planPhoto(item,settings);const canvas=await renderSlide(item,plan.slides[0],plan,settings,800);const f=document.createElement('figure');const caption=document.createElement('figcaption');caption.textContent=name;f.append(canvas,caption);document.getElementById('grid').append(f);
+}
+</script></body></html>

@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+__pycache__/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/surfaces/
+.impeccable/seed*
+.impeccable/concept-seed*
+output/
+
+.impeccable/hook.cache.json
