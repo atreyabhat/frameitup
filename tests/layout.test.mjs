@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULTS, sanitizeSettings, migrateSettings, recommendCount, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings, applySharedSettings, aspectRatioLabel } from '../src/layout.mjs';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings, applySharedSettings, aspectRatioLabel } from '../src/layout.mjs';
 
-test('auto keeps portraits and squares whole; chooses two or three landscape parts', () => {
-  assert.equal(recommendCount(4000, 6000, 0.75), 1);
-  assert.equal(recommendCount(4000, 4000, 0.75), 1);
-  assert.equal(recommendCount(6000, 4000, 0.75), 2);
-  assert.equal(recommendCount(6000, 3000, 0.75), 3);
-  assert.equal(recommendCount(4400, 4000, 0.75), 1);
+test('all new and legacy automatic layouts default to one full photograph',()=>{
+ for(const layout of [undefined,'auto','invalid','single']) {
+  const settings=sanitizeSettings({layout});assert.equal(settings.layout,'single');
+  const plan=planPhoto({width:6000,height:2000},settings);assert.equal(plan.count,1);assert.equal(plan.slides.length,1);
+ }
+ assert.equal(instagramSettings(sanitizeSettings({layout:'3'})).layout,'single');
 });
 
 test('native slices share one exact transform across odd dimensions', () => {
@@ -79,7 +79,7 @@ test('ordered export names isolate duplicate source names and unsafe characters'
 
 test('adaptive split uses portrait viewports rather than wide empty halves', () => {
   const item = {width:1800,height:1200};
-  for (const layout of ['auto','2','3']) {
+  for (const layout of ['2','3']) {
     const settings=sanitizeSettings({instagramReady:false, ratio:'adaptive',layout});
     const plan=planPhoto(item,settings);
     assert.equal(plan.q,0.75);
@@ -89,7 +89,7 @@ test('adaptive split uses portrait viewports rather than wide empty halves', () 
   }
 });
 
-test('Auto format coordinates dimensions and automatic layouts without lossy encoding', () => {
+test('Auto format uses posting dimensions and a single image without changing the encoding', () => {
   const settings=instagramSettings(sanitizeSettings({instagramReady:false, ratio:'adaptive',layout:'single',overview:false,export:'native',style:'film-35mm'}));
   const plan=planPhoto({width:6000,height:4000},settings);
   assert.equal(settings.export,'native');
@@ -122,7 +122,7 @@ test('film frames and detected film always stay whole, including forced and shar
   assert.equal(plan.count,1);assert.equal(plan.slides.length,1);assert.equal(plan.slides[0].kind,'single');
  }
  const digital={width:6000,height:4000,detectedFilm:false};
- assert.equal(planPhoto(digital,sanitizeSettings({style:'classic-white'})).count,2);
+ assert.equal(planPhoto(digital,sanitizeSettings({style:'classic-white',layout:'2'})).count,2);
  const film={...digital,detectedFilm:true};
  assert.equal(planPhoto(film,sanitizeSettings({style:'classic-black',layout:'3'})).count,1);
 });
@@ -154,4 +154,20 @@ test('bulk application is a one-time copy and retains each photo metadata',()=>{
 
 test('original aspect ratios use reduced fractions and mark approximations',()=>{
  for(const [w,h,label] of [[6000,4000,'3:2'],[4000,6000,'2:3'],[1400,1400,'1:1'],[4032,3024,'4:3'],[2400,800,'3:1'],[6000,4001,'≈1.50:1'],[4001,6000,'≈1:1.50']]) assert.equal(aspectRatioLabel(w,h),label);
+});
+
+
+test('metadata fonts are validated, individual, and copied only by an explicit bulk action',()=>{
+ assert.deepEqual(METADATA_FONTS,['DM Mono','Space Mono','Courier Prime','Barlow Condensed','Source Serif 4']);
+ assert.equal(sanitizeSettings({metadataFont:'missing-font'}).metadataFont,'DM Mono');
+ assert.equal(sanitizeSettings().metadataFont,'DM Mono');
+ for(const font of METADATA_FONTS) assert.equal(sanitizeSettings({metadataFont:font}).metadataFont,font);
+ const items=[{id:'a',settings:sanitizeSettings({manual:'Camera A'})},{id:'b',settings:sanitizeSettings({manual:'Camera B'})}];
+ patchPhotoSettings(items,'a',{metadataFont:'Space Mono'});
+ assert.equal(items[1].settings.metadataFont,'DM Mono');
+ applySharedSettings(items,'a');
+ assert.equal(items[1].settings.metadataFont,'Space Mono');
+ patchPhotoSettings(items,'b',{metadataFont:'Courier Prime'});
+ assert.equal(items[0].settings.metadataFont,'Space Mono');
+ assert.deepEqual(items.map(i=>i.settings.manual),['Camera A','Camera B']);
 });

@@ -1,3 +1,5 @@
+export const METADATA_FONTS = ['DM Mono', 'Space Mono', 'Courier Prime', 'Barlow Condensed', 'Source Serif 4'];
+
 export const RATIOS = {
   portrait: { label: 'Portrait 3:4', width: 3, height: 4 },
   classic: { label: 'Portrait 4:5', width: 4, height: 5 },
@@ -6,9 +8,9 @@ export const RATIOS = {
 };
 
 export const DEFAULTS = {
-  ratio: 'portrait', layout: 'auto', style: 'classic-white', border: 5,
+  ratio: 'portrait', layout: 'single', style: 'classic-white', border: 5,
   filmBackground: 'black', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
-  metadataMode: 'auto', manual: '', note: '', fontStep: 3,
+  metadataMode: 'auto', manual: '', note: '', fontStep: 3, metadataFont: 'DM Mono',
   fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true },
 };
 
@@ -19,7 +21,7 @@ export function sanitizeSettings(value = {}) {
   return {
     ...DEFAULTS,
     ratio: choices(value.ratio, [...Object.keys(RATIOS), 'adaptive'], DEFAULTS.ratio),
-    layout: choices(value.layout, ['auto', 'single', '2', '3'], 'auto'),
+    layout: choices(value.layout, ['single', '2', '3'], 'single'),
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
     filmBackground: choices(value.filmBackground, ['white', 'black'], 'black'),
     border: number(value.border, value.style === 'film-35mm' ? 0 : 5, 0, 16), corners: number(value.corners, 0, 0, 25),
@@ -30,6 +32,7 @@ export function sanitizeSettings(value = {}) {
     manual: typeof value.manual === 'string' ? value.manual.slice(0, 1000) : '',
     note: typeof value.note === 'string' ? value.note.slice(0, 200) : '',
     fontStep: number(value.fontStep, 3, 1, 10),
+    metadataFont: choices(value.metadataFont, METADATA_FONTS, DEFAULTS.metadataFont),
     fields: Object.fromEntries(Object.keys(DEFAULTS.fields).map(key => [key, value.fields?.[key] !== false])),
   };
 }
@@ -50,22 +53,13 @@ export function isFilmPhoto(item, settings) {
 
 export function ratioFor(item, settings) {
   if (settings.ratio !== 'adaptive') return RATIOS[settings.ratio];
-  const split = !isFilmPhoto(item, settings) && (settings.layout === '2' || settings.layout === '3' || (settings.layout === 'auto' && recommendCount(item.width, item.height, 0.75) > 1));
+  const split = !isFilmPhoto(item, settings) && (settings.layout === '2' || settings.layout === '3');
   if (split) return { ...RATIOS.portrait, label: 'Adaptive · 3:4' };
   const frame = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : item;
   const q = frame.width / frame.height;
   if (q < 0.75) return RATIOS.portrait;
   if (q > 540 / 283) return RATIOS.landscape;
   return { width: frame.width, height: frame.height, label: 'Adaptive' };
-}
-
-export function recommendCount(width, height, q) {
-  if (width <= height) return 1;
-  const a = width / height;
-  const occupancy = n => Math.min(a / (n * q), n * q / a);
-  let best = 1;
-  for (const n of [2, 3]) if (occupancy(n) > occupancy(best) + 0.00001) best = n;
-  return occupancy(best) - occupancy(1) >= 0.15 ? best : 1;
 }
 
 export function frameInsets(q, settings, hasMetadata) {
@@ -79,7 +73,7 @@ export function frameInsets(q, settings, hasMetadata) {
 export function planPhoto(item, settings, hasMetadata = false) {
   const ratio = ratioFor(item, settings);
   const q = ratio.width / ratio.height;
-  const count = isFilmPhoto(item, settings) ? 1 : settings.layout === 'auto' ? recommendCount(item.width, item.height, q) : settings.layout === 'single' ? 1 : Number(settings.layout);
+  const count = isFilmPhoto(item, settings) || settings.layout === 'single' ? 1 : Number(settings.layout);
   const insets = frameInsets(q, settings, hasMetadata);
   const film = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : null;
   const nativeSize = (needed) => {
@@ -117,7 +111,7 @@ export function filmBox(width, height) {
 }
 
 export function instagramSettings(settings, item = {}) {
-  return sanitizeSettings({ ...settings, instagramReady: true, ratio: isFilmPhoto(item, settings) ? 'square' : 'portrait', layout: 'auto', overview: true });
+  return sanitizeSettings({ ...settings, instagramReady: true, ratio: isFilmPhoto(item, settings) ? 'square' : 'portrait', layout: 'single', overview: true });
 }
 
 export function exportName(fileName, photoIndex, slideIndex, slide, format) {
@@ -136,7 +130,7 @@ export function applySharedSettings(items, selectedId) {
   const source = items.find(item => item.id === selectedId);
   if (!source) return;
   const settings = sanitizeSettings(source.settings);
-  const keys = ['ratio','layout','style','filmBackground','border','corners','export','jpegQuality','instagramReady','fontStep'];
+  const keys = ['ratio','layout','style','filmBackground','border','corners','export','jpegQuality','instagramReady','fontStep','metadataFont'];
   const patch = Object.fromEntries(keys.map(key => [key, settings[key]]));
   patchPhotoSettings(items, selectedId, patch, true);
 }

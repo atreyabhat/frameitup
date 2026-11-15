@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel } from './layout.mjs?v=7';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=7';
-import { renderSlide, encodeCanvas } from './render.mjs?v=7';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel } from './layout.mjs?v=8';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=8';
+import { renderSlide, encodeCanvas } from './render.mjs?v=8';
 
 const $ = id => document.getElementById(id);
 const storage = {
@@ -42,6 +42,7 @@ function updateSetting(key, value) {
   const item = selected();
   const patch = { [key]: value };
   if (key === 'style' && value === 'film-35mm' && item?.settings.style !== value) { patch.ratio = 'square'; patch.border = 0; }
+  if (key === 'style' && value !== 'film-35mm' && item?.settings.style === 'film-35mm') patch.border = 5;
   if (key === 'manual') patch.metadataMode = 'manual';
   preferences = sanitizeSettings({ ...preferences, ...patch });
   patchPhotoSettings(state.items, state.selected, patch);
@@ -51,10 +52,14 @@ function updateSetting(key, value) {
   requestPreview();
 }
 
+for (const family of METADATA_FONTS) {
+  const option = el('option', '', family); option.value = family; $('metadata-font').append(option);
+}
+
 const controlMap = {
   ratio: ['ratio'], 'film-background': ['filmBackground'], border: ['border'], corners: ['corners'],
   metadata: ['metadata'], 'manual-metadata': ['manual'],
-  'font-step': ['fontStep'], 'export-type': ['export'],
+  'metadata-font': ['metadataFont'], 'font-step': ['fontStep'], 'export-type': ['export'],
 };
 for (const [id, [key]] of Object.entries(controlMap)) {
   const input = $(id);
@@ -170,7 +175,7 @@ async function renderPreview(revision) {
   if (!item) {
     $('photo-title').textContent = 'Your photograph'; $('source-ratio').textContent = ''; $('source-info').textContent = 'Add a photograph to start framing.';
     $('slide-strip').replaceChildren(); $('output-dimensions').textContent = '—'; $('slide-description').textContent = 'No photo selected';
-    $('sequence-summary').textContent = '0 slides'; $('auto-description').textContent = '';
+    $('sequence-summary').textContent = '0 slides';
     $('previous-slide').disabled = $('next-slide').disabled = true;
     return;
   }
@@ -184,7 +189,7 @@ async function renderPreview(revision) {
   const viewKey = `${item.id}:${index}`;
   if (state.lastView !== viewKey && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     state.motion?.cancel();
-    state.motion = $('main-canvas').animate([{ opacity: 0.7, transform: 'translateY(3px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 220, easing: 'cubic-bezier(.16,1,.3,1)' });
+    state.motion = $('main-canvas').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
   }
   state.lastView = viewKey;
   $('main-canvas').setAttribute('aria-label', `${item.name}, ${slide.kind === 'slice' ? `continuous part ${slide.index + 1} of ${slide.count}` : 'full framed photograph'}`);
@@ -194,8 +199,6 @@ async function renderPreview(revision) {
   $('output-dimensions').textContent = `${slide.width} × ${slide.height} px`;
   $('slide-description').textContent = slide.kind === 'slice' ? `Part ${slide.index + 1} of ${slide.count}` : 'Full photo';
   $('sequence-summary').textContent = `${plan.slides.length} slide${plan.slides.length === 1 ? '' : 's'} · ${plan.ratio.label.replace('Portrait ', '')}`;
-  $('auto-description').hidden = settings.layout !== 'auto';
-  $('auto-description').textContent = `Auto: ${plan.count === 1 ? 'single' : `${plan.count} parts`}`;
   const lowResolution = (settings.instagramReady) && photoRect(item, slide, plan, settings).scale === 1;
   $('quality-warning').hidden = !lowResolution;
   $('quality-warning').textContent = lowResolution ? 'Small source: padding added to avoid enlargement.' : '';

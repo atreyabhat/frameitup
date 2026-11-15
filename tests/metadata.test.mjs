@@ -35,3 +35,9 @@ test('imports with a selected film frame default square even with camera EXIF',(
  const digital=importSettings({camera:'Camera'},sanitizeSettings({style:'classic-white',ratio:'square'}));
  assert.equal(digital.ratio,'portrait');
 });
+
+
+test('imports retain the preferred font while starting with the metadata footer off',()=>{
+ const settings=importSettings({camera:'FUJIFILM X-T5'},sanitizeSettings({metadataFont:'Barlow Condensed',metadata:true}));
+ assert.equal(settings.metadataFont,'Barlow Condensed');assert.equal(settings.metadata,false);assert.equal(settings.layout,'single');
+});

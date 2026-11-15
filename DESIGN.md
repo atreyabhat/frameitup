@@ -280,7 +280,7 @@ All edits affect the selected photo. One Apply settings to all photos action cop
 - **Metadata:** Frame details contains a footer checkbox, prefilled directly editable textarea, and text-size stepper. Footer starts off. When camera metadata is unavailable, its checkbox is disabled and a concise explanation appears. There is no source-mode selector, field-toggle group, or custom-note field.
 - **Selections:** photo and frame choices share the accent outline and soft fill. Split segments use white selected fill, charcoal text, and a subtle shadow. Each split segment has a (38px) minimum height. Frame styles remain White, Black, Color, and Film.
 - **Focus and browser surfaces:** focus is a (2px) accent outline offset (4px); focused selects and textareas also change border color. Selection uses accent-soft and ink; caret uses accent; scrollbars use warm gray. The skip link is clipped until keyboard focus.
-- **Motion:** control transitions use (.18s); enabled main buttons press down (1px). Photograph selection settles from opacity (.7) and translateY(3px) over (220ms). Metadata controls enter over (.18s ease-out) from opacity (.7) and translateY(-3px). Unselected slide tiles rise (2px) on hover. Reduced motion removes animations, transitions, and smooth scrolling.
+- **Motion:** control transitions use (.18s); enabled main buttons press down (1px). New photograph previews fade from opacity (0) to (1) over (200ms), including batch imports. Metadata controls enter over (.18s ease-out) from opacity (.7) and translateY(-3px). Unselected slide tiles rise (2px) on hover. Reduced motion removes animations, transitions, and smooth scrolling.
 
 Control choices are informed by Apple’s HIG: [steppers](https://developer.apple.com/design/human-interface-guidelines/steppers) pair incremental adjustment with an obvious value and direct entry; [sliders](https://developer.apple.com/design/human-interface-guidelines/sliders) support a bounded range and visible feedback; [toggles and checkboxes](https://developer.apple.com/design/human-interface-guidelines/toggles) represent independent opposing states. [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons) need clear purpose and usable hit regions; [typography](https://developer.apple.com/design/human-interface-guidelines/typography) prioritizes legibility and hierarchy; [sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars) should adapt to available space. These principles inform the web implementation; they do not assert native-platform compliance.
 
@@ -301,7 +301,7 @@ Control choices are informed by Apple’s HIG: [steppers](https://developer.appl
 - Don't add film counters or barcodes; 35MM is the only film lettering.
 - Don't add source-mode selectors, metadata field toggles, or custom-note controls.
 
-Film-framed or detected-film photos always use one full-photo slide. Split-count buttons are disabled for these photos; Auto and Single remain available. Detection persists when a user changes the frame.
+Film-framed or detected-film photos always use one full-photo slide. Split-count buttons are disabled for these photos; Single remains available. Detection persists when a user changes the frame.
 
 ### Bounded editing workspace
 
@@ -310,3 +310,7 @@ The editor occupies the viewport. The left library and right settings panel scro
 The quality slider fills its leading segment in muted amber. Film defaults square, uses uppercase `35MM`, and has seeded amber edge patina confined to the stock. See tests/film-review.md for sources.
 
 Film background offers Black and White only. Legacy Film only settings map to Black. Film border defaults to 0; non-film imports retain border 5.
+
+Metadata font choices: DM Mono (default), Space Mono, Courier Prime, Barlow Condensed, and Source Serif 4. The small Font dropdown appears with the enabled metadata footer. Selection is per photo; the one-time bulk action copies font styling while preserving individual metadata text. Fonts are hosted locally and explicitly loaded before measuring or rendering previews and exports.
+
+Split controls offer Single, 2 slides and 3 slides only. Legacy Auto settings map to Single. Switching from Film to a non-film frame restores border 5. The Frame heading has no scope suffix or separator line.

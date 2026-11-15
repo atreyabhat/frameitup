@@ -15,8 +15,8 @@ Or run `python3 scripts/serve.py` directly. Open http://127.0.0.1:4173. The serv
 ## Use the editor
 
 - Add edited JPEG, PNG, or WebP photographs. The app opens empty; additional imports append to the session.
-- New photos use Instagram sizing, a 3:4 canvas, automatic splits, border width 5, and metadata off. JPG at 90% is the initial encoding default.
-- Auto keeps portraits and squares whole and suggests connected parts for suitable landscapes. Single, 2 slides, and 3 slides override the selected photo. The full framed overview always precedes connected parts.
+- New photos use Instagram sizing, a 3:4 canvas, Single, border width 5, and metadata off. JPG at 90% is the initial encoding default.
+- Single is the default for every photo. 2 slides and 3 slides are explicit per-photo choices. The full framed overview always precedes connected parts.
 - Auto format selects Instagram (1080 pixels wide) or Custom (source resolution) for the selected photo. Canvas shape is independent: 3:4, 4:5, square, 1.91:1, or Fit each photo. Changing shape retains the resolution profile. Fit each photo uses supported proportions and 3:4 split viewports.
 All edits affect the selected photo. One Apply settings to all photos action copies layout, frame and export settings once; later edits remain individual. Camera metadata, footer visibility and edited metadata text stay with each photo.
 - Choose White, Black, Color, or Film. Border width, rounded corners, and metadata text size have numeric entry and decrement/increment controls. Photos without camera metadata start with Film and a disabled metadata-footer checkbox. Otherwise enable the footer to edit its prefilled text. Frames and metadata stay on the overview, leaving connected edges clear.
@@ -65,10 +65,14 @@ The studio uses one cream, sand, gray and coral scheme. Source Serif 4 serves th
 
 Film framing follows nominal 35mm stock around a 24mm image cross-section, using 2.794×1.981mm KS-shaped perforations at 4.75mm pitch. Rails rotate with the photo, their length adapts to its aspect ratio, and the 35MM label stays outside the original image. Its position is randomized per imported photo and remains stable across previews and exports. White and Black background choices frame the complete stock surround; White and Black enable the outer-border control. Perforations stay visible on both mat colors. No frame counters or barcodes are added. All four development passes and research sources are recorded in `tests/film-review.md`. Open `/tests/film.html` on the dev server to inspect the aspect-ratio matrix; this review surface is excluded from the release build.
 
-Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Automatic, explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos continue to split automatically only when occupancy improves by at least 15 percentage points.
+Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos default to Single and split only when explicitly selected.
 
 The editor occupies the viewport. The left library and right settings panel scroll independently; preview and export actions stay fixed. Layout and Frame share one scrollable Layout & frame tab, with Export as the other tab. Expanded frame details remain in the same flow. Original aspect ratio appears beside the filename.
 
 Film defaults to border 0. Non-perforated stock ends are flush with the photo in either orientation. Follow photo proportions (previously Fit each photo) chooses a canvas from the photo and frame within supported posting ratios; split images use portrait 3:4 slides.
 
 Film background offers Black and White only. Legacy Film only settings map to Black. Film border defaults to 0; non-film imports retain border 5.
+
+Metadata font choices: DM Mono (default), Space Mono, Courier Prime, Barlow Condensed, and Source Serif 4. The small Font dropdown appears with the enabled metadata footer. Selection is per photo; the one-time bulk action copies font styling while preserving individual metadata text. Fonts are hosted locally and explicitly loaded before measuring or rendering previews and exports.
+
+Split controls offer Single, 2 slides and 3 slides only. Legacy Auto settings map to Single. Switching from Film to a non-film frame restores border 5. The Frame heading has no scope suffix or separator line.

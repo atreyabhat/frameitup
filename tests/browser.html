@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="en"><meta charset="utf-8"><title>Frame It Up renderer verification</title><body><h1>Renderer verification</h1><p id="status">Running…</p><ul id="results"></ul><script type="module">
-import {sanitizeSettings, planPhoto, photoRect, instagramSettings} from '/src/layout.mjs';
+<html lang="en"><meta charset="utf-8"><title>Frame It Up renderer verification</title><link rel="stylesheet" href="/styles.css"><body><h1>Renderer verification</h1><p id="status">Running…</p><ul id="results"></ul><script type="module">
+import {METADATA_FONTS, sanitizeSettings, planPhoto, photoRect, instagramSettings} from '/src/layout.mjs';
 import {filmGeometry} from '/src/film.mjs';
 import {renderSlide, encodeCanvas} from '/src/render.mjs';
 const results = document.getElementById('results');
@@ -32,7 +32,7 @@ try {
   const settings=sanitizeSettings({instagramReady:true, export:'instagram',layout:'3'}),plan=planPhoto(item,settings);
   for(const slide of plan.slides){const canvas=await renderSlide(item,slide,plan,settings),blob=await encodeCanvas(canvas,'instagram'),decoded=await createImageBitmap(blob);check(blob.type==='image/jpeg'&&decoded.width===1080&&decoded.height===1440,`${slide.kind} JPEG is actually 1080 × 1440`);decoded.close();}
   const ready=instagramSettings(sanitizeSettings({export:'native'})),readyPlan=planPhoto(item,ready);
-  check(readyPlan.slides[0].kind==='overview','Auto format puts the full image first');
+  check(readyPlan.slides[0].kind==='single','Auto format defaults to a single full image');
   for(const slide of readyPlan.slides){const canvas=await renderSlide(item,slide,readyPlan,ready),blob=await encodeCanvas(canvas,ready.export);check(blob.type==='image/png'&&canvas.width===1080&&canvas.height===1440,`${slide.kind} Auto format PNG uses 1080 × 1440 without lossy encoding`);}
   for (const name of ['landscape-valley.jpg','portrait-coast.jpg','square-mountain.jpg','panorama-trees.jpg','tall-snow.jpg']) {
     const image = new Image(); image.src = `/tests/fixtures/${name}`; await image.decode();
@@ -62,6 +62,17 @@ try {
   const filmPixels=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
   check(equal(filmPixels(first),filmPixels(repeat)),'Film patina and lettering remain identical across repeated exports');
   check(!equal(filmPixels(first),filmPixels(variation)),'Film patina and lettering vary with each photo seed');
+  const fontRenders = new Set();
+  for (const metadataFont of METADATA_FONTS) {
+    const settings=sanitizeSettings({style:'classic-white',ratio:'square',layout:'single',metadata:true,manual:'FUJIFILM X-T5 | 50mm | f/2.8 | 1/250 | ISO 200',metadataFont,fontStep:8});
+    const plan=planPhoto(item,settings,true),slide=plan.slides[0];
+    const canvas=await renderSlide(item,slide,plan,settings);
+    check(document.fonts.check(`400 24px "${metadataFont}"`),`${metadataFont} loads before footer rendering`);
+    const blob=await encodeCanvas(canvas,'native'),bitmap=await createImageBitmap(blob);
+    check(bitmap.width===1080&&bitmap.height===1080,`${metadataFont} exports a decodable PNG`);bitmap.close();
+    fontRenders.add(canvas.toDataURL());
+  }
+  check(fontRenders.size===METADATA_FONTS.length,'Every metadata font produces distinct rendered text');
   try{await renderSlide(item,{width:20000,height:20000,kind:'single'},plan,settings);check(false,'Oversized exports must fail');}catch{check(true,'Oversized native export fails explicitly instead of silently downsizing');}
 }catch(error){check(false,error.stack);}
 document.getElementById('status').textContent=`${passed} passed, ${failed} failed`;

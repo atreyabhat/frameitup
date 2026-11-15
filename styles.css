@@ -1,3 +1,7 @@
+@font-face{font-family:"DM Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/dm-mono.ttf") format("truetype")}
+@font-face{font-family:"Space Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/space-mono.ttf") format("truetype")}
+@font-face{font-family:"Courier Prime";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/courier-prime.ttf") format("truetype")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:400;font-display:swap;src:url("/assets/fonts/barlow-condensed.ttf") format("truetype")}
 @font-face{font-family:"Source Sans 3";font-style:normal;font-weight:200 900;font-display:swap;src:url("/assets/fonts/source-sans-3.ttf") format("truetype")}
 @font-face{font-family:"Source Serif 4";font-style:normal;font-weight:200 900;font-display:swap;src:url("/assets/fonts/source-serif-4.ttf") format("truetype")}
 :root{color-scheme:light;--page:#eae7dc;--panel:#f3f0e8;--stage:#dedbd1;--ink:#302f2b;--muted:#66645e;--line:#cdc8bc;--accent:#a93f36;--coral:#e85a4f;--sand:#d8c3a5;--accent-soft:#ecd5c8;--button-ink:#fffaf4;--hover:#e5e0d5;--danger:#a33329;--radius:4px;font-family:"Source Sans 3",sans-serif;font-size:15px;line-height:1.5;background:var(--page);color:var(--ink)}
@@ -56,7 +60,7 @@ body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1f
 .inspector-panels{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:3px 5px 8px 3px;margin:0 -5px 0 -3px}
 .inspector-panels .settings-section{border:0;padding:0;margin:0}
 .inspector-panels legend{font-size:13px;margin-bottom:12px}
-#panel-frame{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+#panel-frame{margin-top:20px;padding-top:0;border:0}
 #panel-export legend{display:none}
 .inspector-panels [role=tabpanel]{animation:controls-in .18s ease-out}
 .inspector .settings-section>label.scope-check{margin:2px 0 14px;min-height:32px}
@@ -132,3 +136,5 @@ body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1f
 .photo-title-row h1{min-width:0}
 #source-ratio{flex:none;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:760px){.layout-field{margin-bottom:8px}.apply-settings{min-height:30px;font-size:11px;margin-top:2px}.photo-title-row{gap:6px}#source-ratio{font-size:10px}}
+
+#layout-options{grid-template-columns:repeat(3,minmax(0,1fr))}

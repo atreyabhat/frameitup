@@ -12,11 +12,11 @@ Atreya and photographers preparing edited photographs for Instagram on desktop a
 
 ## Product Purpose
 
-Frame complete photographs and make landscapes readable as two or three continuous carousel slides preceded by a full framed overview. Automatically propose each photo's layout, with per-photo overrides.
+Frame complete photographs and make landscapes readable as two or three continuous carousel slides preceded by a full framed overview. Default every photo to Single; allow explicit two- or three-part splits for digital photos.
 
 ## Capabilities and Constraints
 
-Static local processing, four frame styles, editable metadata footers, individual downloads, and numbered ZIPs. Initial digital settings are Instagram sizing, 3:4, automatic split, border 5, metadata off, and JPG at quality 90%. Film imports or selecting Film default to square, border 0, and no splitting. PNG is lossless and disables the quality slider. JPG quality is adjustable from 10–100%. File encoding is separate from Instagram 1080-pixel sizing or Custom source resolution.
+Static local processing, four frame styles, editable metadata footers, individual downloads, and numbered ZIPs. Initial digital settings are Instagram sizing, 3:4, Single, border 5, metadata off, and JPG at quality 90%. Film imports or selecting Film default to square, border 0, and no splitting. PNG is lossless and disables the quality slider. JPG quality is adjustable from 10–100%. File encoding is separate from Instagram 1080-pixel sizing or Custom source resolution.
 
 All edits affect the selected photo. One Apply settings to all photos action copies layout, frame and export settings once; later edits remain individual. Camera metadata, footer visibility and edited metadata text stay with each photo.
 
@@ -45,7 +45,7 @@ Existing static code and the approved Frame It Up Revamp Plan in Pages, supersed
 
 Actual Instagram account support for Mixed orientation, hosting configuration, and support beyond edited SDR sRGB JPEG/PNG need verification. The initial browser workflow does not claim archival RAW/HDR preservation.
 
-Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Automatic, explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos continue to split automatically only when occupancy improves by at least 15 percentage points.
+Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos default to Single and split only when explicitly selected.
 
 The editor occupies the viewport. The left library and right settings panel scroll independently; preview and export actions stay fixed. Layout and Frame share one scrollable Layout & frame tab, with Export as the other tab. Expanded frame details remain in the same flow. Original aspect ratio appears beside the filename.
 - Film detection or selecting Film defaults to Square; users can explicitly choose another shape. Film remains unsplit.
@@ -55,3 +55,7 @@ The editor occupies the viewport. The left library and right settings panel scro
 Film stock has no end padding on non-perforated edges. Aspect-ratio padding remains only as required to fit the complete photograph and sprockets. Amber edge blooms vary in count, spread, intensity and angle; straight simulated scratch lines are removed.
 
 Film background offers Black and White only. Legacy Film only settings map to Black. Film border defaults to 0; non-film imports retain border 5.
+
+Metadata font choices: DM Mono (default), Space Mono, Courier Prime, Barlow Condensed, and Source Serif 4. The small Font dropdown appears with the enabled metadata footer. Selection is per photo; the one-time bulk action copies font styling while preserving individual metadata text. Fonts are hosted locally and explicitly loaded before measuring or rendering previews and exports.
+
+Split controls offer Single, 2 slides and 3 slides only. Legacy Auto settings map to Single. Switching from Film to a non-film frame restores border 5. The Frame heading has no scope suffix or separator line.

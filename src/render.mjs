@@ -1,6 +1,6 @@
-import { photoRect } from './layout.mjs?v=7';
-import { metadataLine, fitExifToLines } from './metadata.mjs?v=7';
-import { drawFilm } from './film.mjs?v=7';
+import { photoRect, METADATA_FONTS } from './layout.mjs?v=8';
+import { metadataLine, fitExifToLines } from './metadata.mjs?v=8';
+import { drawFilm } from './film.mjs?v=8';
 
 export function backgroundFor(item, settings) {
   if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : '#111110';
@@ -12,7 +12,14 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
   if (!previewWidth && (slide.width > 16384 || slide.height > 16384 || slide.width * slide.height > 64000000)) {
     throw new Error('This full-resolution canvas is too large for a reliable browser export. Choose a 1080 px format or use a smaller source.');
   }
-  if (document.fonts) await document.fonts.ready;
+  const metadataFont = METADATA_FONTS.includes(settings.metadataFont) ? settings.metadataFont : METADATA_FONTS[0];
+  if (document.fonts) {
+    await document.fonts.ready;
+    if (slide.kind !== 'slice' && plan.insets.footer) {
+      const faces = await document.fonts.load(`400 24px "${metadataFont}"`);
+      if (!faces.length) throw new Error('The metadata font could not be loaded. Reload the page and try again.');
+    }
+  }
   const scale = previewWidth ? Math.min(1, previewWidth / slide.width) : 1;
   const canvas = document.createElement('canvas');
   canvas.width = Math.max(1, Math.round(slide.width * scale));
@@ -45,7 +52,7 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
       const pad = slide.width * 0.04;
       let left = pad;
       ctx.fillStyle = dark ? '#ffffff' : '#24211b';
-      ctx.font = `500 ${(16 + (settings.fontStep - 1) * 26 / 9) * slide.width / 1080}px sans-serif`;
+      ctx.font = `400 ${(16 + (settings.fontStep - 1) * 26 / 9) * slide.width / 1080}px "${metadataFont}"`;
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       const lines = fitExifToLines(ctx, metadataLine(item, settings), slide.width - pad - left, 2);
       const lineHeight = slide.width * 0.035;
