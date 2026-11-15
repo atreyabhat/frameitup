@@ -5,7 +5,7 @@ import { sanitizeSettings, planPhoto, photoRect } from '../src/layout.mjs';
 
 test('film uses source orientation and true KS hole proportions at fixed pitch', () => {
   for (const [width,height] of [[900,600],[600,900],[700,700],[1800,600]]) {
-    const item={width,height},settings=sanitizeSettings({style:'film-35mm',layout:'single',ratio:'adaptive'});
+    const item={width,height},settings=sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',ratio:'adaptive'});
     const plan=planPhoto(item,settings),rect=photoRect(item,plan.slides[0],plan,settings);
     const g=filmGeometry(rect,plan.film);
     assert.equal(g.vertical,width<height);
@@ -22,7 +22,7 @@ test('film uses source orientation and true KS hole proportions at fixed pitch',
 test('all film perforations and full image fit their planned canvas', () => {
   for(const ratio of ['portrait','classic','square','landscape','adaptive']) {
     for(const [width,height] of [[900,600],[600,900],[700,700],[1800,600]]) {
-      const item={width,height},settings=sanitizeSettings({style:'film-35mm',layout:'single',ratio});
+      const item={width,height},settings=sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',ratio});
       const plan=planPhoto(item,settings),slide=plan.slides[0],rect=photoRect(item,slide,plan,settings);
       for(const hole of filmGeometry(rect,plan.film).holes) assert(hole.x>=0&&hole.y>=0&&hole.x+hole.width<=slide.width&&hole.y+hole.height<=slide.height);
     }
@@ -30,7 +30,7 @@ test('all film perforations and full image fit their planned canvas', () => {
 });
 
 test('native wide output does not add hundreds of padding pixels for ratio rounding', () => {
-  const settings=sanitizeSettings({style:'film-35mm',layout:'single',ratio:'adaptive'});
+  const settings=sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',ratio:'adaptive'});
   const plan=planPhoto({width:1200,height:400},settings);
   assert(plan.slides[0].width-plan.film.width<2);
 });
@@ -44,7 +44,7 @@ test('five photo shapes retain their image and film within all supported layouts
     for(const filmBackground of ['none','white','black'])
     for(const border of [0,4,16])
     for(const metadata of [false,true]) {
-      const settings=sanitizeSettings({style:'film-35mm',ratio,layout,export:format,filmBackground,border,metadata});
+      const settings=sanitizeSettings({instagramReady:false, style:'film-35mm',ratio,layout,export:format,filmBackground,border,metadata});
       const plan=planPhoto(item,settings,metadata);
       for(const slide of plan.slides) {
         const rect=photoRect(item,slide,plan,settings);
@@ -63,11 +63,11 @@ test('five photo shapes retain their image and film within all supported layouts
 });
 
 test('film background is validated and white or black mats use the border control', () => {
-  assert.equal(sanitizeSettings({filmBackground:'invalid'}).filmBackground,'none');
+  assert.equal(sanitizeSettings({instagramReady:false, filmBackground:'invalid'}).filmBackground,'none');
   const item={width:1800,height:1200};
-  const only=planPhoto(item,sanitizeSettings({style:'film-35mm',layout:'single',filmBackground:'none',border:8}));
+  const only=planPhoto(item,sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',filmBackground:'none',border:8}));
   for(const filmBackground of ['white','black']) {
-    const mat=planPhoto(item,sanitizeSettings({style:'film-35mm',layout:'single',filmBackground,border:8}));
+    const mat=planPhoto(item,sanitizeSettings({instagramReady:false, style:'film-35mm',layout:'single',filmBackground,border:8}));
     assert(mat.slides[0].width>only.slides[0].width);
     assert.equal(mat.insets.x,.08);
   }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULTS, sanitizeSettings, migrateSettings, recommendCount, planPhoto, photoRect, exportName, RATIOS, instagramSettings } from '../src/layout.mjs';
+import { DEFAULTS, sanitizeSettings, migrateSettings, recommendCount, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings } from '../src/layout.mjs';
 
 test('auto keeps portraits and squares whole; chooses two or three landscape parts', () => {
   assert.equal(recommendCount(4000, 6000, 0.75), 1);
@@ -12,7 +12,7 @@ test('auto keeps portraits and squares whole; chooses two or three landscape par
 
 test('native slices share one exact transform across odd dimensions', () => {
   const item = { width: 1001, height: 667 };
-  const settings = sanitizeSettings({ layout: '2' });
+  const settings = sanitizeSettings({instagramReady:false,  layout: '2' });
   const plan = planPhoto(item, settings);
   assert.deepEqual(plan.slides.map(x => x.kind), ['overview', 'slice', 'slice']);
   const left = photoRect(item, plan.slides[1], plan, settings);
@@ -29,7 +29,7 @@ test('native full frames preserve all source pixels for every style and ratio', 
     const item = { width: dimensions[0], height: dimensions[1] };
     for (const ratio of [...Object.keys(RATIOS), 'adaptive']) {
       for (const style of ['classic-white', 'classic-black', 'average', 'film-35mm']) {
-        const settings = sanitizeSettings({ ratio, style, metadata: true, layout: 'single', border: 16 });
+        const settings = sanitizeSettings({instagramReady:false,  ratio, style, metadata: true, layout: 'single', border: 16 });
         const plan = planPhoto(item, settings, true), slide = plan.slides[0];
         const rect = photoRect(item, slide, plan, settings);
         assert.equal(rect.scale, 1);
@@ -44,7 +44,7 @@ test('native full frames preserve all source pixels for every style and ratio', 
 test('Instagram copies have exact documented dimensions and never enlarge content', () => {
   const item = { width: 6000, height: 4000 };
   for (const [ratio, height] of [['portrait', 1440], ['classic', 1350], ['square', 1080], ['landscape', 566]]) {
-    const settings = sanitizeSettings({ export: 'instagram', ratio });
+    const settings = sanitizeSettings({instagramReady:true, export: 'instagram', ratio });
     const plan = planPhoto(item, settings);
     assert(plan.slides.every(slide => slide.width === 1080 && slide.height === height));
     for (const slide of plan.slides) assert(photoRect({ width: 100, height: 80 }, slide, plan, settings).scale <= 1);
@@ -53,7 +53,7 @@ test('Instagram copies have exact documented dimensions and never enlarge conten
 
 test('full photo always comes first even with old disabled preferences', () => {
   const item = { width: 3000, height: 4000 };
-  const plan = planPhoto(item, sanitizeSettings({ layout: '3', overview: false }));
+  const plan = planPhoto(item, sanitizeSettings({instagramReady:false,  layout: '3', overview: false }));
   assert.equal(plan.count, 3);
   assert.equal(plan.slides.length, 4);
   assert.equal(plan.slides[0].kind, 'overview');
@@ -62,10 +62,10 @@ test('full photo always comes first even with old disabled preferences', () => {
 
 test('migration retains useful preferences but resets destructive quality and scaling', () => {
   const settings = migrateSettings({ preset: 'fuji-style', borderWidth: 8, exportQuality: 0.5, nonInstagramScale: 2 });
-  assert.equal(settings.export, 'native');
+  assert.equal(settings.export, 'instagram');
   assert.equal(settings.style, 'classic-white');
   assert.equal(settings.border, 8);
-  assert.deepEqual(sanitizeSettings({ border: Infinity, export: 'webp', ratio: 'evil' }).export, DEFAULTS.export);
+  assert.deepEqual(sanitizeSettings({instagramReady:false,  border: Infinity, export: 'webp', ratio: 'evil' }).export, DEFAULTS.export);
 });
 
 test('ordered export names isolate duplicate source names and unsafe characters', () => {
@@ -80,7 +80,7 @@ test('ordered export names isolate duplicate source names and unsafe characters'
 test('adaptive split uses portrait viewports rather than wide empty halves', () => {
   const item = {width:1800,height:1200};
   for (const layout of ['auto','2','3']) {
-    const settings=sanitizeSettings({ratio:'adaptive',layout});
+    const settings=sanitizeSettings({instagramReady:false, ratio:'adaptive',layout});
     const plan=planPhoto(item,settings);
     assert.equal(plan.q,0.75);
     assert.equal(plan.slides[0].kind,'overview');
@@ -90,7 +90,7 @@ test('adaptive split uses portrait viewports rather than wide empty halves', () 
 });
 
 test('Auto format coordinates dimensions and automatic layouts without lossy encoding', () => {
-  const settings=instagramSettings(sanitizeSettings({ratio:'adaptive',layout:'single',overview:false,export:'native',style:'film-35mm'}));
+  const settings=instagramSettings(sanitizeSettings({instagramReady:false, ratio:'adaptive',layout:'single',overview:false,export:'native',style:'film-35mm'}));
   const plan=planPhoto({width:6000,height:4000},settings);
   assert.equal(settings.export,'native');
   assert.equal(settings.style,'film-35mm');
@@ -98,4 +98,15 @@ test('Auto format coordinates dimensions and automatic layouts without lossy enc
   assert.equal(plan.count,2);
   assert.equal(plan.slides[0].kind,'overview');
   assert(plan.slides.every(slide=>slide.width===1080 && slide.height===1440));
+});
+
+test('format and canvas changes stay on the selected photo unless apply-all is explicit',()=>{
+ const items=[{id:'a',settings:sanitizeSettings()},{id:'b',settings:sanitizeSettings()}];
+ patchPhotoSettings(items,'a',{ratio:'square',instagramReady:false});
+ assert.equal(items[0].settings.ratio,'square');assert.equal(items[1].settings.ratio,'portrait');
+ patchPhotoSettings(items,'a',{ratio:'landscape'},true);
+ assert(items.every(i=>i.settings.ratio==='landscape'));
+});
+test('new defaults are Instagram dimensions, border5, footer off and JPEG90',()=>{
+ const s=sanitizeSettings();assert.equal(s.border,5);assert.equal(s.instagramReady,true);assert.equal(s.metadata,false);assert.equal(s.jpegQuality,.9);
 });

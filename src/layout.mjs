@@ -6,8 +6,8 @@ export const RATIOS = {
 };
 
 export const DEFAULTS = {
-  ratio: 'portrait', layout: 'auto', style: 'classic-white', border: 4,
-  filmBackground: 'none', corners: 0, overview: true, export: 'native', instagramReady: false, metadata: false,
+  ratio: 'portrait', layout: 'auto', style: 'classic-white', border: 5,
+  filmBackground: 'none', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
   metadataMode: 'auto', manual: '', note: '', fontStep: 3,
   fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true },
 };
@@ -22,9 +22,10 @@ export function sanitizeSettings(value = {}) {
     layout: choices(value.layout, ['auto', 'single', '2', '3'], 'auto'),
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
     filmBackground: choices(value.filmBackground, ['none', 'white', 'black'], 'none'),
-    border: number(value.border, 4, 0, 16), corners: number(value.corners, 0, 0, 25),
-    overview: true, export: choices(value.export, ['native', 'instagram'], 'native'),
-    instagramReady: value.instagramReady === true,
+    border: number(value.border, 5, 0, 16), corners: number(value.corners, 0, 0, 25),
+    overview: true, export: choices(value.export, ['native', 'instagram'], DEFAULTS.export),
+    jpegQuality: number(value.jpegQuality, 0.9, 0.1, 1),
+    instagramReady: value.instagramReady !== false,
     metadata: value.metadata === true, metadataMode: value.metadataMode === 'manual' ? 'manual' : 'auto',
     manual: typeof value.manual === 'string' ? value.manual.slice(0, 1000) : '',
     note: typeof value.note === 'string' ? value.note.slice(0, 200) : '',
@@ -85,7 +86,7 @@ export function planPhoto(item, settings, hasMetadata = false) {
     return { width, height: Math.ceil(width / q) };
   };
   const posting = { width: 1080, height: Math.round(1080 / q) };
-  const postingSize = settings.export === 'instagram' || settings.instagramReady;
+  const postingSize = settings.instagramReady;
   const fullSize = postingSize ? posting : nativeSize(Math.max((film?.width || item.width) / insets.innerWidth, (film?.height || item.height) / insets.innerHeight));
   const sliceSize = postingSize ? posting : nativeSize(Math.max(item.width / count, item.height * q));
   const slides = count > 1 ? Array.from({ length: count }, (_, index) => ({ kind: 'slice', index, count, ...sliceSize })) : [];
@@ -101,7 +102,7 @@ export function photoRect(item, slide, plan, settings) {
     width: plan.insets.innerWidth * slide.width, height: plan.insets.innerHeight * slide.width,
   };
   const frame = !sliced && plan.film ? plan.film : item;
-  const scale = settings.export === 'native' && !settings.instagramReady ? 1 : Math.min(1, area.width / frame.width, area.height / frame.height);
+  const scale = !settings.instagramReady ? 1 : Math.min(1, area.width / frame.width, area.height / frame.height);
   const width = item.width * scale, height = item.height * scale;
   return { x: Math.floor(area.x + (area.width - width) / 2) - (sliced ? slide.index * slide.width : 0), y: Math.floor(area.y + (area.height - height) / 2), width, height, scale };
 }
@@ -121,4 +122,8 @@ export function exportName(fileName, photoIndex, slideIndex, slide, format) {
   const base = fileName.replace(/\.[^.]+$/, '').normalize('NFKC').replace(/[^\p{L}\p{N}_-]+/gu, '_').replace(/^_+|_+$/g, '').slice(0, 70) || 'photo';
   const role = slide.kind === 'slice' ? `part-${slide.index + 1}-of-${slide.count}` : slide.kind === 'overview' ? 'full' : 'framed';
   return `${String(photoIndex + 1).padStart(2, '0')}_${String(slideIndex + 1).padStart(2, '0')}_${base}_${role}.${format === 'instagram' ? 'jpg' : 'png'}`;
+}
+
+export function patchPhotoSettings(items, selectedId, patch, all = false) {
+  for (const item of items) if (all || item.id === selectedId) item.settings = sanitizeSettings({ ...item.settings, ...patch });
 }

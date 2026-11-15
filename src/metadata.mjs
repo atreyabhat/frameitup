@@ -156,7 +156,7 @@ export function hasCameraMetadata(exif) {
 
 export function importSettings(exif, preferences) {
   const available = hasCameraMetadata(exif);
-  const settings = { ...preferences, metadata: available && preferences.metadata, metadataMode: 'auto', manual: '', note: '', fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true } };
+  const settings = { ...preferences, border: 5, export: 'instagram', jpegQuality: 0.9, instagramReady: true, ratio: 'portrait', layout: 'auto', metadata: false, metadataMode: 'auto', manual: '', note: '', fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true } };
   if (!available) settings.style = 'film-35mm';
   settings.manual = metadataLine({ exif }, settings);
   return settings;

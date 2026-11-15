@@ -1,12 +1,13 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T17:13:38.672056+00:00",
+  "generatedAt": "2026-11-15T17:39:28.268373+00:00",
   "title": "Design System: Frame It Up",
   "extensions": {
     "colorMeta": {
       "page": {
         "role": "neutral",
         "displayName": "Page",
+        "canonical": "#eae7dc",
         "tonalRamp": [
           "oklch(15% 0.0150 94.21)",
           "oklch(26% 0.0150 94.21)",
@@ -21,20 +22,22 @@
       "panel": {
         "role": "neutral",
         "displayName": "Panel",
+        "canonical": "#f6f3ec",
         "tonalRamp": [
-          "oklch(15% 0.0111 89.72)",
-          "oklch(26% 0.0111 89.72)",
-          "oklch(38% 0.0111 89.72)",
-          "oklch(49% 0.0111 89.72)",
-          "oklch(61% 0.0111 89.72)",
-          "oklch(72% 0.0111 89.72)",
-          "oklch(84% 0.0111 89.72)",
-          "oklch(95% 0.0111 89.72)"
+          "oklch(15% 0.0098 87.47)",
+          "oklch(26% 0.0098 87.47)",
+          "oklch(38% 0.0098 87.47)",
+          "oklch(49% 0.0098 87.47)",
+          "oklch(61% 0.0098 87.47)",
+          "oklch(72% 0.0098 87.47)",
+          "oklch(84% 0.0098 87.47)",
+          "oklch(95% 0.0098 87.47)"
         ]
       },
       "stage": {
         "role": "neutral",
         "displayName": "Stage",
+        "canonical": "#dedbd1",
         "tonalRamp": [
           "oklch(15% 0.0139 93.00)",
           "oklch(26% 0.0139 93.00)",
@@ -49,6 +52,7 @@
       "ink": {
         "role": "neutral",
         "displayName": "Ink",
+        "canonical": "#302f2b",
         "tonalRamp": [
           "oklch(15% 0.0072 95.30)",
           "oklch(26% 0.0072 95.30)",
@@ -63,6 +67,7 @@
       "muted": {
         "role": "neutral",
         "displayName": "Muted",
+        "canonical": "#66645e",
         "tonalRamp": [
           "oklch(15% 0.0097 91.57)",
           "oklch(26% 0.0097 91.57)",
@@ -77,20 +82,22 @@
       "line": {
         "role": "neutral",
         "displayName": "Line",
+        "canonical": "#d4cfc4",
         "tonalRamp": [
-          "oklch(15% 0.0174 88.01)",
-          "oklch(26% 0.0174 88.01)",
-          "oklch(38% 0.0174 88.01)",
-          "oklch(49% 0.0174 88.01)",
-          "oklch(61% 0.0174 88.01)",
-          "oklch(72% 0.0174 88.01)",
-          "oklch(84% 0.0174 88.01)",
-          "oklch(95% 0.0174 88.01)"
+          "oklch(15% 0.0160 86.43)",
+          "oklch(26% 0.0160 86.43)",
+          "oklch(38% 0.0160 86.43)",
+          "oklch(49% 0.0160 86.43)",
+          "oklch(61% 0.0160 86.43)",
+          "oklch(72% 0.0160 86.43)",
+          "oklch(84% 0.0160 86.43)",
+          "oklch(95% 0.0160 86.43)"
         ]
       },
       "accent": {
         "role": "primary",
         "displayName": "Accent",
+        "canonical": "#a93f36",
         "tonalRamp": [
           "oklch(15% 0.1414 27.91)",
           "oklch(26% 0.1414 27.91)",
@@ -105,6 +112,7 @@
       "coral": {
         "role": "primary",
         "displayName": "Coral",
+        "canonical": "#e85a4f",
         "tonalRamp": [
           "oklch(15% 0.1784 27.51)",
           "oklch(26% 0.1784 27.51)",
@@ -119,6 +127,7 @@
       "sand": {
         "role": "secondary",
         "displayName": "Sand",
+        "canonical": "#d8c3a5",
         "tonalRamp": [
           "oklch(15% 0.0469 76.75)",
           "oklch(26% 0.0469 76.75)",
@@ -133,6 +142,7 @@
       "accent-soft": {
         "role": "primary",
         "displayName": "Accent Soft",
+        "canonical": "#ecd5c8",
         "tonalRamp": [
           "oklch(15% 0.0312 51.49)",
           "oklch(26% 0.0312 51.49)",
@@ -147,6 +157,7 @@
       "button-ink": {
         "role": "neutral",
         "displayName": "Button Ink",
+        "canonical": "#fffaf4",
         "tonalRamp": [
           "oklch(15% 0.0096 72.66)",
           "oklch(26% 0.0096 72.66)",
@@ -161,6 +172,7 @@
       "hover": {
         "role": "neutral",
         "displayName": "Hover",
+        "canonical": "#e5e0d5",
         "tonalRamp": [
           "oklch(15% 0.0157 86.43)",
           "oklch(26% 0.0157 86.43)",
@@ -175,6 +187,7 @@
       "danger": {
         "role": "neutral",
         "displayName": "Danger",
+        "canonical": "#a33329",
         "tonalRamp": [
           "oklch(15% 0.1493 28.82)",
           "oklch(26% 0.1493 28.82)",
@@ -189,6 +202,7 @@
       "swatch-gray": {
         "role": "neutral",
         "displayName": "Swatch Gray",
+        "canonical": "#8e8d8a",
         "tonalRamp": [
           "oklch(15% 0.0046 91.47)",
           "oklch(26% 0.0046 91.47)",
@@ -203,6 +217,7 @@
       "scrollbar": {
         "role": "neutral",
         "displayName": "Scrollbar",
+        "canonical": "#aaa393",
         "tonalRamp": [
           "oklch(15% 0.0240 87.18)",
           "oklch(26% 0.0240 87.18)",
@@ -217,6 +232,7 @@
       "upload-hover": {
         "role": "neutral",
         "displayName": "Upload Hover",
+        "canonical": "#47443d",
         "tonalRamp": [
           "oklch(15% 0.0122 87.55)",
           "oklch(26% 0.0122 87.55)",
@@ -231,6 +247,7 @@
       "export-hover": {
         "role": "primary",
         "displayName": "Export Hover",
+        "canonical": "#8c332c",
         "tonalRamp": [
           "oklch(15% 0.1228 27.58)",
           "oklch(26% 0.1228 27.58)",
@@ -241,6 +258,141 @@
           "oklch(84% 0.1228 27.58)",
           "oklch(95% 0.1228 27.58)"
         ]
+      },
+      "library": {
+        "displayName": "Library",
+        "canonical": "#eeebe3",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0112 89.72)",
+          "oklch(26% 0.0112 89.72)",
+          "oklch(38% 0.0112 89.72)",
+          "oklch(49% 0.0112 89.72)",
+          "oklch(61% 0.0112 89.72)",
+          "oklch(72% 0.0112 89.72)",
+          "oklch(84% 0.0112 89.72)",
+          "oklch(95% 0.0112 89.72)"
+        ]
+      },
+      "stage-surface": {
+        "displayName": "Stage Surface",
+        "canonical": "#e0ddd4",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0126 91.53)",
+          "oklch(26% 0.0126 91.53)",
+          "oklch(38% 0.0126 91.53)",
+          "oklch(49% 0.0126 91.53)",
+          "oklch(61% 0.0126 91.53)",
+          "oklch(72% 0.0126 91.53)",
+          "oklch(84% 0.0126 91.53)",
+          "oklch(95% 0.0126 91.53)"
+        ]
+      },
+      "field-surface": {
+        "displayName": "Field Surface",
+        "canonical": "#fffdf780",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0082 91.48)",
+          "oklch(26% 0.0082 91.48)",
+          "oklch(38% 0.0082 91.48)",
+          "oklch(49% 0.0082 91.48)",
+          "oklch(61% 0.0082 91.48)",
+          "oklch(72% 0.0082 91.48)",
+          "oklch(84% 0.0082 91.48)",
+          "oklch(95% 0.0082 91.48)"
+        ]
+      },
+      "field-line": {
+        "displayName": "Field Line",
+        "canonical": "#d9d3c7",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0176 84.59)",
+          "oklch(26% 0.0176 84.59)",
+          "oklch(38% 0.0176 84.59)",
+          "oklch(49% 0.0176 84.59)",
+          "oklch(61% 0.0176 84.59)",
+          "oklch(72% 0.0176 84.59)",
+          "oklch(84% 0.0176 84.59)",
+          "oklch(95% 0.0176 84.59)"
+        ]
+      },
+      "segment-surface": {
+        "displayName": "Segment Surface",
+        "canonical": "#e9e5dc",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0128 86.83)",
+          "oklch(26% 0.0128 86.83)",
+          "oklch(38% 0.0128 86.83)",
+          "oklch(49% 0.0128 86.83)",
+          "oklch(61% 0.0128 86.83)",
+          "oklch(72% 0.0128 86.83)",
+          "oklch(84% 0.0128 86.83)",
+          "oklch(95% 0.0128 86.83)"
+        ]
+      },
+      "selected-surface": {
+        "displayName": "Selected Surface",
+        "canonical": "#fffdf8",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0069 88.64)",
+          "oklch(26% 0.0069 88.64)",
+          "oklch(38% 0.0069 88.64)",
+          "oklch(49% 0.0069 88.64)",
+          "oklch(61% 0.0069 88.64)",
+          "oklch(72% 0.0069 88.64)",
+          "oklch(84% 0.0069 88.64)",
+          "oklch(95% 0.0069 88.64)"
+        ]
+      },
+      "stepper-line": {
+        "displayName": "Stepper Line",
+        "canonical": "#d7d1c4",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0189 86.15)",
+          "oklch(26% 0.0189 86.15)",
+          "oklch(38% 0.0189 86.15)",
+          "oklch(49% 0.0189 86.15)",
+          "oklch(61% 0.0189 86.15)",
+          "oklch(72% 0.0189 86.15)",
+          "oklch(84% 0.0189 86.15)",
+          "oklch(95% 0.0189 86.15)"
+        ]
+      },
+      "slider-track": {
+        "displayName": "Slider Track",
+        "canonical": "#d4cec1",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0189 86.15)",
+          "oklch(26% 0.0189 86.15)",
+          "oklch(38% 0.0189 86.15)",
+          "oklch(49% 0.0189 86.15)",
+          "oklch(61% 0.0189 86.15)",
+          "oklch(72% 0.0189 86.15)",
+          "oklch(84% 0.0189 86.15)",
+          "oklch(95% 0.0189 86.15)"
+        ]
+      },
+      "slider-thumb-line": {
+        "displayName": "Slider Thumb Line",
+        "canonical": "#b8b0a0",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0241 84.59)",
+          "oklch(26% 0.0241 84.59)",
+          "oklch(38% 0.0241 84.59)",
+          "oklch(49% 0.0241 84.59)",
+          "oklch(61% 0.0241 84.59)",
+          "oklch(72% 0.0241 84.59)",
+          "oklch(84% 0.0241 84.59)",
+          "oklch(95% 0.0241 84.59)"
+        ]
       }
     },
     "typographyMeta": {
@@ -250,42 +402,71 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Sans-serif photograph filename; 18px on mobile."
+        "purpose": "Sans-serif photograph filename; 18px on mobile. Uses the platform system sans-serif stack."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Root editor text."
+        "purpose": "Root editor text. Uses the platform system sans-serif stack."
       },
       "section": {
         "displayName": "Section",
-        "purpose": "Settings legends."
+        "purpose": "Settings legends. Uses the platform system sans-serif stack."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Field labels."
+        "purpose": "Field labels. Uses the platform system sans-serif stack."
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "Counts, source dimensions, thumbnails, and preview descriptions."
+        "purpose": "Counts, source dimensions, thumbnails, and preview descriptions. Uses the platform system sans-serif stack."
       },
       "hint": {
         "displayName": "Hint",
-        "purpose": "Functional guidance."
+        "purpose": "Functional guidance. Uses the platform system sans-serif stack."
       },
       "text-action": {
         "displayName": "Text Action",
-        "purpose": "Contextual actions such as Apply split to all and Download this slide."
+        "purpose": "Contextual actions such as Apply split to all and Download this slide. Uses the platform system sans-serif stack."
       },
       "empty-state": {
         "displayName": "Empty State",
         "purpose": "Serif invitation; 28px on mobile."
+      },
+      "scope": {
+        "displayName": "Scope",
+        "purpose": "Independent Apply to all photos checkbox labels."
       }
     },
     "shadows": [
       {
         "name": "photograph",
         "value": "0 10px 30px #4d47341c",
-        "purpose": "Soft lift of the fitted photograph."
+        "purpose": "Fitted photograph lift."
+      },
+      {
+        "name": "inspector",
+        "value": "-8px 0 28px #51452a05",
+        "purpose": "Very faint desktop pane separation; removed on mobile."
+      },
+      {
+        "name": "field",
+        "value": "0 1px 2px #302f2b04",
+        "purpose": "Subtle field edge."
+      },
+      {
+        "name": "split-selected",
+        "value": "0 1px 4px #302f2b18",
+        "purpose": "Selected segment lift."
+      },
+      {
+        "name": "stepper",
+        "value": "0 1px 3px #302f2b08",
+        "purpose": "Numeric control edge."
+      },
+      {
+        "name": "slider-thumb",
+        "value": "0 2px 4px #302f2b24",
+        "purpose": "Quality thumb lift."
       }
     ],
     "motion": [
@@ -350,7 +531,7 @@
       "refersTo": "button-primary",
       "description": "Single Add photos action.",
       "html": "<button class=\"ds-button ds-primary\">Add photos</button>",
-      "css": ".ds-button{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f3f0e8)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-button.ds-primary:hover:not(:disabled){background:#47443d}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary{transition:none!important;animation:none!important}} .ds-button.ds-primary:hover:not(:disabled){background:#47443d}"
+      "css": ".ds-button{font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;font-size:14px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#d4cfc4);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f6f3ec)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-button.ds-primary:hover:not(:disabled){background:#47443d}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary{transition:none!important;animation:none!important}} .ds-button.ds-primary:hover:not(:disabled){background:#47443d}"
     },
     {
       "name": "Export",
@@ -358,31 +539,23 @@
       "refersTo": "button-export",
       "description": "Full-width coral export action.",
       "html": "<button class=\"ds-button ds-primary ds-export\">Export photos</button>",
-      "css": ".ds-button{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f3f0e8)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-export{width:100%;justify-content:space-between;background:var(--accent,#a93f36)!important;border-color:var(--accent,#a93f36)!important}.ds-export:hover:not(:disabled){background:#8c332c!important}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary,.ds-export{transition:none!important;animation:none!important}}"
+      "css": ".ds-button{font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;font-size:14px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 17px;border:1px solid var(--line,#d4cfc4);border-radius:var(--radius,4px);font-weight:500;background:var(--panel,#f6f3ec)}.ds-button.ds-primary{background:var(--ink,#302f2b);color:var(--button-ink,#fffaf4);border-color:var(--ink,#302f2b)}.ds-export{width:100%;justify-content:space-between;background:var(--accent,#a93f36)!important;border-color:var(--accent,#a93f36)!important}.ds-export:hover:not(:disabled){background:#8c332c!important}.ds-button:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-button:disabled{opacity:.4;cursor:default}.ds-button:active:not(:disabled){transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-button,.ds-primary,.ds-export{transition:none!important;animation:none!important}}"
     },
     {
-      "name": "Text action",
+      "name": "Remove photo",
       "kind": "button",
-      "refersTo": "button-text",
-      "description": "Contextual text action.",
-      "html": "<button class=\"ds-text\">Download this slide</button>",
-      "css": ".ds-text{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-text{min-height:44px;padding:6px 0;color:var(--accent,#a93f36);text-align:left;font-size:13px;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}.ds-text:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-text:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-text:disabled{opacity:.4;cursor:default}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}@media(prefers-reduced-motion:reduce){.ds-text{transition:none!important;animation:none!important}}"
-    },
-    {
-      "name": "Icon action",
-      "kind": "button",
-      "refersTo": "button-icon",
-      "description": "Photo ordering or removal action.",
-      "html": "<button class=\"ds-icon\" aria-label=\"Move photo later\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m10 6 6 6-6 6\"/></svg></button>",
-      "css": ".ds-icon{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius,4px)}.ds-icon:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-icon:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-icon:disabled{opacity:.4;cursor:default}.ds-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none!important;animation:none!important}}"
+      "refersTo": "remove-photo",
+      "description": "Larger outlined trash action.",
+      "html": "<button class=\"ds-trash\" aria-label=\"Remove selected photo\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7m4-7v7\"/></svg></button>",
+      "css": ".ds-trash{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line,#d4cfc4);background:var(--panel,#f6f3ec);color:var(--ink,#302f2b);border-radius:10px;cursor:pointer}.ds-trash svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ds-trash:hover:not(:disabled){background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36)}.ds-trash:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-trash:disabled{opacity:.4}@media(max-width:760px){.ds-trash{width:42px;height:44px}}"
     },
     {
       "name": "Auto format select",
       "kind": "input",
       "refersTo": "auto-format",
-      "description": "Shared Custom or Instagram setup selector.",
-      "html": "<label class=\"ds-label\">Auto format · all photos<select class=\"ds-select\"><option>Custom</option><option>Instagram · 1080 px</option></select></label>",
-      "css": ".ds-label{display:block;font:500 13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-select{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;padding:9px;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px)}.ds-select:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}.ds-select:disabled{opacity:.4;cursor:default}"
+      "description": "Per-photo Custom or Instagram resolution profile; batch scope is separate.",
+      "html": "<label class=\"ds-label\">Auto format<select class=\"ds-select\"><option>Custom</option><option>Instagram</option></select></label>",
+      "css": ".ds-label{display:block;font:500 13px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;color:var(--ink,#302f2b)}.ds-select{display:block;margin-top:7px;font:14px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;width:100%;min-height:44px;padding:9px;background:#fffdf780;color:var(--ink,#302f2b);border:1px solid #d9d3c7;border-radius:8px;box-shadow:0 1px 2px #302f2b04}.ds-select:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}.ds-select:disabled{opacity:.4;cursor:default}"
     },
     {
       "name": "Metadata text",
@@ -390,7 +563,7 @@
       "refersTo": "field",
       "description": "Per-photo metadata text, prefilled and directly editable.",
       "html": "<label class=\"ds-label\">Metadata text<textarea class=\"ds-field\" rows=\"3\">Camera | 35mm | f/2.8</textarea></label>",
-      "css": ".ds-label{display:block;font:13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-field{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;resize:vertical;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:9px;caret-color:var(--accent,#a93f36)}.ds-field:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}"
+      "css": ".ds-label{display:block;font:13px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;color:var(--ink,#302f2b)}.ds-field{display:block;margin-top:7px;font:14px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;width:100%;min-height:44px;resize:vertical;background:#fffdf780;color:var(--ink,#302f2b);border:1px solid #d9d3c7;border-radius:8px;box-shadow:0 1px 2px #302f2b04;padding:9px;caret-color:var(--accent,#a93f36)}.ds-field:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}"
     },
     {
       "name": "Split segments",
@@ -398,7 +571,7 @@
       "refersTo": "layout-segment",
       "description": "Selected-photo split choice.",
       "html": "<div class=\"ds-segments\" role=\"group\" aria-label=\"Split this photo\"><button aria-pressed=\"true\">Auto</button><button aria-pressed=\"false\">Single</button><button aria-pressed=\"false\">2 slides</button><button aria-pressed=\"false\">3 slides</button></div>",
-      "css": ".ds-segments{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:3px;gap:2px}.ds-segments button{font-size:12px;min-height:38px;padding:5px 2px;border-radius:2px}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36);font-weight:600}.ds-segments button{font-family:\"Source Sans 3\",sans-serif;border:0;background:none;color:var(--ink,#302f2b);cursor:pointer}.ds-segments button:hover{background:var(--hover,#e5e0d5)}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36)}.ds-segments button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-segments{transition:none!important;animation:none!important}}"
+      "css": ".ds-segments{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line,#d4cfc4);border-radius:var(--radius,4px);padding:3px;gap:2px}.ds-segments button{font-size:12px;min-height:38px;padding:5px 2px;border-radius:2px}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36);font-weight:600}.ds-segments button{font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;border:0;background:none;color:var(--ink,#302f2b);cursor:pointer}.ds-segments button:hover{background:var(--hover,#e5e0d5)}.ds-segments button[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);color:var(--accent,#a93f36)}.ds-segments button:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-segments{transition:none!important;animation:none!important}}.ds-segments{background:#e9e5dc;border:0;padding:4px;border-radius:8px}.ds-segments button{border-radius:5px}.ds-segments button[aria-pressed=true]{background:#fffdf8;color:var(--ink,#302f2b);box-shadow:0 1px 4px #302f2b18}"
     },
     {
       "name": "Photo navigation",
@@ -406,46 +579,55 @@
       "refersTo": "photo-item",
       "description": "Photo rail selection with filename and source dimensions.",
       "html": "<nav class=\"ds-rail\" aria-label=\"Photographs\"><button class=\"ds-photo\" aria-pressed=\"true\"><span class=\"ds-thumb\" aria-hidden=\"true\"></span><span class=\"ds-name\">Your photograph</span><span class=\"ds-detail\">1800 × 1200</span></button></nav>",
-      "css": ".ds-photo{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-photo{padding:5px;border:1px solid transparent;border-radius:3px;display:block;width:100%;text-align:left}.ds-photo[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;margin:7px 1px 0}.ds-detail{display:block;font-size:12px;color:var(--muted,#66645e);margin:1px;font-variant-numeric:tabular-nums}.ds-photo:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-photo:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-photo:disabled{opacity:.4;cursor:default}.ds-rail{width:122px}.ds-thumb{display:block;height:87px;background:var(--stage,#dedbd1);border-radius:1px}.ds-photo[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-photo,.ds-name,.ds-detail{transition:none!important;animation:none!important}}"
+      "css": ".ds-photo{font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;font-size:14px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-photo{padding:5px;border:1px solid transparent;border-radius:3px;display:block;width:100%;text-align:left}.ds-photo[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;margin:7px 1px 0}.ds-detail{display:block;font-size:12px;color:var(--muted,#66645e);margin:1px;font-variant-numeric:tabular-nums}.ds-photo:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-photo:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-photo:disabled{opacity:.4;cursor:default}.ds-rail{width:122px}.ds-thumb{display:block;height:87px;background:var(--stage,#dedbd1);border-radius:1px}.ds-photo[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-photo,.ds-name,.ds-detail{transition:none!important;animation:none!important}}"
     },
     {
-      "name": "Frame choice",
+      "name": "Numeric stepper",
       "kind": "custom",
-      "refersTo": "frame-option",
-      "description": "Per-photo frame-style choice.",
-      "html": "<button class=\"ds-frame\" aria-pressed=\"true\"><span class=\"ds-sample ds-white\"><i></i></span><span>White</span></button>",
-      "css": ".ds-frame{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-frame{padding:0 0 5px;border-radius:3px;min-height:65px;font-size:12px;text-align:center;border:1px solid transparent}.ds-frame[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-sample{height:37px;margin:4px;display:block;border:1px solid var(--line,#cdc8bc);padding:5px;position:relative}.ds-sample i{display:block;width:100%;height:100%;background:#8e8d8a}.ds-sample.ds-white{background:#fff}.ds-frame:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-frame:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-frame:disabled{opacity:.4;cursor:default}.ds-frame{width:58px}.ds-frame[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-frame,.ds-sample,.ds-white{transition:none!important;animation:none!important}}"
+      "refersTo": "stepper",
+      "description": "Precise numeric adjustment with direct entry.",
+      "html": "<label class=\"ds-adjust\">Border width<span class=\"ds-stepper\"><button aria-label=\"Decrease border width\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 12h12\"/></svg></button><input aria-label=\"Border width\" type=\"number\" min=\"0\" max=\"16\" step=\"1\" value=\"5\" /><button aria-label=\"Increase border width\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 12h12M12 6v12\"/></svg></button></span></label>",
+      "css": ".ds-adjust{display:flex;align-items:center;justify-content:space-between;gap:12px;font:13px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;color:var(--ink,#302f2b)}.ds-stepper{display:flex;align-items:center;background:#fffdf8;border:1px solid #d7d1c4;border-radius:9px;box-shadow:0 1px 3px #302f2b08;overflow:hidden}.ds-stepper button{width:38px;height:40px;border:0;background:none;color:inherit;cursor:pointer}.ds-stepper input{font:inherit;width:42px;height:36px;padding:0;border:0;background:transparent;text-align:center;font-variant-numeric:tabular-nums;appearance:textfield}.ds-stepper button:hover{background:var(--hover,#e5e0d5)}.ds-stepper button:focus-visible,.ds-stepper input:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-stepper svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}"
     },
     {
-      "name": "Slide tile",
-      "kind": "custom",
-      "refersTo": "slide-tile",
-      "description": "Ordered full-photo or connected-part selection.",
-      "html": "<button class=\"ds-slide\" aria-pressed=\"true\"><canvas width=\"66\" height=\"88\" aria-label=\"Slide preview\"></canvas><span>01 · Full photo</span></button>",
-      "css": ".ds-slide{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-slide{padding:5px;border:1px solid transparent;border-radius:3px;flex:0 0 auto;scroll-snap-align:center}.ds-slide[aria-pressed=true]{border-color:var(--accent,#a93f36);background:var(--accent-soft,#ecd5c8)}.ds-slide canvas{height:88px;width:auto;display:block;background:var(--stage,#dedbd1)}.ds-slide span{display:block;font-size:12px;text-align:left;margin-top:6px;color:var(--muted,#66645e);font-variant-numeric:tabular-nums}.ds-slide:hover:not([aria-pressed=true]){transform:translateY(-2px)}.ds-slide:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-slide:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-slide:disabled{opacity:.4;cursor:default}.ds-slide[aria-pressed=true]:hover{background:var(--accent-soft,#ecd5c8)}@media(prefers-reduced-motion:reduce){.ds-slide{transition:none!important;animation:none!important}}"
+      "name": "Quality slider",
+      "kind": "input",
+      "refersTo": "quality-slider",
+      "description": "JPEG percentage; disabled for lossless PNG.",
+      "html": "<label class=\"ds-quality\">Output quality <output>90%</output><input type=\"range\" min=\"10\" max=\"100\" value=\"90\" /></label>",
+      "css": ".ds-quality{font:13px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;color:var(--ink,#302f2b)}.ds-quality output{float:right;font-variant-numeric:tabular-nums;color:var(--muted,#66645e)}.ds-quality input{display:block;width:100%;height:32px;appearance:none;background:transparent}.ds-quality input::-webkit-slider-runnable-track{height:4px;background:#d4cec1;border-radius:4px}.ds-quality input::-moz-range-track{height:4px;background:#d4cec1;border-radius:4px}.ds-quality input::-webkit-slider-thumb{appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:#fffdf8;border:1px solid #b8b0a0;box-shadow:0 2px 4px #302f2b24}.ds-quality input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fffdf8;border:1px solid #b8b0a0;box-shadow:0 2px 4px #302f2b24}.ds-quality input:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-quality input:disabled{opacity:.35;cursor:default}"
+    },
+    {
+      "name": "Batch scope checkbox",
+      "kind": "input",
+      "refersTo": "scope-checkbox",
+      "description": "Independent scope for the adjacent setting.",
+      "html": "<label class=\"ds-scope\"><input type=\"checkbox\" />Apply to all photos</label>",
+      "css": ".ds-scope{display:flex;align-items:center;gap:7px;min-height:36px;font:12px/1.5 -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Source Sans 3\", sans-serif;color:var(--muted,#66645e);cursor:pointer}.ds-scope input{accent-color:var(--accent,#a93f36);width:15px;height:15px;margin:0}.ds-scope input:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}"
     }
   ],
   "narrative": {
     "northStar": "The Photography Light Table",
-    "overview": "The Photography Light Table uses a single cream and sand visual system, warm gray structure, charcoal text, and restrained coral interaction accents. Source Serif 4 gives the identity a composed serif voice; Source Sans 3 keeps photographs, measurements, and settings readable.\n\nWorking surfaces stay flat and compact. Photograph frames remain separate from the interface palette. The current implementation in styles.css and index.html is normative; the editor uses plain HTML, CSS, and JavaScript.",
+    "overview": "The Photography Light Table uses one cream and sand palette, warm gray structure, charcoal text, and restrained coral accents. The identity and empty invitation use Source Serif 4; the editor uses the platform system sans-serif stack, with Source Sans 3 as a fallback.\n\nQuiet panes and compact controls keep photographs central. Exact values use editable numeric steppers; JPEG quality keeps a bounded slider. The final cascade in styles.css and the controls in index.html are normative.",
     "keyCharacteristics": [
       "One fixed light palette; no theme switch.",
-      "Serif identity with sans-serif filenames and controls.",
-      "Fine borders, small corner radii, and restrained selection states."
+      "Serif identity and system-font controls.",
+      "Per-photo settings with independent batch-scope checkboxes.",
+      "Soft field edges, restrained shadows, and visible numeric values."
     ],
     "rules": [],
     "dos": [
-      "Do use the fixed cream, sand, gray, and coral world.",
-      "Do use the darker functional accent for readable actions, selection, and focus.",
-      "Do keep Source Serif 4 for the identity and invitation, and Source Sans 3 for editor controls.",
-      "Do keep visible focus, reduced-motion behavior, and photograph proportions.",
-      "Do keep copy functional and upload access to one Add photos action."
+      "Do preserve the fixed cream, sand, gray, and coral world.",
+      "Do use system typography for controls and Source Serif 4 for identity and invitation.",
+      "Do show the current value beside decrement and increment actions, with direct numeric entry.",
+      "Do keep Auto format and Canvas shape scope independent.",
+      "Do keep visible focus and reduced-motion behavior."
     ],
     "donts": [
-      "Don't reintroduce dark/light themes, gold accents, or the previous fonts.",
-      "Don't add preloaded photographs, marketing sentences, or repeated explanatory copy.",
-      "Don't add film counters or barcodes; the film lettering is 35mm only.",
-      "Don't turn photographs or settings into decorative cards or add conspicuous motion."
+      "Don't reintroduce dark/light themes, marketing copy, or preloaded photographs.",
+      "Don't describe file encoding as a resolution choice; JPG/PNG and Instagram/Custom are independent.",
+      "Don't add film counters or barcodes; 35mm is the only film lettering.",
+      "Don't add source-mode selectors, metadata field toggles, or custom-note controls."
     ]
   }
 }

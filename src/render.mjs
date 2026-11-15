@@ -1,6 +1,6 @@
-import { photoRect } from './layout.mjs?v=2';
-import { metadataLine, fitExifToLines } from './metadata.mjs?v=2';
-import { drawFilm } from './film.mjs?v=2';
+import { photoRect } from './layout.mjs?v=3';
+import { metadataLine, fitExifToLines } from './metadata.mjs?v=3';
+import { drawFilm } from './film.mjs?v=3';
 
 export function backgroundFor(item, settings) {
   if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : settings.filmBackground === 'black' ? '#111110' : '#171410';
@@ -57,10 +57,10 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
   return canvas;
 }
 
-export function encodeCanvas(canvas, type) {
+export function encodeCanvas(canvas, type, quality = 0.9) {
   const mime = type === 'instagram' ? 'image/jpeg' : 'image/png';
   return new Promise((resolve, reject) => canvas.toBlob(blob => {
     if (!blob || blob.type !== mime) reject(new Error('Your browser could not encode the selected format. Try another browser.'));
     else resolve(blob);
-  }, mime, 1));
+  }, mime, quality));
 }

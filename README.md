@@ -14,23 +14,26 @@ Or run `python3 scripts/serve.py` directly. Open http://127.0.0.1:4173. The serv
 
 ## Use the editor
 
-- Add edited JPEG, PNG, or WebP photographs. The app opens empty and additional imports append to the session.
-- Auto keeps portraits and squares whole, and proposes two or three connected slides when they make a landscape substantially larger.
-- Override any photograph with Single, 2 slides, or 3 slides. The complete framed photograph always comes first, followed by its connected parts; the overview cannot be disabled.
-- Select a common canvas ratio: 3:4, 4:5, square, or 1.91:1. Fit each photo keeps complete photos within Instagram’s supported proportions and uses 3:4 viewports for split images, avoiding wide empty halves. Film mode also accounts for the entire physical frame when choosing an adaptive canvas.
-- Choose White, Black, Color, or Film. Adjust border and rounded corners. Photos without camera metadata start with Film, and their metadata-footer checkbox is disabled. For photos with camera metadata, enable the footer to edit its prefilled text and size directly; the text is separate for each photo. Frames and metadata appear on the complete photograph, keeping connected edges clear. Film framing does not change photo saturation.
-- Move photos using the earlier/later buttons. Each photo’s slide group moves together.
-- Export a numbered ZIP, or download individual slides. Auto format offers Custom and Instagram · 1080 px. Instagram sets a shared 3:4 canvas, automatic splits, and 1080×1440 output while preserving the selected PNG or JPEG encoding. Choose Custom to control canvas and resolution independently; changing canvas shape also exits the Instagram preset. Full-resolution PNG is available in Custom. The app allows batches above 20 slides; Instagram’s posting limits are separate. Uncheck Include all photos to export the selected group.
+- Add edited JPEG, PNG, or WebP photographs. The app opens empty; additional imports append to the session.
+- New photos use Instagram sizing, a 3:4 canvas, automatic splits, border width 5, and metadata off. JPG at 90% is the initial encoding default.
+- Auto keeps portraits and squares whole and suggests connected parts for suitable landscapes. Single, 2 slides, and 3 slides override the selected photo. The full framed overview always precedes connected parts.
+- Auto format selects Instagram (1080 pixels wide) or Custom (source resolution) for the selected photo. Canvas shape is independent: 3:4, 4:5, square, 1.91:1, or Fit each photo. Changing shape retains the resolution profile. Fit each photo uses supported proportions and 3:4 split viewports.
+- Auto format and Canvas shape each have an independent Apply to all photos checkbox. Checking one immediately copies that selected setting; subsequent changes use that scope. Format scope copies profile, canvas, and split; canvas scope copies only shape. Frame, metadata, file encoding, and quality remain per-photo.
+- Choose White, Black, Color, or Film. Border width, rounded corners, and metadata text size have numeric entry and decrement/increment controls. Photos without camera metadata start with Film and a disabled metadata-footer checkbox. Otherwise enable the footer to edit its prefilled text. Frames and metadata stay on the overview, leaving connected edges clear.
+- Choose JPG or PNG independently of resolution. JPG quality ranges from 10–100%; PNG disables the quality slider and remains lossless. Move photos with earlier/later actions; each slide group moves together.
+- Export all photos as a numbered ZIP, the selected group by unchecking Include all photos, or one slide with Download this slide. Batches above 20 slides are allowed; Instagram’s posting limits are separate.
 
 ## Image quality
 
-**Full resolution · PNG is the default.** Photo content retains decoded source pixels at 1:1; framing adds canvas space. Native slices share an exact source transform. The full overview can have larger pixel dimensions than its slices, preserving its source detail; all retain the selected aspect ratio. No file-size targets, lossy export, automatic downscaling, filters, sharpening, or enlargement apply in this mode.
+**The initial default is Instagram-sized JPG at 90%.** Instagram profile outputs 1080-pixel-wide files at the selected canvas ratio. JPG is encoded once at the selected quality and remains lossy. Small sources are padded instead of enlarged. PNG offers lossless encoding at the same posting size.
 
-**JPEG · 1080 px is explicit.** It creates 1080-pixel-wide, maximum-quality JPEGs in sRGB, encoded once from the source. JPEG remains lossy. Small sources are padded rather than enlarged. Instagram independently resizes and recompresses uploads; this app cannot bypass that.
+**Custom uses source resolution with either encoding.** Photo content keeps a 1:1 decoded source transform; framing adds canvas space. Connected slices share an exact source transform. Full overviews may have larger dimensions than their slices. PNG preserves rendered pixels; JPG applies the selected lossy quality. No sharpening, filters, or enlargement are added. Instagram may resize and recompress files independently.
 
-Previews and library thumbnails use smaller rasters for interaction; exported photographs never derive from them. Canvas exports are SDR sRGB and do not preserve original RAW/HDR/16-bit profiles or embedded source metadata. The metadata footer is visible text. Edit and convert those source formats in a photo editor before import. Very large sources or canvases produce an explicit error, never a silent quality reduction.
+There is no application-level 80-megapixel import cutoff. Import still depends on browser decoding and memory. Sources above 24 megapixels use a working bitmap with a maximum long edge of 4320 pixels where createImageBitmap is available. The original file and dimensions remain in the session; source-resolution exports decode the original file again rather than enlarging the working copy. Posting-size output can use the working bitmap. Previews and thumbnails are smaller interaction rasters.
 
-Photographs stay on the device. JavaScript libraries and typefaces ship locally; the editor does not upload photos. Only preferences are saved in localStorage. Reloading clears the photo session. v2 preferences migrate without carrying over JPEG quality reductions or artificial 2× enlargement.
+Export canvases retain the reliability guard: no side above 16384 pixels and no canvas above 64 megapixels. An oversized source-resolution output reports an error; use Instagram sizing or a smaller edited source. Canvas output is SDR sRGB, without original RAW/HDR/16-bit profiles or embedded source metadata. Footer metadata is visible text.
+
+Photos stay on the device. Libraries and custom fonts ship locally; the app uploads no photographs. Only preferences are stored in localStorage. Reloading clears the photo session.
 
 ## Verification
 
@@ -58,6 +61,6 @@ Actual account/app upload testing for mixed orientation, final Instagram sharpne
 
 ## Film frame and visual system
 
-The studio uses one cream, sand, gray and coral scheme with self-hosted Source Serif 4 and Source Sans 3. Motion respects reduced-motion preferences. There is one Add photos action and no theme toggle or preloaded photos. The Fujifilm preset is removed; saved Fuji selections fall back to White. Border width is unitless.
+The studio uses one cream, sand, gray and coral scheme. Source Serif 4 serves the identity; controls use the platform system sans-serif stack with locally hosted Source Sans 3 as a fallback. Motion respects reduced-motion preferences. There is one Add photos action and no theme toggle or preloaded photos. The Fujifilm preset is removed; saved Fuji selections fall back to White. Border width is unitless.
 
 Film framing follows nominal 35mm stock around a 24mm image cross-section, using 2.794×1.981mm KS-shaped perforations at 4.75mm pitch. Rails rotate with the photo, their length adapts to its aspect ratio, and the 35mm label stays outside the original image. Its position is randomized per imported photo and remains stable across previews and exports. Film only, White, and Black background choices frame the complete stock surround; White and Black enable the outer-border control. Perforations stay visible on both mat colors. No frame counters or barcodes are added. All four development passes and research sources are recorded in `tests/film-review.md`. Open `/tests/film.html` on the dev server to inspect the aspect-ratio matrix; this review surface is excluded from the release build.

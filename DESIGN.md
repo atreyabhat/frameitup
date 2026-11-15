@@ -1,13 +1,13 @@
 ---
 name: Frame It Up
-description: One cream and sand photography workspace with restrained coral controls.
+description: Cream photography workspace with system typography and precise per-photo controls.
 colors:
   page: '#eae7dc'
-  panel: '#f3f0e8'
+  panel: '#f6f3ec'
   stage: '#dedbd1'
   ink: '#302f2b'
   muted: '#66645e'
-  line: '#cdc8bc'
+  line: '#d4cfc4'
   accent: '#a93f36'
   coral: '#e85a4f'
   sand: '#d8c3a5'
@@ -19,6 +19,15 @@ colors:
   scrollbar: '#aaa393'
   upload-hover: '#47443d'
   export-hover: '#8c332c'
+  library: '#eeebe3'
+  stage-surface: '#e0ddd4'
+  field-surface: '#fffdf780'
+  field-line: '#d9d3c7'
+  segment-surface: '#e9e5dc'
+  selected-surface: '#fffdf8'
+  stepper-line: '#d7d1c4'
+  slider-track: '#d4cec1'
+  slider-thumb-line: '#b8b0a0'
 typography:
   brand:
     fontFamily: '"Source Serif 4", Georgia, serif'
@@ -27,38 +36,38 @@ typography:
     lineHeight: 1.5
     letterSpacing: -0.035em
   title:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 19px
     fontWeight: 500
     lineHeight: 1.5
     letterSpacing: -0.015em
   body:
-    fontFamily: '"Source Sans 3", sans-serif'
-    fontSize: 15px
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
+    fontSize: 14px
     fontWeight: 400
     lineHeight: 1.5
   section:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 15px
     fontWeight: 600
     lineHeight: 1.5
   label:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 13px
     fontWeight: 500
     lineHeight: 1.5
   caption:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 12px
     fontWeight: 400
     lineHeight: 1.5
   hint:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 12px
     fontWeight: 400
     lineHeight: 1.6
   text-action:
-    fontFamily: '"Source Sans 3", sans-serif'
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
     fontSize: 13px
     fontWeight: 400
     lineHeight: 1.5
@@ -68,11 +77,21 @@ typography:
     fontWeight: 400
     lineHeight: 1.2
     letterSpacing: -0.02em
+  scope:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Source Sans 3", sans-serif
+    fontSize: 12px
+    fontWeight: 400
+    lineHeight: 1.5
 rounded:
   image: 1px
   surface: 2px
   selection: 3px
   control: 4px
+  field: 8px
+  segment-selected: 5px
+  stage: 9px
+  stepper: 9px
+  trash: 10px
 spacing:
   '2': 2px
   '3': 3px
@@ -128,27 +147,27 @@ components:
     height: 44px
     width: 44px
   auto-format:
-    backgroundColor: '{colors.panel}'
+    backgroundColor: '{colors.field-surface}'
     textColor: '{colors.ink}'
-    rounded: '{rounded.control}'
+    rounded: '{rounded.field}'
     padding: 9px
     height: 44px
     width: 100%
   field:
-    backgroundColor: '{colors.panel}'
+    backgroundColor: '{colors.field-surface}'
     textColor: '{colors.ink}'
-    rounded: '{rounded.control}'
+    rounded: '{rounded.field}'
     padding: 9px
     height: 44px
     width: 100%
   layout-segment:
     typography: '{typography.caption}'
-    rounded: '{rounded.surface}'
+    rounded: '{rounded.segment-selected}'
     padding: 5px 2px
     height: 38px
   layout-segment-selected:
-    backgroundColor: '{colors.accent-soft}'
-    textColor: '{colors.accent}'
+    backgroundColor: '{colors.selected-surface}'
+    textColor: '{colors.ink}'
   photo-item:
     rounded: '{rounded.selection}'
     padding: 5px
@@ -165,10 +184,35 @@ components:
     rounded: '{rounded.selection}'
     padding: 5px
   preview-stage:
-    backgroundColor: '{colors.stage}'
-    rounded: '{rounded.surface}'
+    backgroundColor: '{colors.stage-surface}'
+    rounded: '{rounded.stage}'
     padding: 26px 48px
     height: clamp(340px,55vh,640px)
+  stepper:
+    backgroundColor: '{colors.selected-surface}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.stepper}'
+  stepper-button:
+    width: 38px
+    height: 40px
+  stepper-input:
+    textColor: '{colors.ink}'
+    width: 42px
+    height: 36px
+    padding: '0'
+  scope-checkbox:
+    typography: '{typography.scope}'
+    textColor: '{colors.muted}'
+    height: 36px
+  quality-slider:
+    height: 32px
+    width: 100%
+  remove-photo:
+    backgroundColor: '{colors.panel}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.trash}'
+    width: 46px
+    height: 46px
 ---
 
 # Design System: Frame It Up
@@ -177,80 +221,82 @@ components:
 
 **Creative North Star: "The Photography Light Table"**
 
-The Photography Light Table uses a single cream and sand visual system, warm gray structure, charcoal text, and restrained coral interaction accents. Source Serif 4 gives the identity a composed serif voice; Source Sans 3 keeps photographs, measurements, and settings readable.
+The Photography Light Table uses one cream and sand palette, warm gray structure, charcoal text, and restrained coral accents. The identity and empty invitation use Source Serif 4; the editor uses the platform system sans-serif stack, with Source Sans 3 as a fallback.
 
-Working surfaces stay flat and compact. Photograph frames remain separate from the interface palette. The current implementation in styles.css and index.html is normative; the editor uses plain HTML, CSS, and JavaScript.
+Quiet panes and compact controls keep photographs central. Exact values use editable numeric steppers; JPEG quality keeps a bounded slider. The final cascade in styles.css and the controls in index.html are normative.
 
 **Key Characteristics:**
 - One fixed light palette; no theme switch.
-- Serif identity with sans-serif filenames and controls.
-- Fine borders, small corner radii, and restrained selection states.
+- Serif identity and system-font controls.
+- Per-photo settings with independent batch-scope checkboxes.
+- Soft field edges, restrained shadows, and visible numeric values.
 
 ## Colors
 
 ### Primary
 
-The reference coral is retained as the coral token. The darker functional accent carries export, text actions, pressed states, ranges, checkboxes, and focus so these remain legible on cream surfaces. Accent-soft supplies the subdued selected fill. Charcoal distinguishes Add photos from the coral export action.
+The reference coral remains available as coral. Its darker functional accent carries export, text actions, focus, and checkboxes; accent-soft supplies selected photograph and frame fills. Add photos is charcoal. Primary and export hover values remain distinct.
 
 ### Secondary
 
-Sand is retained in the Color frame sample. Auto format uses the same native select treatment as canvas and export format.
+Sand appears in the Color frame sample. Native selects remain neutral.
 
 ### Neutral
 
-Page is the cream workspace; panel is the slightly lighter rail and inspector; stage is the gray preview surface. Ink and muted distinguish content from measurements and supporting text. Line separates fields and regions; hover supplies quiet feedback. Swatch-gray represents photograph content in frame samples. Scrollbar, selection, and caret use the same palette. The frontmatter records exact values; the sidecar's tonal ramps are display metadata rather than additional application colors.
+Page is cream, the library is slightly darker, and panel is the lighter inspector. Stage-surface is the actual preview backdrop; stage remains the small-preview fallback. Fields use a translucent warm white surface, fine field-line, and subtle shadow. Layout segments use a quiet backing with a raised white selection. Ink and muted separate controls from supporting measurements. Exact palette values are in frontmatter.
 
 ## Typography
 
-Both variable font families are hosted locally with font-display swap. Source Serif 4 serves the wordmark and empty invitation. Source Sans 3 serves filenames, controls, descriptions, and measurements. Photograph titles are medium-weight sans-serif. Numeric measurements and counts use tabular figures.
+The wordmark and invitation use locally hosted Source Serif 4. Body, filenames, labels, selects, and numeric controls use the system stack in frontmatter; Source Sans 3 remains a locally hosted fallback and serves the rendered film label. Body size is (14px), photograph title (19px), legends (15px), labels and text actions (13px), and captions and scope labels (12px). Measurements use tabular numerals. The system stack adapts its face to the platform; this web interface does not claim native Dynamic Type behavior.
 
-The frontmatter records desktop roles. Field labels and text actions use (13px), captions and hints (12px), settings legends (15px), and photograph titles (19px). The wordmark becomes (24px) at the mobile breakpoint and (22px) on the smallest phones. Mobile photograph titles use (18px), and the empty invitation becomes (28px). The invitation uses a tighter line height; other text follows the role values above.
+At (760px) and below, the wordmark uses (24px), photo title (18px), and invitation (28px). At (380px) and below, the wordmark uses (22px).
 
 ## Layout
 
-Desktop uses a photo rail, flexible photograph workspace, and inspector: (150px / minmax(0,1fr) / 350px). Header height is (78px); workspace padding is (25px 30px 24px), and inspector padding is (25px 22px). The stage height is (clamp(340px,55vh,640px)); its photograph fits without stretching. The rail is hidden while empty, leaving the workspace and inspector. Empty-stage height is (calc(100svh - 166px)), with a minimum of (400px).
+Desktop uses rail / flexible preview / inspector columns (150px / minmax(0,1fr) / 350px). Header height is (78px). Workspace padding is (25px 30px 24px); inspector padding is (25px 22px). Settings sections have (25px) bottom padding and margin. The photograph fits within a stage of (clamp(340px,55vh,640px)) with (26px 48px) padding. The empty library is hidden.
 
-- At (1500px) and above: columns (168px / minmax(0,1fr) / 380px), workspace padding (28px 48px), stage height (clamp(400px,57vh,680px)).
-- At (1100px) and below: columns (115px / minmax(0,1fr) / 310px), workspace padding (24px 18px), inspector padding (24px 17px), rail thumbnail height (67px).
-- At (760px) and below: the photograph workspace comes first, horizontal photo rail second, inspector third. Header height is (68px). Workspace padding is (18px); inspector padding is (24px 22px 36px). The inspector has two columns; export and posting guidance span both. Layout segments use two columns. The stage uses (clamp(290px,48svh,500px)) and (24px 46px) padding. Empty stage uses (42svh), minimum (260px). Rail choices are (86px) wide with (57px) thumbnails; slide thumbnails are (76px) tall. Photo-action widths become (36px).
-- At (560px) and below: inspector sections stack, layout segments return to four columns, and download result links stack their name and dimensions.
-- At (380px) and below: header gutters are (12px), and photo-action widths become (30px).
+- At (1500px) and above: columns (168px / minmax(0,1fr) / 380px); workspace padding (28px 48px); stage (clamp(400px,57vh,680px)).
+- At (1100px) and below: columns (115px / minmax(0,1fr) / 310px); workspace padding (24px 18px); inspector padding (24px 17px).
+- At (760px) and below: photograph, horizontal photo rail, then inspector. The header is (68px) high; workspace padding is (18px). Inspector uses two columns with (24px 22px 36px) padding; export and posting guidance span both. Split segments use two columns. Stage is (clamp(290px,48svh,500px)) with (24px 46px) padding. The inspector shadow is removed. Trash control becomes (42px × 44px); other photo actions become (36px) wide.
+- At (560px) and below: inspector stacks, split segments return to four columns, and download links stack filename and dimensions.
+- At (380px) and below: header gutters are (12px); non-trash photo actions become (30px) wide.
 
-The slide sequence scrolls horizontally and separates the full photograph from connected parts with a fine divider. The selected slide and selected photograph share the accent outline and soft fill. The status row remains in document flow.
+Desktop photo thumbnails are (87px) tall, compact desktop (67px), and mobile (57px) within (86px) wide choices. Slide canvases are (88px) tall on desktop and (76px) on mobile. Both rails scroll when needed. The full photograph is separated from connected parts with a fine divider. Empty stage is (calc(100svh - 166px)), minimum (400px); mobile uses (42svh), minimum (260px). The status row stays in document flow.
 
 ## Elevation & Depth
 
-Tonal surfaces and single-pixel borders distinguish regions. The fitted photograph alone has a soft offset shadow (0 10px 30px #4d47341c). Buttons, inspector, rail, and arrows remain flat.
+Tonal panes and fine borders provide structure. The photograph uses a soft offset shadow; the inspector has a very faint lateral shadow on desktop. Fields, selected split segments, steppers, and the quality thumb have subtle local shadows. Exact values are in the sidecar. There is no decorative blur or glass layer.
 
 ## Shapes
 
-Photograph thumbnails use nearly square corners. Preview surfaces, selected items, and controls use the small radii in the frontmatter. Fields and arrows follow the control radius. Rounded photograph corners are an explicit user setting, independent of the interface shapes. Film samples show pale perforations on dark stock; the rendered frame preserves source orientation and uses 35mm as its only film lettering. The label position varies per imported photograph and remains stable across that photograph’s previews and exports.
+Photograph thumbnails retain nearly square corners. The preview and numeric stepper use softly rounded corners; fields and split groups use their own slightly smaller radius. The larger trash button has a distinct radius and visible border. Photograph rounding remains an explicit user setting. Film rails rotate with source orientation. The 35mm label position is chosen once per imported photo and stays stable across previews and exports.
 
 ## Components
 
-- **Buttons:** Add photos uses charcoal; export uses the functional accent. Both use a minimum height of (44px), medium weight, and the control radius. Text actions use accent and reveal an underline on hover. Icon actions use the same radius and authored stroke SVGs. Disabled buttons use opacity (.4).
-- **Auto format:** a native select with Custom and Instagram · 1080 px choices. It shares the field treatment and has an explicit all-photos label. The caption describes the chosen setup. Changing canvas shape returns the select to Custom.
-- **Fields:** native selects, text inputs, and textareas use panel, ink, line, the control radius, and a minimum height of (44px). Focused selects and textareas also change their border to accent. Ranges and checkboxes use accent. The per-photo metadata textarea and text-size control remain inside Frame details. Text is prefilled from the source and can be edited directly; there is no source-mode selector, field-toggle group, or custom-note field. The footer checkbox is disabled when camera metadata is unavailable, with a concise explanation. The film-background choice appears only for Film. Film only hides the border control; White and Black backgrounds expose it.
-- **Layout segments:** four equal choices with a fine outlined group. Selected state uses accent-soft, accent, and weight (600). Each segment has a minimum height of (38px); responsive column changes are recorded above.
-- **Photo navigation:** image, truncated filename, and source dimensions. Desktop thumbnails are (87px) tall. Selection uses the shared accent treatment. On mobile the rail scrolls horizontally.
-- **Frame choices:** White, Black, Color, and Film share one compact group. Neutral swatches show frame treatment without introducing sample photographs. Selected state follows the shared treatment. Film's optional white or black surround and width remain per-photo settings.
-- **Slide tiles:** small canvas previews with meaningful ordered captions. Desktop canvas height is (88px); the full photograph is separated from slices by a divider. Unselected tiles move up (2px) on hover.
-- **Focus and browser surfaces:** focus is a (2px) accent outline offset (4px). The skip link is clipped until keyboard focus. Selection uses accent-soft and ink; caret uses accent; scrollbars use the warm gray token. Programmatic workspace focus suppresses its outline.
-- **Motion:** controls transition over (.18s), using cubic-bezier(.16,1,.3,1) for background and ease for borders, shadow, and transform. Enabled main buttons press down (1px). A changed photograph settles from opacity (.7) and vertical offset (3px) over (220ms). Metadata controls enter over (.18s ease-out) from opacity (.7) and vertical offset (-3px). Reduced-motion preference removes those animations, CSS transitions, and smooth scrolling.
+- **Actions:** Add photos is charcoal; export is the functional accent. Main buttons have a (44px) minimum height. Contextual text actions reveal an underline on hover. Trash is larger, outlined, and uses a (22px) icon; hover changes its fill and ink to the accent treatment. Disabled buttons use opacity (.4).
+- **Auto format and Canvas shape:** separate native selects. Each has its own adjacent Apply to all photos checkbox, unchecked by default. Selecting a profile changes the current photo unless its scope checkbox is checked. Canvas changes retain the chosen resolution profile. Auto format batch scope copies the selected profile, ratio, and split; canvas batch scope copies only ratio.
+- **Precision controls:** border width, rounded corners, and metadata text size use decrement / editable number / increment. Buttons are (38px × 40px); numeric input is (42px × 36px). Border is bounded (0–16), corners (0–25), and text size (1–10), with step (1). The current value is always visible. Film only hides the border row; White and Black film backgrounds expose it.
+- **Quality:** File format offers PNG and JPG independently of resolution profile. The output-quality slider spans (10–100%) in steps of (1), with its value shown beside the label. PNG disables it and identifies the encoding as Lossless in the quality description. A warm neutral track and pale round thumb keep it subordinate to the photograph.
+- **Metadata:** Frame details contains a footer checkbox, prefilled directly editable textarea, and text-size stepper. Footer starts off. When camera metadata is unavailable, its checkbox is disabled and a concise explanation appears. There is no source-mode selector, field-toggle group, or custom-note field.
+- **Selections:** photo and frame choices share the accent outline and soft fill. Split segments use white selected fill, charcoal text, and a subtle shadow. Each split segment has a (38px) minimum height. Frame styles remain White, Black, Color, and Film.
+- **Focus and browser surfaces:** focus is a (2px) accent outline offset (4px); focused selects and textareas also change border color. Selection uses accent-soft and ink; caret uses accent; scrollbars use warm gray. The skip link is clipped until keyboard focus.
+- **Motion:** control transitions use (.18s); enabled main buttons press down (1px). Photograph selection settles from opacity (.7) and translateY(3px) over (220ms). Metadata controls enter over (.18s ease-out) from opacity (.7) and translateY(-3px). Unselected slide tiles rise (2px) on hover. Reduced motion removes animations, transitions, and smooth scrolling.
+
+Control choices are informed by Apple’s HIG: [steppers](https://developer.apple.com/design/human-interface-guidelines/steppers) pair incremental adjustment with an obvious value and direct entry; [sliders](https://developer.apple.com/design/human-interface-guidelines/sliders) support a bounded range and visible feedback; [toggles and checkboxes](https://developer.apple.com/design/human-interface-guidelines/toggles) represent independent opposing states. [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons) need clear purpose and usable hit regions; [typography](https://developer.apple.com/design/human-interface-guidelines/typography) prioritizes legibility and hierarchy; [sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars) should adapt to available space. These principles inform the web implementation; they do not assert native-platform compliance.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- Do use the fixed cream, sand, gray, and coral world.
-- Do use the darker functional accent for readable actions, selection, and focus.
-- Do keep Source Serif 4 for the identity and invitation, and Source Sans 3 for editor controls.
-- Do keep visible focus, reduced-motion behavior, and photograph proportions.
-- Do keep copy functional and upload access to one Add photos action.
+- Do preserve the fixed cream, sand, gray, and coral world.
+- Do use system typography for controls and Source Serif 4 for identity and invitation.
+- Do show the current value beside decrement and increment actions, with direct numeric entry.
+- Do keep Auto format and Canvas shape scope independent.
+- Do keep visible focus and reduced-motion behavior.
 
 ### Don't:
 
-- Don't reintroduce dark/light themes, gold accents, or the previous fonts.
-- Don't add preloaded photographs, marketing sentences, or repeated explanatory copy.
-- Don't add film counters or barcodes; the film lettering is 35mm only.
-- Don't turn photographs or settings into decorative cards or add conspicuous motion.
+- Don't reintroduce dark/light themes, marketing copy, or preloaded photographs.
+- Don't describe file encoding as a resolution choice; JPG/PNG and Instagram/Custom are independent.
+- Don't add film counters or barcodes; 35mm is the only film lettering.
+- Don't add source-mode selectors, metadata field toggles, or custom-note controls.

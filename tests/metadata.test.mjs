@@ -22,3 +22,8 @@ test('film label placement stays fixed per photo and varies across photos',()=>{
  assert(positions.every(p=>p.along>=0&&p.along<=1));assert(new Set(positions.map(p=>p.side)).size===2);
  assert.deepEqual(filmLabelPosition(42),filmLabelPosition(42));assert.notDeepEqual(positions[0],positions[1]);
 });
+
+test('every import resets posting and quality defaults even after another photo was customized',()=>{
+ const s=importSettings({camera:'Camera'},sanitizeSettings({export:'native',jpegQuality:.5,metadata:true,border:12,instagramReady:false}));
+ assert.equal(s.export,'instagram');assert.equal(s.jpegQuality,.9);assert.equal(s.border,5);assert.equal(s.metadata,false);assert.equal(s.instagramReady,true);
+});

@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings } from './layout.mjs?v=2';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=2';
-import { renderSlide, encodeCanvas } from './render.mjs?v=2';
+import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings } from './layout.mjs?v=3';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=3';
+import { renderSlide, encodeCanvas } from './render.mjs?v=3';
 
 const $ = id => document.getElementById(id);
 const storage = {
@@ -9,14 +9,14 @@ const storage = {
 };
 function loadPreferences() {
   try {
-    const current = storage.get('frameitup.settings.v3');
-    return current ? sanitizeSettings(JSON.parse(current)) : migrateSettings(JSON.parse(storage.get('frameitup.settings.v2') || '{}'));
+    const current = storage.get('frameitup.settings.v4');
+    return current ? sanitizeSettings(JSON.parse(current)) : sanitizeSettings();
   } catch { return sanitizeSettings(); }
 }
 let preferences = loadPreferences();
 const state = { items: [], selected: null, slide: 0, revision: 0, timer: null, exporting: false, outputs: [], lastView: null, motion: null };
 const selected = () => state.items.find(item => item.id === state.selected);
-const settingsFor = item => ({ ...preferences, ...item.settings, ratio: preferences.ratio, export: preferences.export, instagramReady: preferences.instagramReady });
+const settingsFor = item => sanitizeSettings(item.settings);
 const planFor = (item, settings = settingsFor(item)) => planPhoto(item, settings, Boolean(metadataLine(item, settings)));
 const el = (tag, className, text) => {
   const element = document.createElement(tag);
@@ -28,7 +28,7 @@ function setStatus(message, error = false) {
   $('status').textContent = message;
   $('status').parentElement.classList.toggle('error', error);
 }
-function savePreferences() { storage.set('frameitup.settings.v3', JSON.stringify(preferences)); }
+function savePreferences() { storage.set('frameitup.settings.v4', JSON.stringify(preferences)); }
 
 function invalidateOutputs() {
   for (const output of state.outputs) URL.revokeObjectURL(output.url);
@@ -40,10 +40,10 @@ function invalidateOutputs() {
 function updateSetting(key, value, global = false) {
   if (state.exporting) return;
   const item = selected();
-  preferences = sanitizeSettings({ ...preferences, [key]: value });
-  if (key === 'ratio') preferences.instagramReady = false;
-  if (key === 'manual' && item) item.settings.metadataMode = 'manual';
-  if (item && !global) item.settings = { ...item.settings, [key]: preferences[key] };
+  const patch = { [key]: value };
+  if (key === 'manual') patch.metadataMode = 'manual';
+  preferences = sanitizeSettings({ ...preferences, ...patch });
+  patchPhotoSettings(state.items, state.selected, patch, key === 'ratio' && $('canvas-all').checked);
   savePreferences();
   invalidateOutputs();
   syncControls();
@@ -51,14 +51,14 @@ function updateSetting(key, value, global = false) {
 }
 
 const controlMap = {
-  ratio: ['ratio', true], 'film-background': ['filmBackground'], border: ['border'], corners: ['corners'],
+  ratio: ['ratio'], 'film-background': ['filmBackground'], border: ['border'], corners: ['corners'],
   metadata: ['metadata'], 'manual-metadata': ['manual'],
-  'font-step': ['fontStep'], 'export-type': ['export', true],
+  'font-step': ['fontStep'], 'export-type': ['export'],
 };
 for (const [id, [key, global]] of Object.entries(controlMap)) {
   const input = $(id);
-  input.addEventListener(input.tagName === 'TEXTAREA' || input.type === 'range' || input.type === 'text' ? 'input' : 'change', () => {
-    updateSetting(key, input.type === 'checkbox' ? input.checked : input.type === 'range' ? Number(input.value) : input.value, global);
+  input.addEventListener(input.tagName === 'TEXTAREA' || input.type === 'range' || input.type === 'number' || input.type === 'text' ? 'input' : 'change', () => {
+    updateSetting(key, input.type === 'checkbox' ? input.checked : input.type === 'range' || input.type === 'number' ? Number(input.value) : input.value, global);
   });
 }
 document.querySelectorAll('[data-layout]').forEach(button => button.addEventListener('click', () => {
@@ -73,10 +73,10 @@ $('apply-layout').addEventListener('click', () => {
 
 $('auto-format').addEventListener('change', () => {
   if (state.exporting) return;
-  if ($('auto-format').value === 'instagram') {
-    preferences = instagramSettings(preferences);
-    for (const item of state.items) item.settings.layout = 'auto';
-  } else preferences = sanitizeSettings({ ...preferences, instagramReady: false });
+  const current = selected() ? settingsFor(selected()) : preferences;
+  const patch = $('auto-format').value === 'instagram' ? { instagramReady: true, ratio: 'portrait', layout: 'auto' } : { instagramReady: false };
+  preferences = sanitizeSettings({ ...current, ...patch });
+  patchPhotoSettings(state.items, state.selected, patch, $('format-all').checked);
   savePreferences(); invalidateOutputs(); state.slide = 0;
   syncControls(); requestPreview();
 });
@@ -102,13 +102,14 @@ function syncControls() {
   $('film-background-control').hidden = settings.style !== 'film-35mm';
   $('border').disabled = filmOnly;
   $('border').hidden = filmOnly;
-  document.querySelector('label[for="border"]').hidden = filmOnly;
-  $('quality-description').textContent = settings.export === 'native' ? settings.instagramReady ? 'Lossless · 1080 px wide' : 'Lossless · Source resolution' : 'JPEG 100% · 1080 px wide';
-  $('export-type').options[0].textContent = settings.instagramReady ? 'PNG · 1080 px' : 'Full resolution · PNG';
+  $('border-row').hidden = filmOnly;
+  $('jpeg-quality').value = Math.round(settings.jpegQuality * 100);
+  $('jpeg-quality').disabled = settings.export === 'native';
+  $('jpeg-quality-value').value = settings.export === 'native' ? '—' : `${Math.round(settings.jpegQuality * 100)}%`;
+  $('quality-description').textContent = `${settings.export === 'native' ? 'PNG · Lossless' : 'JPG'} · ${settings.instagramReady ? '1080 px' : 'Source resolution'} · sRGB`;
   $('auto-format').value = settings.instagramReady ? 'instagram' : 'custom';
   $('auto-format').disabled = !item || state.exporting;
-  $('ready-hint').textContent = settings.instagramReady ? 'Portrait 3:4 · Automatic splits' : 'Choose canvas and resolution below.';
-  $('export-format-label').textContent = settings.export === 'native' ? 'Lossless PNG · sRGB' : 'JPEG 100% · sRGB';
+  $('ready-hint').textContent = '';
   $('scope-row').hidden = state.items.length < 2;
   const targets = $('export-all').checked ? state.items : item ? [item] : [];
   const count = targets.reduce((sum, entry) => sum + planFor(entry).slides.length, 0);
@@ -135,7 +136,7 @@ function renderLibrary() {
     const img = el('img', 'photo-thumb'); img.src = item.thumbnail; img.alt = '';
     button.append(img, el('span', 'photo-item-name', item.name), el('span', 'photo-item-detail', `${item.width} × ${item.height}`));
     button.addEventListener('click', () => {
-      state.selected = item.id; state.slide = 0; state.inspecting = false;
+      state.selected = item.id; state.slide = 0;
       renderLibrary(); syncControls(); requestPreview();
     });
     $('photo-list').append(button);
@@ -190,7 +191,7 @@ async function renderPreview(revision) {
   $('sequence-summary').textContent = `${plan.slides.length} slide${plan.slides.length === 1 ? '' : 's'} · ${plan.ratio.label.replace('Portrait ', '')}`;
   $('auto-description').hidden = settings.layout !== 'auto';
   $('auto-description').textContent = `Auto: ${plan.count === 1 ? 'single' : `${plan.count} parts`}`;
-  const lowResolution = (settings.export === 'instagram' || settings.instagramReady) && photoRect(item, slide, plan, settings).scale === 1;
+  const lowResolution = (settings.instagramReady) && photoRect(item, slide, plan, settings).scale === 1;
   $('quality-warning').hidden = !lowResolution;
   $('quality-warning').textContent = lowResolution ? 'Small source: padding added to avoid enlargement.' : '';
   $('previous-slide').disabled = index === 0;
@@ -245,7 +246,7 @@ async function decodeFile(file) {
   const image = new Image(); image.src = url;
   try {
     await image.decode();
-    if (image.naturalWidth * image.naturalHeight > 80000000) throw new Error('This source exceeds the 80-megapixel browser import limit. Use a smaller edited copy.');
+
     const item = { id: crypto.randomUUID(), name: file.name, file, image, width: image.naturalWidth, height: image.naturalHeight, settings: structuredClone(preferences.instagramReady ? { ...preferences, layout: 'auto', overview: true } : preferences), thumbnail: '', average: '#c4bba6', exif: null };
     const canvas = document.createElement('canvas');
     const thumbnailScale = 180 / Math.max(item.width, item.height);
@@ -256,6 +257,11 @@ async function decodeFile(file) {
     canvas.width = canvas.height = 1; ctx.drawImage(image, 0, 0, 1, 1);
     const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
     item.average = `rgb(${r}, ${g}, ${b})`;
+    if (item.width * item.height > 24000000 && window.createImageBitmap) {
+      const scale = Math.min(1, 4320 / Math.max(item.width, item.height));
+      item.image = await createImageBitmap(file, { resizeWidth: Math.max(1, Math.round(item.width * scale)), resizeHeight: Math.max(1, Math.round(item.height * scale)), resizeQuality: 'high' });
+      item.workingCopy = true; image.src = '';
+    }
     item.exif = await parseExifFromFile(file);
     item.settings = importSettings(item.exif, item.settings);
     item.filmSeed = crypto.getRandomValues(new Uint32Array(1))[0];
@@ -297,7 +303,8 @@ document.addEventListener('drop', event => { event.preventDefault(); dragDepth =
 
 $('remove-photo').addEventListener('click', () => {
   const index = state.items.findIndex(item => item.id === state.selected);
-  state.items.splice(index, 1); state.selected = state.items[Math.min(index, state.items.length - 1)]?.id || null; state.slide = 0; state.inspecting = false;
+  if (selected()?.workingCopy) selected().image.close();
+  state.items.splice(index, 1); state.selected = state.items[Math.min(index, state.items.length - 1)]?.id || null; state.slide = 0;
   invalidateOutputs(); renderLibrary(); syncControls(); requestPreview(); setStatus('Photograph removed from this session.');
 });
 for (const [id, direction] of [['move-before', -1], ['move-after', 1]]) $(id).addEventListener('click', () => {
@@ -328,8 +335,13 @@ async function exportFiles(currentOnly = false) {
     for (const [index, job] of jobs.entries()) {
       setStatus(`Rendering ${index + 1} of ${jobs.length}: ${job.name}`);
       try {
-        const canvas = await renderSlide(job.item, job.slide, job.plan, job.settings);
-        const blob = await encodeCanvas(canvas, job.settings.export);
+        let original;
+        let canvas;
+        try {
+          if (job.item.workingCopy && !job.settings.instagramReady) original = await createImageBitmap(job.item.file);
+          canvas = await renderSlide(original ? { ...job.item, image: original } : job.item, job.slide, job.plan, job.settings);
+        } finally { original?.close(); }
+        const blob = await encodeCanvas(canvas, job.settings.export, job.settings.jpegQuality);
         canvas.width = canvas.height = 1;
         state.outputs.push({ name: job.name, blob, url: URL.createObjectURL(blob), width: job.slide.width, height: job.slide.height });
       } catch (error) { failures.push(`${job.name}: ${error.message}`); }
@@ -364,3 +376,16 @@ $('close-results').addEventListener('click', () => { invalidateOutputs(); $('exp
 syncControls();
 requestPreview();
 setStatus('Add your photographs to begin.');
+
+$('jpeg-quality').addEventListener('input', () => updateSetting('jpegQuality', Number($('jpeg-quality').value) / 100));
+for (const [id, key] of [['format-all','format'],['canvas-all','ratio']]) $(id).addEventListener('change', () => {
+  if (!$(id).checked || !selected()) return;
+  const settings = settingsFor(selected());
+  const patch = key === 'format' ? { instagramReady: settings.instagramReady, ratio: settings.ratio, layout: settings.layout } : { ratio: settings.ratio };
+  patchPhotoSettings(state.items, state.selected, patch, true); invalidateOutputs(); syncControls(); requestPreview();
+});
+document.querySelectorAll('[data-step]').forEach(button => button.addEventListener('click', () => {
+  const input = $(button.dataset.step);
+  if (button.dataset.delta === '1') input.stepUp(); else input.stepDown();
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}));
