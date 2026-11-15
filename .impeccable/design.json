@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T06:33:10.795876+00:00",
+  "generatedAt": "2026-11-15T17:13:38.672056+00:00",
   "title": "Design System: Frame It Up",
   "extensions": {
     "colorMeta": {
@@ -228,20 +228,6 @@
           "oklch(95% 0.0122 87.55)"
         ]
       },
-      "auto-format-line": {
-        "role": "secondary",
-        "displayName": "Auto Format Line",
-        "tonalRamp": [
-          "oklch(15% 0.0548 78.14)",
-          "oklch(26% 0.0548 78.14)",
-          "oklch(38% 0.0548 78.14)",
-          "oklch(49% 0.0548 78.14)",
-          "oklch(61% 0.0548 78.14)",
-          "oklch(72% 0.0548 78.14)",
-          "oklch(84% 0.0548 78.14)",
-          "oklch(95% 0.0548 78.14)"
-        ]
-      },
       "export-hover": {
         "role": "primary",
         "displayName": "Export Hover",
@@ -288,7 +274,7 @@
       },
       "text-action": {
         "displayName": "Text Action",
-        "purpose": "Contextual actions; preview-caption actions use 12px."
+        "purpose": "Contextual actions such as Apply split to all and Download this slide."
       },
       "empty-state": {
         "displayName": "Empty State",
@@ -316,7 +302,7 @@
       {
         "name": "press",
         "value": "translateY(1px)",
-        "purpose": "Enabled main button and Auto format press feedback."
+        "purpose": "Enabled main button press feedback."
       },
       {
         "name": "slide-hover",
@@ -324,14 +310,14 @@
         "purpose": "Unselected slide hover."
       },
       {
-        "name": "ready-check",
-        "value": ".18s",
-        "purpose": "Pressed check opacity 0 to 1 and scale .75 to 1."
-      },
-      {
         "name": "reduced-motion",
         "value": "none",
         "purpose": "Disable animation, transitions, and smooth scrolling."
+      },
+      {
+        "name": "metadata-controls-in",
+        "value": ".18s ease-out",
+        "purpose": "Metadata controls enter from opacity .7 and translateY(-3px); disabled for reduced motion."
       }
     ],
     "breakpoints": [
@@ -379,7 +365,7 @@
       "kind": "button",
       "refersTo": "button-text",
       "description": "Contextual text action.",
-      "html": "<button class=\"ds-text\">Inspect pixels</button>",
+      "html": "<button class=\"ds-text\">Download this slide</button>",
       "css": ".ds-text{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-text{min-height:44px;padding:6px 0;color:var(--accent,#a93f36);text-align:left;font-size:13px;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}.ds-text:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-text:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-text:disabled{opacity:.4;cursor:default}.ds-text:hover:not(:disabled){background:none;text-decoration-color:currentColor}@media(prefers-reduced-motion:reduce){.ds-text{transition:none!important;animation:none!important}}"
     },
     {
@@ -391,20 +377,20 @@
       "css": ".ds-icon{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius,4px)}.ds-icon:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-icon:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-icon:disabled{opacity:.4;cursor:default}.ds-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none!important;animation:none!important}}"
     },
     {
-      "name": "Auto format",
-      "kind": "button",
+      "name": "Auto format select",
+      "kind": "input",
       "refersTo": "auto-format",
-      "description": "Shared canvas and automatic layout setup.",
-      "html": "<button class=\"ds-auto\" aria-pressed=\"true\"><span>Auto format</span><svg class=\"ds-check\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></button>",
-      "css": ".ds-auto{font-family:\"Source Sans 3\",sans-serif;font-size:15px;line-height:1.5;cursor:pointer;color:var(--ink,#302f2b);border:0;background:none;transition:background .18s cubic-bezier(.16,1,.3,1),border-color .18s ease,box-shadow .18s ease,transform .18s ease;}.ds-auto{display:flex;align-items:center;justify-content:flex-start;gap:9px;width:100%;min-height:44px;background:var(--sand,#d8c3a5);border:1px solid #c0a986;border-radius:var(--radius,4px);padding:9px 11px;font-size:14px;font-weight:600}.ds-auto[aria-pressed=true]{background:var(--accent-soft,#ecd5c8);border-color:var(--accent,#a93f36);color:var(--accent,#a93f36)}.ds-check{width:16px;margin-left:auto;opacity:0;transform:scale(.75);transition:opacity .18s,transform .18s}.ds-auto[aria-pressed=true] .ds-check{opacity:1;transform:scale(1)}.ds-auto:hover:not(:disabled){background:var(--hover,#e5e0d5)}.ds-auto:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}.ds-auto:disabled{opacity:.4;cursor:default}.ds-auto:active:not(:disabled){transform:translateY(1px)}.ds-check{height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}@media(prefers-reduced-motion:reduce){.ds-auto,.ds-check{transition:none!important;animation:none!important}}"
+      "description": "Shared Custom or Instagram setup selector.",
+      "html": "<label class=\"ds-label\">Auto format · all photos<select class=\"ds-select\"><option>Custom</option><option>Instagram · 1080 px</option></select></label>",
+      "css": ".ds-label{display:block;font:500 13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-select{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;padding:9px;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px)}.ds-select:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}.ds-select:disabled{opacity:.4;cursor:default}"
     },
     {
-      "name": "Text field",
+      "name": "Metadata text",
       "kind": "input",
       "refersTo": "field",
-      "description": "Manual metadata or custom note field.",
-      "html": "<label class=\"ds-label\">Custom note<input class=\"ds-field\" type=\"text\" /></label>",
-      "css": ".ds-label{display:block;font:13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-field{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:9px;caret-color:var(--accent,#a93f36)}.ds-field:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px}"
+      "description": "Per-photo metadata text, prefilled and directly editable.",
+      "html": "<label class=\"ds-label\">Metadata text<textarea class=\"ds-field\" rows=\"3\">Camera | 35mm | f/2.8</textarea></label>",
+      "css": ".ds-label{display:block;font:13px/1.5 \"Source Sans 3\",sans-serif;color:var(--ink,#302f2b)}.ds-field{display:block;margin-top:7px;font:15px/1.5 \"Source Sans 3\",sans-serif;width:100%;min-height:44px;resize:vertical;background:var(--panel,#f3f0e8);color:var(--ink,#302f2b);border:1px solid var(--line,#cdc8bc);border-radius:var(--radius,4px);padding:9px;caret-color:var(--accent,#a93f36)}.ds-field:focus-visible{outline:2px solid var(--accent,#a93f36);outline-offset:4px;border-color:var(--accent,#a93f36)}"
     },
     {
       "name": "Split segments",

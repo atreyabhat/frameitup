@@ -23,7 +23,7 @@ export function sanitizeSettings(value = {}) {
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
     filmBackground: choices(value.filmBackground, ['none', 'white', 'black'], 'none'),
     border: number(value.border, 4, 0, 16), corners: number(value.corners, 0, 0, 25),
-    overview: value.overview !== false, export: choices(value.export, ['native', 'instagram'], 'native'),
+    overview: true, export: choices(value.export, ['native', 'instagram'], 'native'),
     instagramReady: value.instagramReady === true,
     metadata: value.metadata === true, metadataMode: value.metadataMode === 'manual' ? 'manual' : 'auto',
     manual: typeof value.manual === 'string' ? value.manual.slice(0, 1000) : '',
@@ -89,7 +89,7 @@ export function planPhoto(item, settings, hasMetadata = false) {
   const fullSize = postingSize ? posting : nativeSize(Math.max((film?.width || item.width) / insets.innerWidth, (film?.height || item.height) / insets.innerHeight));
   const sliceSize = postingSize ? posting : nativeSize(Math.max(item.width / count, item.height * q));
   const slides = count > 1 ? Array.from({ length: count }, (_, index) => ({ kind: 'slice', index, count, ...sliceSize })) : [];
-  if (count === 1 || settings.overview) slides.unshift({ kind: count === 1 ? 'single' : 'overview', index: 0, count: 1, ...fullSize });
+  slides.unshift({ kind: count === 1 ? 'single' : 'overview', index: 0, count: 1, ...fullSize });
   return { ratio, q, count, slides, insets, film };
 }
 

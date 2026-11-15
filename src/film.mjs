@@ -19,7 +19,7 @@ export function filmGeometry(rect, film) {
   return { unit, vertical, rail, length, holes, pitch, count };
 }
 
-export function drawFilm(ctx, rect, film, background) {
+export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   const geometry = filmGeometry(rect, film);
   const fw = film.width * rect.scale, fh = film.height * rect.scale;
   const fx = rect.x + (rect.width - fw) / 2, fy = rect.y + (rect.height - fh) / 2;
@@ -48,7 +48,14 @@ export function drawFilm(ctx, rect, film, background) {
   ctx.fillStyle = '#c8a36b';
   ctx.font = `500 ${0.85 * u}px "Source Sans 3", sans-serif`;
   ctx.textBaseline = 'middle';
-  ctx.fillText('35mm', 3 * u, 0.95 * u);
+  const position = filmLabelPosition(seedPosition);
+  ctx.textAlign = 'center';
+  ctx.fillText('35mm', (3 * u) + position.along * Math.max(0, length - 6 * u), (position.side ? 34.05 : 0.95) * u);
   ctx.restore();
   ctx.restore();
+}
+
+export function filmLabelPosition(seed) {
+  const value = (Math.imul(seed >>> 0, 1664525) + 1013904223) >>> 0;
+  return { side: value & 1, along: (value >>> 1) / 2147483648 };
 }

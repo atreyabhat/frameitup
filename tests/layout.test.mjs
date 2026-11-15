@@ -51,12 +51,13 @@ test('Instagram copies have exact documented dimensions and never enlarge conten
   }
 });
 
-test('overview can be disabled and forced counts remain explicit', () => {
+test('full photo always comes first even with old disabled preferences', () => {
   const item = { width: 3000, height: 4000 };
   const plan = planPhoto(item, sanitizeSettings({ layout: '3', overview: false }));
   assert.equal(plan.count, 3);
-  assert.equal(plan.slides.length, 3);
-  assert(plan.slides.every(slide => slide.kind === 'slice'));
+  assert.equal(plan.slides.length, 4);
+  assert.equal(plan.slides[0].kind, 'overview');
+  assert(plan.slides.slice(1).every(slide => slide.kind === 'slice'));
 });
 
 test('migration retains useful preferences but resets destructive quality and scaling', () => {

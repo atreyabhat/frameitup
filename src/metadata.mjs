@@ -149,3 +149,15 @@ export function metadataLine(item, settings) {
 }
 
 export { fitExifToLines };
+
+export function hasCameraMetadata(exif) {
+  return Boolean(exif && [exif.camera, exif.lens, exif.focal, exif.focal35, exif.fNumber, exif.exposure, exif.iso].some(Boolean));
+}
+
+export function importSettings(exif, preferences) {
+  const available = hasCameraMetadata(exif);
+  const settings = { ...preferences, metadata: available && preferences.metadata, metadataMode: 'auto', manual: '', note: '', fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true } };
+  if (!available) settings.style = 'film-35mm';
+  settings.manual = metadataLine({ exif }, settings);
+  return settings;
+}

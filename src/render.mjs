@@ -36,7 +36,7 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
   ctx.drawImage(item.image, rect.x, rect.y, rect.width, rect.height);
   ctx.restore();
   if (slide.kind !== 'slice') {
-    if (settings.style === 'film-35mm') drawFilm(ctx, rect, plan.film, backgroundFor(item, settings));
+    if (settings.style === 'film-35mm') drawFilm(ctx, rect, plan.film, backgroundFor(item, settings), item.filmSeed || 0);
     if (plan.insets.footer) {
       const y = slide.height - plan.insets.footer * slide.width;
       const dark = settings.style === 'classic-black' || (settings.style === 'film-35mm' && settings.filmBackground !== 'white');
