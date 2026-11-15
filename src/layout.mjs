@@ -1,3 +1,5 @@
+export const FILM_SCALE = 0.8;
+
 export const METADATA_FONTS = ['DM Mono', 'Space Mono', 'Courier Prime', 'Barlow Condensed', 'Source Serif 4'];
 
 export const RATIOS = {
@@ -10,7 +12,7 @@ export const RATIOS = {
 export const DEFAULTS = {
   ratio: 'portrait', layout: 'single', style: 'classic-white', border: 5,
   filmBackground: 'black', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
-  detailX: 0.5, detailY: 0.5, detailZoom: 2,
+  detailX: 0.5, detailY: 0.5, detailZoom: 1,
   metadataMode: 'auto', manual: '', note: '', fontStep: 3, metadataFont: 'DM Mono',
   fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true },
 };
@@ -26,7 +28,7 @@ export function sanitizeSettings(value = {}) {
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
     filmBackground: choices(value.filmBackground, ['white', 'black'], 'black'),
     border: number(value.border, value.style === 'film-35mm' ? 0 : 5, 0, 16), corners: number(value.corners, 0, 0, 25),
-    detailX: number(value.detailX, 0.5, 0, 1), detailY: number(value.detailY, 0.5, 0, 1), detailZoom: number(value.detailZoom, 2, 1, 4),
+    detailX: number(value.detailX, 0.5, 0, 1), detailY: number(value.detailY, 0.5, 0, 1), detailZoom: number(value.detailZoom, 1, 1, 4),
     overview: true, export: choices(value.export, ['native', 'instagram'], DEFAULTS.export),
     jpegQuality: number(value.jpegQuality, 0.9, 0.1, 1),
     instagramReady: value.instagramReady !== false,
@@ -122,14 +124,15 @@ export function detailCrop(item, settings, q = ratioFor(item, settings).width / 
 }
 
 export function filmBox(width, height, square = false) {
-  const mm = Math.min(width, height) / 24;
+  const originalMM = Math.min(width, height) / 24;
+  const mm = originalMM * FILM_SCALE;
   const vertical = width < height;
   const rail = 5.5 * mm;
   if (square) {
     // Fit the untouched photo, keeping a minimum legible rail for near-square sources.
     const long = Math.max(width, height), short = Math.min(width, height);
-    const side = Math.max(long, short + 2 * Math.min(rail, long * 0.03));
-    return { width: side, height: side, vertical, mm: Math.min(mm, (side - short) / 2 / 5.5), rail: (side - short) / 2, square: true };
+    const side = Math.max(long, short + 2 * Math.min(5.5 * originalMM, long * 0.03));
+    return { width: side, height: side, vertical, mm: Math.min(originalMM, (side - short) / 2 / 5.5) * FILM_SCALE, rail: (side - short) / 2, square: true };
   }
   return { width: width + 2 * (vertical ? rail : 0), height: height + 2 * (vertical ? 0 : rail), vertical, mm, rail };
 }

@@ -318,7 +318,7 @@ Slide controls offer Single, Detail, 2 slides and 3 slides. Legacy Auto settings
 
 ## Detail slides and copies
 
-Single remains the import default. Detail adds one close-up after the full photograph; it starts centered at 2×. Selecting the Detail thumbnail opens the finished crop beside the original, with a draggable crop rectangle, 1–4× zoom, and Center action. Arrow keys move the crop; Shift increases the step. The crop follows the selected canvas ratio and stays inside the source. Crop position and zoom remain individual when presentation settings are copied to all photos.
+Single remains the import default. Detail adds one close-up after the full photograph; it starts centered at 1×. Selecting the Detail thumbnail opens the finished crop beside the original, with a draggable crop rectangle, 1–4× zoom, and Center action. Arrow keys move the crop; Shift increases the step. The crop follows the selected canvas ratio and stays inside the source. Crop position and zoom remain individual when presentation settings are copied to all photos.
 
 Detail is an explicit choice, including for film photos; film is never automatically split. Film stock and metadata stay on the full photograph, while the detail shows only the selected image region. Posting-size detail exports fill the canvas; a small-source notice appears when enlargement is necessary. Custom-resolution details retain the selected source pixels. Working-copy imports decode the original for detail exports.
 
@@ -333,3 +333,6 @@ Missing camera metadata still initializes Film, but only the currently selected 
 
 
 Photo-library thumbnails show the full source proportions, capped at 280px visual height (180px on mobile), from a 960px maximum long-edge JPEG at quality 0.94. Film perforations anchor near the image edge; adaptive square stock extends outside the holes. See tests/film-review.md for the real-negative reference comparison.
+
+
+Selected film size is 20% smaller: natural film rails, perforation size, pitch, lettering and patina scale use 0.8 of the previous size. Square full-photo output keeps the full picture and square stock extent; its perforation geometry uses the same 0.8 scale without cropping. Detail zoom defaults to 1, including every new import regardless of the preceding photo's zoom. Individual crop edits and slide copies retain their chosen zoom.

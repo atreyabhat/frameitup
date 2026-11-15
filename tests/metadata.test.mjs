@@ -41,3 +41,12 @@ test('imports retain the preferred font while starting with the metadata footer 
  const settings=importSettings({camera:'FUJIFILM X-T5'},sanitizeSettings({metadataFont:'Barlow Condensed',metadata:true}));
  assert.equal(settings.metadataFont,'Barlow Condensed');assert.equal(settings.metadata,false);assert.equal(settings.layout,'single');
 });
+
+
+test('detail zoom defaults to one on every import despite previous edits',()=>{
+ for(const exif of [null,{camera:'FUJIFILM X-T5'}]) {
+  const settings=importSettings(exif,sanitizeSettings({detailZoom:3,detailX:.1,detailY:.9}));
+  assert.equal(settings.detailZoom,1);assert.equal(settings.detailX,.5);assert.equal(settings.detailY,.5);
+ }
+ assert.equal(sanitizeSettings().detailZoom,1);
+});

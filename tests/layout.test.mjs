@@ -195,12 +195,12 @@ test('detail stays inside every source at extreme positions, ratios and zooms',(
   assert(c.width>0&&c.height>0&&rect.scale>0);
  }
  const invalid=sanitizeSettings({detailX:-10,detailY:99,detailZoom:Infinity});
- assert.equal(invalid.detailX,0);assert.equal(invalid.detailY,1);assert.equal(invalid.detailZoom,2);
+ assert.equal(invalid.detailX,0);assert.equal(invalid.detailY,1);assert.equal(invalid.detailZoom,1);
 });
 test('crop positions stay individual through bulk application',()=>{
  const items=[{id:'a',settings:sanitizeSettings({layout:'detail',detailX:0,detailY:1,detailZoom:3})},{id:'b',settings:sanitizeSettings({detailX:1,detailY:0})}];
  applySharedSettings(items,'a');
- assert.equal(items[1].settings.layout,'detail');assert.equal(items[1].settings.detailX,1);assert.equal(items[1].settings.detailY,0);assert.equal(items[1].settings.detailZoom,2);
+ assert.equal(items[1].settings.layout,'detail');assert.equal(items[1].settings.detailX,1);assert.equal(items[1].settings.detailY,0);assert.equal(items[1].settings.detailZoom,1);
 });
 test('explicit detail adds one crop to film without splitting the full film frame',()=>{
  const settings=sanitizeSettings({style:'film-35mm',layout:'detail'});

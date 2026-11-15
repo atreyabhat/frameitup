@@ -63,7 +63,7 @@ Slide controls offer Single, Detail, 2 slides and 3 slides. Legacy Auto settings
 
 ## Detail slides and copies
 
-Single remains the import default. Detail adds one close-up after the full photograph; it starts centered at 2×. Selecting the Detail thumbnail opens the finished crop beside the original, with a draggable crop rectangle, 1–4× zoom, and Center action. Arrow keys move the crop; Shift increases the step. The crop follows the selected canvas ratio and stays inside the source. Crop position and zoom remain individual when presentation settings are copied to all photos.
+Single remains the import default. Detail adds one close-up after the full photograph; it starts centered at 1×. Selecting the Detail thumbnail opens the finished crop beside the original, with a draggable crop rectangle, 1–4× zoom, and Center action. Arrow keys move the crop; Shift increases the step. The crop follows the selected canvas ratio and stays inside the source. Crop position and zoom remain individual when presentation settings are copied to all photos.
 
 Detail is an explicit choice, including for film photos; film is never automatically split. Film stock and metadata stay on the full photograph, while the detail shows only the selected image region. Posting-size detail exports fill the canvas; a small-source notice appears when enlargement is necessary. Custom-resolution details retain the selected source pixels. Working-copy imports decode the original for detail exports.
 
@@ -75,3 +75,6 @@ The photo library is 25% wider (180px desktop, 200px wide desktop, 140px compact
 Square Film output with border 0 and no metadata footer now adapts its stock to fill the entire square. Landscape rails expand above/below the intact photo; portrait rails expand at the sides. Perforations retain their proportions and pitch; their size reduces for narrow rails. Near-square sources use a minimum visible rail and a continuous film surround. Non-square canvases and explicitly added border/footer space retain their existing mat layout. White/Black selects the perforation background when the stock fills the canvas.
 
 Missing camera metadata still initializes Film, but only the currently selected Film style disables two/three-part splitting. Switching to White, Black, or Color enables split controls and uses the normal Auto format behavior, including for Photoshop exports without EXIF.
+
+
+Selected film size is 20% smaller: natural film rails, perforation size, pitch, lettering and patina scale use 0.8 of the previous size. Square full-photo output keeps the full picture and square stock extent; its perforation geometry uses the same 0.8 scale without cropping. Detail zoom defaults to 1, including every new import regardless of the preceding photo's zoom. Individual crop edits and slide copies retain their chosen zoom.

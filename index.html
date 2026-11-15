@@ -6,10 +6,10 @@
   <meta name="description" content="Frame your photographs, turn landscapes into continuous Instagram carousels, and export at full resolution. Private, in your browser." />
   <meta name="theme-color" content="#eae7dc" />
   <title>Frame It Up</title>
-  <link rel="stylesheet" href="/styles.css?v=12" />
+  <link rel="stylesheet" href="/styles.css?v=13" />
   <script defer src="/assets/vendor/jszip.min.js"></script>
   <script defer src="/assets/vendor/exifr-lite.umd.js"></script>
-  <script type="module" src="/src/app.mjs?v=12"></script>
+  <script type="module" src="/src/app.mjs?v=13"></script>
 </head>
 <body>
   <a class="skip-link" href="#workspace">Skip to photograph</a>
@@ -32,7 +32,7 @@
         <section id="crop-editor" class="crop-editor" aria-label="Detail crop editor" hidden>
           <span class="crop-label">Original · drag to position</span>
           <div id="crop-area" class="crop-area"><div id="crop-surface" class="crop-surface"><canvas id="crop-original" aria-label="Original photograph"></canvas><button id="crop-rectangle" class="crop-rectangle" aria-label="Move detail crop" aria-describedby="crop-help"><span aria-hidden="true">+</span></button></div></div>
-          <div class="crop-controls"><label for="detail-zoom">Zoom</label><div class="number-stepper"><button type="button" data-step="detail-zoom" data-delta="-1" aria-label="Zoom out">−</button><input id="detail-zoom" aria-label="Zoom" type="number" min="1" max="4" step="0.1" value="2" /><button type="button" data-step="detail-zoom" data-delta="1" aria-label="Zoom in">+</button></div><button id="center-crop" class="text-button">Center</button></div>
+          <div class="crop-controls"><label for="detail-zoom">Zoom</label><div class="number-stepper"><button type="button" data-step="detail-zoom" data-delta="-1" aria-label="Zoom out">−</button><input id="detail-zoom" aria-label="Zoom" type="number" min="1" max="4" step="0.1" value="1" /><button type="button" data-step="detail-zoom" data-delta="1" aria-label="Zoom in">+</button></div><button id="center-crop" class="text-button">Center</button></div>
           <span id="crop-help" class="sr-only">Drag the rectangle or use arrow keys to move it. Hold Shift for larger steps.</span>
         </section>
         <div id="empty-state" class="empty-state" hidden><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="38" height="38" rx="1"/><path d="m5 33 12-12 9 9 7-7 10 10"/><circle cx="32" cy="16" r="3"/></svg><h1>Add photos to begin</h1><span class="empty-formats">JPEG, PNG, WebP · Drag files here or use Add photos</span></div>

@@ -128,3 +128,16 @@ test('perforations stay close to the image with more stock outside, including ex
   assert(outside>gap*2,`${ratio}/${width}x${height}: outside stock should exceed the image-side gap`);
  }
 });
+
+
+test('film stock and perforations match the selected 20 percent smaller comparison',()=>{
+ for(const [width,height] of [[1800,1200],[1200,1800],[1400,1400],[2400,800]]) {
+  const item={width,height},s=sanitizeSettings({style:'film-35mm',ratio:'adaptive',instagramReady:false});
+  const p=planPhoto(item,s),originalMM=Math.min(width,height)/24;
+  assert(Math.abs(p.film.mm-originalMM*.8)<1e-8);
+  assert(Math.abs(p.film.rail-originalMM*5.5*.8)<1e-8);
+  const square=planPhoto(item,{...s,ratio:'square'}),side=square.film.width;
+  const originalSquareMM=Math.min(originalMM,(side-Math.min(width,height))/2/5.5);
+  assert(Math.abs(square.film.mm-originalSquareMM*.8)<1e-8);
+ }
+});

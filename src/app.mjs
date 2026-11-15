@@ -1,6 +1,6 @@
-import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=12';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=12';
-import { renderSlide, encodeCanvas } from './render.mjs?v=12';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=13';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=13';
+import { renderSlide, encodeCanvas } from './render.mjs?v=13';
 
 const $ = id => document.getElementById(id);
 // Native selects can match :focus-visible after mouse clicks; track input intent.
