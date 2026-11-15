@@ -27,12 +27,35 @@ export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   // Stock texture and edge ink are clipped away from the photograph itself.
   ctx.beginPath(); ctx.rect(fx, fy, fw, fh); ctx.rect(rect.x, rect.y, rect.width, rect.height); ctx.clip('evenodd');
   ctx.fillStyle = '#171410'; ctx.fillRect(fx, fy, fw, fh);
-  let seed = 731;
+  let seed = seedPosition >>> 0;
   const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  ctx.fillStyle = 'rgba(212,190,150,0.055)';
+  // Uneven amber edge fog, scaled with the stock and stable for this photo.
+  for (let i = 0; i < 3; i++) {
+    const along = random(), side = random() > 0.5;
+    const x = geometry.vertical ? (side ? fx + fw : fx) : fx + along * fw;
+    const y = geometry.vertical ? fy + along * fh : (side ? fy + fh : fy);
+    const reach = geometry.unit * (3 + random() * 3);
+    ctx.save(); ctx.translate(x, y);
+    ctx.scale(geometry.vertical ? 1 : 3.5, geometry.vertical ? 3.5 : 1);
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, reach);
+    glow.addColorStop(0, 'rgba(190,98,35,0.48)');
+    glow.addColorStop(0.35, 'rgba(135,55,22,0.28)');
+    glow.addColorStop(1, 'rgba(95,37,17,0)');
+    ctx.fillStyle = glow; ctx.fillRect(-reach, -reach, reach * 2, reach * 2); ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(212,190,150,0.10)';
   for (let i = 0; i < 900; i++) {
     const size = geometry.unit * (0.025 + random() * 0.035);
     ctx.fillRect(fx + random() * fw, fy + random() * fh, size, size);
+  }
+  // Fine wear follows the length of the film, never crossing the image aperture.
+  ctx.strokeStyle = 'rgba(213,170,104,0.16)'; ctx.lineWidth = geometry.unit * 0.035;
+  for (let i = 0; i < 14; i++) {
+    const side = random() > 0.5, along = random(), inset = random() * geometry.unit * 0.55;
+    const x = geometry.vertical ? (side ? fx + fw - inset : fx + inset) : fx + along * fw;
+    const y = geometry.vertical ? fy + along * fh : (side ? fy + fh - inset : fy + inset);
+    const length = geometry.unit * (0.5 + random() * 2);
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x + (geometry.vertical ? 0 : length), y + (geometry.vertical ? length : 0)); ctx.stroke();
   }
   const edge = geometry.unit * 0.045;
   ctx.strokeStyle = '#51432e'; ctx.lineWidth = edge;
@@ -50,7 +73,7 @@ export function drawFilm(ctx, rect, film, background, seedPosition = 0) {
   ctx.textBaseline = 'middle';
   const position = filmLabelPosition(seedPosition);
   ctx.textAlign = 'center';
-  ctx.fillText('35mm', (3 * u) + position.along * Math.max(0, length - 6 * u), (position.side ? 34.05 : 0.95) * u);
+  ctx.fillText('35MM', (3 * u) + position.along * Math.max(0, length - 6 * u), (position.side ? 34.05 : 0.95) * u);
   ctx.restore();
   ctx.restore();
 }

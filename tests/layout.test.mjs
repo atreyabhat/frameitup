@@ -97,7 +97,7 @@ test('Auto format coordinates dimensions and automatic layouts without lossy enc
   assert.equal(settings.instagramReady,true);
   assert.equal(plan.count,1);
   assert.equal(plan.slides[0].kind,'single');
-  assert(plan.slides.every(slide=>slide.width===1080 && slide.height===1440));
+  assert(plan.slides.every(slide=>slide.width===1080 && slide.height===1080));
 });
 
 test('format and canvas changes stay on the selected photo unless apply-all is explicit',()=>{
@@ -125,4 +125,14 @@ test('film frames and detected film always stay whole, including forced and shar
  assert.equal(planPhoto(digital,sanitizeSettings({style:'classic-white'})).count,2);
  const film={...digital,detectedFilm:true};
  assert.equal(planPhoto(film,sanitizeSettings({style:'classic-black',layout:'3'})).count,1);
+});
+
+
+test('Instagram format defaults detected film square even after changing its frame',()=>{
+ const original=sanitizeSettings({style:'classic-white',ratio:'portrait'});
+ const film=instagramSettings(original,{detectedFilm:true});
+ assert.equal(film.ratio,'square');
+ assert.equal(instagramSettings(original).ratio,'portrait');
+ const explicit=sanitizeSettings({...film,ratio:'classic'});
+ assert.equal(planPhoto({width:1800,height:1200,detectedFilm:true},explicit).slides[0].height,1350);
 });

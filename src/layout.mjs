@@ -118,8 +118,8 @@ export function filmBox(width, height) {
   return { width: width + 2 * (vertical ? rail : end), height: height + 2 * (vertical ? end : rail), vertical, mm };
 }
 
-export function instagramSettings(settings) {
-  return sanitizeSettings({ ...settings, instagramReady: true, ratio: 'portrait', layout: 'auto', overview: true });
+export function instagramSettings(settings, item = {}) {
+  return sanitizeSettings({ ...settings, instagramReady: true, ratio: isFilmPhoto(item, settings) ? 'square' : 'portrait', layout: 'auto', overview: true });
 }
 
 export function exportName(fileName, photoIndex, slideIndex, slide, format) {

@@ -54,6 +54,14 @@ try {
     }
     original.width=original.height=1;
   }
+  const filmSettings=sanitizeSettings({instagramReady:false,style:'film-35mm',ratio:'square',filmBackground:'white',layout:'single'});
+  const filmPlan=planPhoto(item,filmSettings), filmSlide=filmPlan.slides[0];
+  const first=await renderSlide({...item,filmSeed:42},filmSlide,filmPlan,filmSettings);
+  const repeat=await renderSlide({...item,filmSeed:42},filmSlide,filmPlan,filmSettings);
+  const variation=await renderSlide({...item,filmSeed:89721},filmSlide,filmPlan,filmSettings);
+  const filmPixels=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+  check(equal(filmPixels(first),filmPixels(repeat)),'Film patina and lettering remain identical across repeated exports');
+  check(!equal(filmPixels(first),filmPixels(variation)),'Film patina and lettering vary with each photo seed');
   try{await renderSlide(item,{width:20000,height:20000,kind:'single'},plan,settings);check(false,'Oversized exports must fail');}catch{check(true,'Oversized native export fails explicitly instead of silently downsizing');}
 }catch(error){check(false,error.stack);}
 document.getElementById('status').textContent=`${passed} passed, ${failed} failed`;

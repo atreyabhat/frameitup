@@ -302,3 +302,9 @@ Control choices are informed by Apple’s HIG: [steppers](https://developer.appl
 - Don't add source-mode selectors, metadata field toggles, or custom-note controls.
 
 Film-framed or detected-film photos always use one full-photo slide. Split-count buttons are disabled for these photos; Auto and Single remain available. Detection persists when a user changes the frame.
+
+### Bounded editing workspace
+
+The editor occupies the viewport; only the left library scrolls. Preview and export actions stay in place. Layout, Frame and Export tabs expose one inspector section at a time, with arrow-key navigation. Frame details replace the basic frame controls while open, keeping metadata editing within the same space. Individual download recovery links sit in the scrollable library rather than extending the preview. The slide strip fits at most four thumbnails without a second scrollbar. Small screens retain a vertical library beside the preview and a compact tabbed inspector below it.
+
+The quality slider fills its leading segment in muted amber. Film defaults square, uses uppercase `35MM`, and has seeded amber edge patina confined to the stock. See tests/film-review.md for sources.

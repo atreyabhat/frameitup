@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto } from './layout.mjs?v=4';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=4';
-import { renderSlide, encodeCanvas } from './render.mjs?v=4';
+import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto } from './layout.mjs?v=5';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=5';
+import { renderSlide, encodeCanvas } from './render.mjs?v=5';
 
 const $ = id => document.getElementById(id);
 const storage = {
@@ -41,6 +41,7 @@ function updateSetting(key, value, global = false) {
   if (state.exporting) return;
   const item = selected();
   const patch = { [key]: value };
+  if (key === 'style' && value === 'film-35mm' && item?.settings.style !== value) patch.ratio = 'square';
   if (key === 'manual') patch.metadataMode = 'manual';
   preferences = sanitizeSettings({ ...preferences, ...patch });
   patchPhotoSettings(state.items, state.selected, patch, key === 'ratio' && $('canvas-all').checked);
@@ -74,9 +75,11 @@ $('apply-layout').addEventListener('click', () => {
 $('auto-format').addEventListener('change', () => {
   if (state.exporting) return;
   const current = selected() ? settingsFor(selected()) : preferences;
-  const patch = $('auto-format').value === 'instagram' ? { instagramReady: true, ratio: 'portrait', layout: 'auto' } : { instagramReady: false };
-  preferences = sanitizeSettings({ ...current, ...patch });
-  patchPhotoSettings(state.items, state.selected, patch, $('format-all').checked);
+  const instagram = $('auto-format').value === 'instagram';
+  preferences = instagram ? instagramSettings(current, selected()) : sanitizeSettings({ ...current, instagramReady: false });
+  for (const entry of state.items) if ($('format-all').checked || entry.id === state.selected) {
+    entry.settings = instagram ? instagramSettings(entry.settings, entry) : sanitizeSettings({ ...entry.settings, instagramReady: false });
+  }
   savePreferences(); invalidateOutputs(); state.slide = 0;
   syncControls(); requestPreview();
 });
@@ -109,6 +112,7 @@ function syncControls() {
   $('border').hidden = filmOnly;
   $('border-row').hidden = filmOnly;
   $('jpeg-quality').value = Math.round(settings.jpegQuality * 100);
+  $('jpeg-quality').style.setProperty('--quality-fill', `${(Math.round(settings.jpegQuality * 100) - 10) / 90 * 100}%`);
   $('jpeg-quality').disabled = settings.export === 'native';
   $('jpeg-quality-value').value = settings.export === 'native' ? '—' : `${Math.round(settings.jpegQuality * 100)}%`;
   $('quality-description').textContent = `${settings.export === 'native' ? 'PNG · Lossless' : 'JPG'} · ${settings.instagramReady ? '1080 px' : 'Source resolution'} · sRGB`;
@@ -395,3 +399,21 @@ document.querySelectorAll('[data-step]').forEach(button => button.addEventListen
   if (button.dataset.delta === '1') input.stepUp(); else input.stepDown();
   input.dispatchEvent(new Event('input', { bubbles: true }));
 }));
+
+const inspectorTabs = [...document.querySelectorAll('[data-panel]')];
+function showPanel(tab) {
+  for (const button of inspectorTabs) {
+    const active = button === tab;
+    button.setAttribute('aria-selected', String(active));
+    button.tabIndex = active ? 0 : -1;
+    $(`panel-${button.dataset.panel}`).hidden = !active;
+  }
+}
+for (const [index, tab] of inspectorTabs.entries()) {
+  tab.addEventListener('click', () => showPanel(tab));
+  tab.addEventListener('keydown', event => {
+    const next = event.key === 'ArrowRight' ? (index + 1) % inspectorTabs.length : event.key === 'ArrowLeft' ? (index + inspectorTabs.length - 1) % inspectorTabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? inspectorTabs.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault(); showPanel(inspectorTabs[next]); inspectorTabs[next].focus();
+  });
+}

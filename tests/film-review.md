@@ -15,3 +15,11 @@ Four implementation and visual review passes, each rendered through the producti
 - [Actual ILFORD XP2 strip](https://www.nikonistas.com/digital/foro/topic/433102-problema-con-algunas-fotos-veladas/): portrait rail orientation and rotated lettering.
 
 The digital frame uses these proportions as a visual model. Its length adapts to the photograph; it is not a claim that the image was captured on a particular film stock. The 5.5 mm rails derive from a nominal 35 mm strip around a 24 mm image. Decorative identification marks do not encode a real DX stock code.
+
+## Border patina and square defaults — November 15, 2026
+
+Reference: [Lomography's full-border scanning examples](https://www.lomography.com/school/how-to-scan-sprocket-holes-and-film-borders-at-home-fa-q2evqbl3), [ILFORD processing defects](https://www.ilfordphoto.com/common-film-processing-problems/), and [a photographer's actual negative scans](https://forums.negativelabpro.com/t/light-leaks-from-sprocket-holes-in-digital-camera-scan/5481). The discussion distinguishes edge exposure, pressure marks and processing artifacts; these are not all caused by development.
+
+The rendering is a restrained interpretation: three uneven amber edge blooms, fine edge wear and stock grain. It is not a copied scan overlay. All marks use the existing per-photo random seed, rotate with the stock orientation, and are clipped to the film outside the image aperture. Perforations are drawn afterwards so the cutouts stay clear. White and black mats stay clean. Lettering reads `35MM`.
+
+Film imports and switching into Film default to square. This is a default, not a forced aspect ratio; explicit canvas choices remain available. The never-split film rule remains unchanged.
