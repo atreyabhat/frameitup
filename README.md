@@ -75,4 +75,15 @@ Film background offers Black and White only. Legacy Film only settings map to Bl
 
 Metadata font choices: DM Mono (default), Space Mono, Courier Prime, Barlow Condensed, and Source Serif 4. The small Font dropdown appears with the enabled metadata footer. Selection is per photo; the one-time bulk action copies font styling while preserving individual metadata text. Fonts are hosted locally and explicitly loaded before measuring or rendering previews and exports.
 
-Split controls offer Single, 2 slides and 3 slides only. Legacy Auto settings map to Single. Switching from Film to a non-film frame restores border 5. The Frame heading has no scope suffix or separator line.
+Slide controls offer Single, Detail, 2 slides and 3 slides. Legacy Auto settings map to Single. Switching from Film to a non-film frame restores border 5. The Frame heading has no scope suffix or separator line.
+
+
+## Detail slides and copies
+
+Single remains the import default. Detail adds one close-up after the full photograph; it starts centered at 2×. Selecting the Detail thumbnail opens the finished crop beside the original, with a draggable crop rectangle, 1–4× zoom, and Center action. Arrow keys move the crop; Shift increases the step. The crop follows the selected canvas ratio and stays inside the source. Crop position and zoom remain individual when presentation settings are copied to all photos.
+
+Detail is an explicit choice, including for film photos; film is never automatically split. Film stock and metadata stay on the full photograph, while the detail shows only the selected image region. Posting-size detail exports fill the canvas; a small-source notice appears when enlargement is necessary. Custom-resolution details retain the selected source pixels. Working-copy imports decode the original for detail exports.
+
+Each bottom thumbnail has a Duplicate action. Copies appear immediately after their source with a 200ms entrance and maintain independent settings, including metadata on full-photo copies. Copies can be removed separately and remain intact when the original sequence changes. Export numbering follows the visible slide order. Layout controls are omitted for a copy because the copy is one existing slide; frame controls are omitted for copied crop/part slides. Reduced-motion preferences remove the entrance.
+
+The photo library is 25% wider (180px desktop, 200px wide desktop, 140px compact desktop, 95px mobile). Thumbnail dimensions are omitted; source dimensions remain above the main preview. Mouse clicks do not create an outer focus rectangle. Keyboard focus remains visible with a close neutral indicator. Film hides Rounded corners and always preserves square image corners.

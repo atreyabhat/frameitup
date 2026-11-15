@@ -10,6 +10,7 @@ export const RATIOS = {
 export const DEFAULTS = {
   ratio: 'portrait', layout: 'single', style: 'classic-white', border: 5,
   filmBackground: 'black', corners: 0, overview: true, export: 'instagram', jpegQuality: 0.9, instagramReady: true, metadata: false,
+  detailX: 0.5, detailY: 0.5, detailZoom: 2,
   metadataMode: 'auto', manual: '', note: '', fontStep: 3, metadataFont: 'DM Mono',
   fields: { camera: true, focal: true, aperture: true, shutter: true, iso: true },
 };
@@ -21,10 +22,11 @@ export function sanitizeSettings(value = {}) {
   return {
     ...DEFAULTS,
     ratio: choices(value.ratio, [...Object.keys(RATIOS), 'adaptive'], DEFAULTS.ratio),
-    layout: choices(value.layout, ['single', '2', '3'], 'single'),
+    layout: choices(value.layout, ['single', 'detail', '2', '3'], 'single'),
     style: choices(value.style, ['classic-white', 'classic-black', 'average', 'film-35mm'], DEFAULTS.style),
     filmBackground: choices(value.filmBackground, ['white', 'black'], 'black'),
     border: number(value.border, value.style === 'film-35mm' ? 0 : 5, 0, 16), corners: number(value.corners, 0, 0, 25),
+    detailX: number(value.detailX, 0.5, 0, 1), detailY: number(value.detailY, 0.5, 0, 1), detailZoom: number(value.detailZoom, 2, 1, 4),
     overview: true, export: choices(value.export, ['native', 'instagram'], DEFAULTS.export),
     jpegQuality: number(value.jpegQuality, 0.9, 0.1, 1),
     instagramReady: value.instagramReady !== false,
@@ -73,7 +75,7 @@ export function frameInsets(q, settings, hasMetadata) {
 export function planPhoto(item, settings, hasMetadata = false) {
   const ratio = ratioFor(item, settings);
   const q = ratio.width / ratio.height;
-  const count = isFilmPhoto(item, settings) || settings.layout === 'single' ? 1 : Number(settings.layout);
+  const count = isFilmPhoto(item, settings) || ['single', 'detail'].includes(settings.layout) ? 1 : Number(settings.layout);
   const insets = frameInsets(q, settings, hasMetadata);
   const film = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : null;
   const nativeSize = (needed) => {
@@ -86,11 +88,20 @@ export function planPhoto(item, settings, hasMetadata = false) {
   const fullSize = postingSize ? posting : nativeSize(Math.max((film?.width || item.width) / insets.innerWidth, (film?.height || item.height) / insets.innerHeight));
   const sliceSize = postingSize ? posting : nativeSize(Math.max(item.width / count, item.height * q));
   const slides = count > 1 ? Array.from({ length: count }, (_, index) => ({ kind: 'slice', index, count, ...sliceSize })) : [];
-  slides.unshift({ kind: count === 1 ? 'single' : 'overview', index: 0, count: 1, ...fullSize });
+  if (settings.layout === 'detail') {
+    const crop = detailCrop(item, settings, q);
+    slides.push({ kind: 'detail', index: 0, count: 1, ...(postingSize ? posting : { width: crop.width, height: crop.height }) });
+  }
+  slides.unshift({ kind: slides.length === 0 ? 'single' : 'overview', index: 0, count: 1, ...fullSize });
   return { ratio, q, count, slides, insets, film };
 }
 
 export function photoRect(item, slide, plan, settings) {
+  if (slide.kind === 'detail') {
+    const crop = detailCrop(item, settings, plan.q);
+    const scale = Math.max(slide.width / crop.width, slide.height / crop.height);
+    return { x: Math.floor((slide.width - crop.width * scale) / 2), y: Math.floor((slide.height - crop.height * scale) / 2), width: crop.width * scale, height: crop.height * scale, scale, crop };
+  }
   const sliced = slide.kind === 'slice';
   const stripWidth = slide.width * (sliced ? slide.count : 1);
   const area = sliced ? { x: 0, y: 0, width: stripWidth, height: slide.height } : {
@@ -101,6 +112,13 @@ export function photoRect(item, slide, plan, settings) {
   const scale = !settings.instagramReady ? 1 : Math.min(1, area.width / frame.width, area.height / frame.height);
   const width = item.width * scale, height = item.height * scale;
   return { x: Math.floor(area.x + (area.width - width) / 2) - (sliced ? slide.index * slide.width : 0), y: Math.floor(area.y + (area.height - height) / 2), width, height, scale };
+}
+
+// Position is normalized over the available travel, so every crop stays in bounds.
+export function detailCrop(item, settings, q = ratioFor(item, settings).width / ratioFor(item, settings).height) {
+  const width = Math.max(1, Math.floor(Math.min(item.width, item.height * q) / settings.detailZoom));
+  const height = Math.max(1, Math.min(item.height, Math.floor(width / q)));
+  return { x: Math.round((item.width - width) * settings.detailX), y: Math.round((item.height - height) * settings.detailY), width, height };
 }
 
 export function filmBox(width, height) {
@@ -116,7 +134,7 @@ export function instagramSettings(settings, item = {}) {
 
 export function exportName(fileName, photoIndex, slideIndex, slide, format) {
   const base = fileName.replace(/\.[^.]+$/, '').normalize('NFKC').replace(/[^\p{L}\p{N}_-]+/gu, '_').replace(/^_+|_+$/g, '').slice(0, 70) || 'photo';
-  const role = slide.kind === 'slice' ? `part-${slide.index + 1}-of-${slide.count}` : slide.kind === 'overview' ? 'full' : 'framed';
+  const role = slide.kind === 'detail' ? 'detail' : slide.kind === 'slice' ? `part-${slide.index + 1}-of-${slide.count}` : slide.kind === 'overview' ? 'full' : 'framed';
   return `${String(photoIndex + 1).padStart(2, '0')}_${String(slideIndex + 1).padStart(2, '0')}_${base}_${role}.${format === 'instagram' ? 'jpg' : 'png'}`;
 }
 
@@ -141,4 +159,36 @@ export function aspectRatioLabel(width, height) {
   const w = width / a, h = height / a;
   if (Math.max(w, h) <= 100) return `${w}:${h}`;
   return width >= height ? `≈${(width / height).toFixed(2)}:1` : `≈1:${(height / width).toFixed(2)}`;
+}
+
+export function slideKey(slide) {
+  return slide.copyId || (slide.kind === 'slice' ? `part-${slide.index}` : slide.kind === 'detail' ? 'detail' : 'full');
+}
+
+// Copies retain their own presentation and source layout; sequence edits cannot overwrite them.
+export function planSequence(item, settings, hasMetadata = () => false) {
+  const plan = planPhoto(item, settings, hasMetadata(settings));
+  for (const copy of item.copies || []) {
+    const copySettings = sanitizeSettings(copy.settings);
+    const isPart = copy.sourceKey.startsWith('part-');
+    const copyPlan = planPhoto(isPart ? { ...item, detectedFilm: false } : item, isPart ? { ...copySettings, style: 'classic-white' } : copySettings, hasMetadata(copySettings));
+    const source = copyPlan.slides.find(slide => slideKey(slide) === copy.sourceKey) || copyPlan.slides[0];
+    const slide = { ...source, copyId: copy.id, ownSettings: copySettings, ownPlan: copyPlan };
+    const anchor = plan.slides.findIndex(entry => slideKey(entry) === copy.after);
+    plan.slides.splice(anchor < 0 ? plan.slides.length : anchor + 1, 0, slide);
+  }
+  return plan;
+}
+
+export function duplicateSlide(item, slide, settings, id) {
+  const copy = { id, after: slideKey(slide), sourceKey: slide.kind === 'slice' ? `part-${slide.index}` : slide.kind === 'detail' ? 'detail' : 'full', settings: structuredClone(slide.ownSettings || settings) };
+  (item.copies ||= []).push(copy);
+  return copy;
+}
+
+export function removeSlideCopy(item, id) {
+  const removed = item.copies?.find(copy => copy.id === id);
+  if (!removed) return;
+  item.copies = item.copies.filter(copy => copy.id !== id);
+  for (const copy of item.copies) if (copy.after === id) copy.after = removed.after;
 }

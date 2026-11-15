@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings, applySharedSettings, aspectRatioLabel } from '../src/layout.mjs';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, photoRect, exportName, RATIOS, instagramSettings, patchPhotoSettings, applySharedSettings, aspectRatioLabel, planSequence, duplicateSlide, removeSlideCopy } from '../src/layout.mjs';
 
 test('all new and legacy automatic layouts default to one full photograph',()=>{
  for(const layout of [undefined,'auto','invalid','single']) {
@@ -170,4 +170,78 @@ test('metadata fonts are validated, individual, and copied only by an explicit b
  patchPhotoSettings(items,'b',{metadataFont:'Courier Prime'});
  assert.equal(items[0].settings.metadataFont,'Space Mono');
  assert.deepEqual(items.map(i=>i.settings.manual),['Camera A','Camera B']);
+});
+
+test('detail starts centered, keeps full first, and uses the selected canvas shape',()=>{
+ const item={width:4000,height:6000};
+ for(const ratio of [...Object.keys(RATIOS),'adaptive']) {
+  const settings=sanitizeSettings({layout:'detail',ratio});
+  const plan=planPhoto(item,settings),slide=plan.slides[1],rect=photoRect(item,slide,plan,settings);
+  assert.deepEqual(plan.slides.map(s=>s.kind),['overview','detail']);
+  assert.equal(slide.width,1080);assert.equal(slide.height,plan.slides[0].height);
+  assert(Math.abs(rect.crop.x + rect.crop.width/2 - item.width/2)<=.5);
+  assert(Math.abs(rect.crop.y + rect.crop.height/2 - item.height/2)<=.5);
+  assert(rect.scale>0);
+  assert.match(exportName('portrait.jpg',0,1,slide,'native'),/^01_02_portrait_detail.png$/);
+ }
+});
+test('detail stays inside every source at extreme positions, ratios and zooms',()=>{
+ for(const [width,height] of [[4000,6000],[6000,4000],[9000,500],[500,9000],[501,501]])
+ for(const ratio of [...Object.keys(RATIOS),'adaptive'])
+ for(const detailZoom of [1,2,4]) for(const detailX of [0,.5,1]) for(const detailY of [0,.5,1]) {
+  const item={width,height},settings=sanitizeSettings({layout:'detail',ratio,detailX,detailY,detailZoom});
+  const plan=planPhoto(item,settings),rect=photoRect(item,plan.slides[1],plan,settings),c=rect.crop;
+  assert(c.x>=0&&c.y>=0&&c.x+c.width<=width&&c.y+c.height<=height);
+  assert(c.width>0&&c.height>0&&rect.scale>0);
+ }
+ const invalid=sanitizeSettings({detailX:-10,detailY:99,detailZoom:Infinity});
+ assert.equal(invalid.detailX,0);assert.equal(invalid.detailY,1);assert.equal(invalid.detailZoom,2);
+});
+test('crop positions stay individual through bulk application',()=>{
+ const items=[{id:'a',settings:sanitizeSettings({layout:'detail',detailX:0,detailY:1,detailZoom:3})},{id:'b',settings:sanitizeSettings({detailX:1,detailY:0})}];
+ applySharedSettings(items,'a');
+ assert.equal(items[1].settings.layout,'detail');assert.equal(items[1].settings.detailX,1);assert.equal(items[1].settings.detailY,0);assert.equal(items[1].settings.detailZoom,2);
+});
+test('explicit detail adds one crop to film without splitting the full film frame',()=>{
+ const settings=sanitizeSettings({style:'film-35mm',layout:'detail'});
+ const plan=planPhoto({width:4000,height:6000,detectedFilm:true},settings);
+ assert.deepEqual(plan.slides.map(s=>s.kind),['overview','detail']);assert.equal(plan.count,1);
+});
+
+
+test('duplicate full slides retain independent metadata, frame and output settings',()=>{
+ const item={width:4000,height:6000,settings:sanitizeSettings(),copies:[]};
+ const full=planPhoto(item,item.settings).slides[0];
+ const copy=duplicateSlide(item,full,item.settings,'copy-a');
+ copy.settings.metadata=true;copy.settings.manual='50mm';copy.settings.border=9;copy.settings.export='native';
+ const seq=planSequence(item,item.settings,s=>s.metadata);
+ assert.deepEqual(seq.slides.map(s=>s.copyId||'original'),['original','copy-a']);
+ assert.equal(item.settings.metadata,false);assert.equal(item.settings.border,5);assert.equal(item.settings.manual,'');
+ assert.equal(seq.slides[1].ownPlan.insets.footer,.13);assert.equal(seq.slides[1].ownSettings.export,'native');
+ item.settings.ratio='landscape';
+ assert.equal(planSequence(item,item.settings).slides[1].ownPlan.q,.75);
+});
+test('repeated and nested copies insert adjacent and survive removal of their anchor',()=>{
+ const item={width:4000,height:6000,settings:sanitizeSettings({layout:'detail'})};
+ let seq=planSequence(item,item.settings);
+ duplicateSlide(item,seq.slides[0],item.settings,'a');
+ seq=planSequence(item,item.settings);duplicateSlide(item,seq.slides[1],item.settings,'b');
+ seq=planSequence(item,item.settings);duplicateSlide(item,seq.slides[0],item.settings,'c');
+ assert.deepEqual(planSequence(item,item.settings).slides.map(s=>s.copyId||s.kind),['overview','c','a','b','detail']);
+ removeSlideCopy(item,'a');
+ assert.deepEqual(planSequence(item,item.settings).slides.map(s=>s.copyId||s.kind),['overview','c','b','detail']);
+ item.settings.layout='single';
+ assert.equal(planSequence(item,item.settings).slides.length,3);
+});
+test('detail copies retain their crop when original changes, and part copies survive layout changes',()=>{
+ const item={width:4000,height:6000,settings:sanitizeSettings({layout:'detail',detailX:.2})};
+ let seq=planSequence(item,item.settings); const copy=duplicateSlide(item,seq.slides[1],item.settings,'detail-copy');
+ item.settings.detailX=.9;assert.equal(copy.settings.detailX,.2);
+ copy.settings.detailY=.1;assert.equal(item.settings.detailY,.5);
+ item.settings.layout='single';seq=planSequence(item,item.settings);
+ assert.equal(seq.slides[1].kind,'detail');assert.equal(seq.slides[1].ownSettings.detailX,.2);
+ const wide={width:6000,height:4000,settings:sanitizeSettings({layout:'3'})};
+ seq=planSequence(wide,wide.settings);duplicateSlide(wide,seq.slides[2],wide.settings,'part-copy');
+ wide.settings.layout='single';seq=planSequence(wide,wide.settings);
+ assert.equal(seq.slides[1].kind,'slice');assert.equal(seq.slides[1].index,1);assert.equal(seq.slides[1].count,3);
 });

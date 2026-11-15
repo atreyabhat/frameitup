@@ -1,6 +1,6 @@
-import { photoRect, METADATA_FONTS } from './layout.mjs?v=8';
-import { metadataLine, fitExifToLines } from './metadata.mjs?v=8';
-import { drawFilm } from './film.mjs?v=8';
+import { photoRect, METADATA_FONTS } from './layout.mjs?v=9';
+import { metadataLine, fitExifToLines } from './metadata.mjs?v=9';
+import { drawFilm } from './film.mjs?v=9';
 
 export function backgroundFor(item, settings) {
   if (settings.style === 'film-35mm') return settings.filmBackground === 'white' ? '#ffffff' : '#111110';
@@ -15,7 +15,7 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
   const metadataFont = METADATA_FONTS.includes(settings.metadataFont) ? settings.metadataFont : METADATA_FONTS[0];
   if (document.fonts) {
     await document.fonts.ready;
-    if (slide.kind !== 'slice' && plan.insets.footer) {
+    if (!['slice', 'detail'].includes(slide.kind) && plan.insets.footer) {
       const faces = await document.fonts.load(`400 24px "${metadataFont}"`);
       if (!faces.length) throw new Error('The metadata font could not be loaded. Reload the page and try again.');
     }
@@ -33,16 +33,21 @@ export async function renderSlide(item, slide, plan, settings, previewWidth = nu
   ctx.fillRect(0, 0, slide.width, slide.height);
   const rect = photoRect(item, slide, plan, settings);
   ctx.save();
-  if (slide.kind !== 'slice' && settings.corners > 0) {
+  if (!['slice', 'detail'].includes(slide.kind) && settings.style !== 'film-35mm' && settings.corners > 0) {
     const r = Math.min(rect.width, rect.height) * settings.corners / 100;
     ctx.beginPath();
     ctx.roundRect(rect.x, rect.y, rect.width, rect.height, r);
     ctx.clip();
   }
   // Every viewport uses the same source transform; interior seams never get a frame.
-  ctx.drawImage(item.image, rect.x, rect.y, rect.width, rect.height);
+  if (rect.crop) {
+    // A working bitmap may be smaller than the original image dimensions.
+    const sx = (item.image.naturalWidth || item.image.width) / item.width;
+    const sy = (item.image.naturalHeight || item.image.height) / item.height;
+    ctx.drawImage(item.image, rect.crop.x * sx, rect.crop.y * sy, rect.crop.width * sx, rect.crop.height * sy, rect.x, rect.y, rect.width, rect.height);
+  } else ctx.drawImage(item.image, rect.x, rect.y, rect.width, rect.height);
   ctx.restore();
-  if (slide.kind !== 'slice') {
+  if (!['slice', 'detail'].includes(slide.kind)) {
     if (settings.style === 'film-35mm') drawFilm(ctx, rect, plan.film, backgroundFor(item, settings), item.filmSeed || 0);
     if (plan.insets.footer) {
       const y = slide.height - plan.insets.footer * slide.width;

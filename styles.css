@@ -32,7 +32,7 @@
 html:has(.editor),body:has(.editor){height:100%;overflow:hidden}
 body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1fr) 32px}
 .app-header{height:auto;padding:0 24px}
-.editor,.editor:has(.library[hidden]){min-height:0;overflow:hidden;grid-template-columns:144px minmax(0,1fr) 356px}
+.editor,.editor:has(.library[hidden]){min-height:0;overflow:hidden;grid-template-columns:180px minmax(0,1fr) 356px}
 .editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr) 356px}
 .library{padding:18px 8px 0 12px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 .library-heading{flex:none;margin:0 8px 12px 2px}
@@ -80,13 +80,13 @@ body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1f
 .results{margin-top:14px;padding-top:10px}.results-heading{flex-wrap:wrap}.result-link{display:block;font-size:11px}.result-link span{display:block;white-space:normal;font-size:10px}
 #jpeg-quality::-webkit-slider-runnable-track{background:linear-gradient(to right,#a98b70 0 var(--quality-fill,88.889%),#d4cec1 var(--quality-fill,88.889%) 100%)}
 #jpeg-quality::-moz-range-progress{height:4px;background:#a98b70;border-radius:4px}
-@media(min-width:1500px){.editor{grid-template-columns:160px minmax(0,1fr) 380px}.editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr) 380px}.workspace{padding:22px 36px 16px}.inspector{padding:18px 24px 12px}}
-@media(max-width:1100px) and (min-width:761px){.editor{grid-template-columns:112px minmax(0,1fr) 320px}.editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr) 320px}.workspace{padding:14px}.inspector{padding:14px 16px 10px}}
+@media(min-width:1500px){.editor{grid-template-columns:200px minmax(0,1fr) 380px}.editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr) 380px}.workspace{padding:22px 36px 16px}.inspector{padding:18px 24px 12px}}
+@media(max-width:1100px) and (min-width:761px){.editor{grid-template-columns:140px minmax(0,1fr) 320px}.editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr) 320px}.workspace{padding:14px}.inspector{padding:14px 16px 10px}}
 @media(max-height:740px){body:has(.editor){grid-template-rows:56px minmax(0,1fr) 28px}.inspector-tabs{margin-bottom:12px}.inspector{padding-top:10px}.inspector .settings-section>label.scope-check{margin-bottom:7px}.inspector .settings-section .field-label{margin-top:8px}.inspector .settings-section select{min-height:38px;padding:7px 9px}.export-dock{padding-top:8px;margin-top:8px}.export-dock #export-current{min-height:30px}.workspace{padding-top:12px}.workspace-heading{margin-bottom:8px}.slide-tile canvas{height:40px}}
 @media(max-width:760px){
  body:has(.editor){grid-template-rows:56px minmax(0,1fr) 26px}
  .app-header{padding:0 14px}.brand{font-size:23px}.app-header .button{min-height:38px}
- .editor,.editor:has(.library[hidden]){display:grid;grid-template-columns:76px minmax(0,1fr);grid-template-rows:minmax(120px,1fr) 380px}
+ .editor,.editor:has(.library[hidden]){display:grid;grid-template-columns:95px minmax(0,1fr);grid-template-rows:minmax(120px,1fr) 380px}
  .editor:has(.library[hidden]){grid-template-columns:minmax(0,1fr)}
  .library{grid-column:1;grid-row:1/3;order:0;padding:8px 2px 0 4px;border-right:1px solid var(--line);border-top:0;border-bottom:0;overflow:hidden}
  .library-scroll{padding:2px 2px 8px 0;scrollbar-gutter:auto}.photo-list{display:grid;gap:8px}.photo-item{width:100%;padding:3px}.photo-thumb{height:44px}.photo-item-name{font-size:10px}.photo-item-detail{display:none}
@@ -137,4 +137,38 @@ body:has(.editor){height:100dvh;display:grid;grid-template-rows:64px minmax(0,1f
 #source-ratio{flex:none;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:760px){.layout-field{margin-bottom:8px}.apply-settings{min-height:30px;font-size:11px;margin-top:2px}.photo-title-row{gap:6px}#source-ratio{font-size:10px}}
 
-#layout-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+#layout-options{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+/* The crop source only joins the workspace while a detail slide is selected. */
+.preview-stage.editing-detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:20px 38px}
+.crop-editor{height:100%;min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.crop-label{font-size:12px;color:var(--muted);text-align:center}
+.crop-area{position:relative;flex:1;min-height:0;min-width:0}
+.crop-surface{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden}
+#crop-original{display:block;width:100%;height:100%}
+.crop-rectangle{position:absolute;min-width:0;min-height:0;padding:0;border:2px solid #fff;box-shadow:0 0 0 1000px #0007,inset 0 0 0 1px #0003;background:transparent;touch-action:none;cursor:grab;border-radius:1px}
+.crop-rectangle:hover:not(:disabled){background:#ffffff0a}
+.crop-rectangle.dragging{cursor:grabbing}
+.crop-rectangle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.crop-rectangle span{color:#fff;text-shadow:0 1px 3px #0009;font-size:22px;font-weight:300;pointer-events:none}
+.crop-controls{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:12px}
+.crop-controls .number-stepper input{width:38px}.crop-controls .number-stepper button{width:30px}
+.crop-controls .text-button{padding:0 4px;font-size:12px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:1100px){.preview-stage.editing-detail{gap:12px;padding:12px 30px}.crop-controls{gap:4px}.crop-controls>label{display:none}}
+@media(max-width:760px){.preview-stage.editing-detail{gap:8px;padding:6px 24px}.crop-editor{gap:4px}.crop-label{font-size:9px}.crop-controls{gap:2px}.crop-controls .number-stepper button{width:24px;height:28px}.crop-controls .number-stepper input{width:30px;height:28px;font-size:11px}.crop-controls .text-button{font-size:10px;min-height:28px}.crop-rectangle{border-width:1px}}
+
+/* Mouse clicks stay quiet; keyboard focus uses one close, neutral outline. */
+:root[data-input=pointer] :focus{outline:none}
+:root[data-input=pointer] .settings-section select:focus,:root[data-input=pointer] .settings-section textarea:focus{border-color:#d9d3c7}
+:root[data-input=keyboard] :focus-visible{outline:2px solid var(--muted);outline-offset:1px}
+:root[data-input=keyboard] .settings-section select:focus-visible,:root[data-input=keyboard] .settings-section textarea:focus-visible{outline:none;border-color:var(--muted);box-shadow:0 0 0 1px var(--muted)}
+
+.slide-strip{overflow-x:auto;overflow-y:hidden;padding-bottom:5px;scrollbar-gutter:stable}
+.slide-item{flex:0 0 auto;min-width:68px;max-width:150px;display:flex;flex-direction:column}
+.slide-item .slide-tile{max-width:100%;width:100%;margin-right:0}
+.slide-item .slide-tile.overview::before{display:none}
+.slide-actions{display:flex;justify-content:flex-end;gap:2px}
+.slide-action{display:grid;place-items:center;width:32px;height:30px;border-radius:4px;color:var(--muted)}
+.slide-action svg{width:16px;height:16px}
+@media(max-width:760px){.slide-item{min-width:56px;max-width:92px}.slide-action{width:28px;height:28px}.slide-action svg{width:14px;height:14px}}

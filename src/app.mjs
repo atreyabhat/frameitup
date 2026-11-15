@@ -1,8 +1,14 @@
-import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel } from './layout.mjs?v=8';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=8';
-import { renderSlide, encodeCanvas } from './render.mjs?v=8';
+import { METADATA_FONTS, DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto, applySharedSettings, aspectRatioLabel, detailCrop, planSequence, slideKey, duplicateSlide, removeSlideCopy } from './layout.mjs?v=9';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=9';
+import { renderSlide, encodeCanvas } from './render.mjs?v=9';
 
 const $ = id => document.getElementById(id);
+// Native selects can match :focus-visible after mouse clicks; track input intent.
+document.documentElement.dataset.input = 'pointer';
+document.addEventListener('pointerdown', () => { document.documentElement.dataset.input = 'pointer'; }, true);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Tab' || event.key.startsWith('Arrow')) document.documentElement.dataset.input = 'keyboard';
+}, true);
 const storage = {
   get(key) { try { return localStorage.getItem(key); } catch { return null; } },
   set(key, value) { try { localStorage.setItem(key, value); } catch { /* Private browsing may disable preference storage. */ } },
@@ -14,10 +20,17 @@ function loadPreferences() {
   } catch { return sanitizeSettings(); }
 }
 let preferences = loadPreferences();
-const state = { items: [], selected: null, slide: 0, revision: 0, timer: null, exporting: false, outputs: [], lastView: null, motion: null };
+const state = { items: [], selected: null, slide: 0, copyId: null, revision: 0, timer: null, exporting: false, outputs: [], lastView: null, motion: null };
 const selected = () => state.items.find(item => item.id === state.selected);
 const settingsFor = item => sanitizeSettings(item.settings);
-const planFor = (item, settings = settingsFor(item)) => planPhoto(item, settings, Boolean(metadataLine(item, settings)));
+const planFor = (item, settings = settingsFor(item)) => planSequence(item, settings, value => Boolean(metadataLine(item, value)));
+const selectedCopy = () => selected()?.copies?.find(copy => copy.id === state.copyId);
+const editingSettings = () => selectedCopy() ? sanitizeSettings(selectedCopy().settings) : selected() ? settingsFor(selected()) : preferences;
+function chooseSlide(index) {
+  const slides = planFor(selected()).slides;
+  state.slide = Math.max(0, Math.min(index, slides.length - 1));
+  state.copyId = slides[state.slide]?.copyId || null;
+}
 const el = (tag, className, text) => {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -40,13 +53,17 @@ function invalidateOutputs() {
 function updateSetting(key, value) {
   if (state.exporting) return;
   const item = selected();
+  const current = editingSettings();
   const patch = { [key]: value };
-  if (key === 'style' && value === 'film-35mm' && item?.settings.style !== value) { patch.ratio = 'square'; patch.border = 0; }
-  if (key === 'style' && value !== 'film-35mm' && item?.settings.style === 'film-35mm') patch.border = 5;
+  if (key === 'style' && value === 'film-35mm' && current.style !== value) { patch.ratio = 'square'; patch.border = 0; }
+  if (key === 'style' && value !== 'film-35mm' && current.style === 'film-35mm') patch.border = 5;
   if (key === 'manual') patch.metadataMode = 'manual';
-  preferences = sanitizeSettings({ ...preferences, ...patch });
-  patchPhotoSettings(state.items, state.selected, patch);
-  savePreferences();
+  if (selectedCopy()) selectedCopy().settings = sanitizeSettings({ ...current, ...patch });
+  else {
+    preferences = sanitizeSettings({ ...preferences, ...patch });
+    patchPhotoSettings(state.items, state.selected, patch);
+    savePreferences();
+  }
   invalidateOutputs();
   syncControls();
   requestPreview();
@@ -57,7 +74,7 @@ for (const family of METADATA_FONTS) {
 }
 
 const controlMap = {
-  ratio: ['ratio'], 'film-background': ['filmBackground'], border: ['border'], corners: ['corners'],
+  'detail-zoom': ['detailZoom'], ratio: ['ratio'], 'film-background': ['filmBackground'], border: ['border'], corners: ['corners'],
   metadata: ['metadata'], 'manual-metadata': ['manual'],
   'metadata-font': ['metadataFont'], 'font-step': ['fontStep'], 'export-type': ['export'],
 };
@@ -68,7 +85,11 @@ for (const [id, [key]] of Object.entries(controlMap)) {
   });
 }
 document.querySelectorAll('[data-layout]').forEach(button => button.addEventListener('click', () => {
-  state.slide = 0; updateSetting('layout', button.dataset.layout);
+  state.copyId = null; updateSetting('layout', button.dataset.layout);
+  if (selected()) {
+    const slides = planFor(selected()).slides;
+    chooseSlide(button.dataset.layout === 'detail' ? slides.findIndex(slide => slide.kind === 'detail' && !slide.copyId) : 0);
+  }
 }));
 document.querySelectorAll('[data-style]').forEach(button => button.addEventListener('click', () => updateSetting('style', button.dataset.style)));
 $('apply-settings').addEventListener('click', () => {
@@ -80,21 +101,27 @@ $('apply-settings').addEventListener('click', () => {
 
 $('auto-format').addEventListener('change', () => {
   if (state.exporting) return;
-  const current = selected() ? settingsFor(selected()) : preferences;
+  const current = editingSettings();
   const instagram = $('auto-format').value === 'instagram';
-  preferences = instagram ? instagramSettings(current, selected()) : sanitizeSettings({ ...current, instagramReady: false });
-  if (selected()) selected().settings = structuredClone(preferences);
-  savePreferences(); invalidateOutputs(); state.slide = 0;
+  const next = instagram ? instagramSettings(current, selected()) : sanitizeSettings({ ...current, instagramReady: false });
+  if (selectedCopy()) selectedCopy().settings = sanitizeSettings({ ...next, layout: current.layout });
+  else {
+    preferences = next;
+    if (selected()) selected().settings = structuredClone(preferences);
+    savePreferences(); state.slide = 0;
+  }
+  invalidateOutputs();
   syncControls(); requestPreview();
 });
 $('export-all').addEventListener('change', () => { invalidateOutputs(); syncControls(); });
 
 function syncControls() {
   const item = selected();
-  const settings = item ? settingsFor(item) : preferences;
+  const settings = editingSettings();
   for (const [id, [key]] of Object.entries(controlMap)) {
     if ($(id).type === 'checkbox') $(id).checked = settings[key]; else $(id).value = settings[key];
   }
+  $('layout-options').hidden = $('layout-label').hidden = Boolean(selectedCopy());
   const film = item ? isFilmPhoto(item, settings) : settings.style === 'film-35mm';
   const layout = film && ['2', '3'].includes(settings.layout) ? 'single' : settings.layout;
   document.querySelectorAll('[data-layout]').forEach(button => {
@@ -111,6 +138,9 @@ function syncControls() {
   $('metadata-controls').hidden = !settings.metadata || !available;
   if (item && settings.metadataMode === 'auto') $('manual-metadata').value = metadataLine(item, { ...settings, manual: '', note: '' });
   $('film-background-control').hidden = settings.style !== 'film-35mm';
+  $('corners-row').hidden = settings.style === 'film-35mm';
+  const displayed = item ? planFor(item).slides.find(slide => slide.copyId === state.copyId && state.copyId) : null;
+  $('panel-frame').hidden = Boolean(displayed && ['slice', 'detail'].includes(displayed.kind));
   $('jpeg-quality').value = Math.round(settings.jpegQuality * 100);
   $('jpeg-quality').style.setProperty('--quality-fill', `${(Math.round(settings.jpegQuality * 100) - 10) / 90 * 100}%`);
   $('jpeg-quality').disabled = settings.export === 'native';
@@ -128,7 +158,7 @@ function syncControls() {
   $('remove-photo').disabled = !item || state.exporting;
   $('previous-photo').disabled = !item || state.items.indexOf(item) === 0 || state.exporting;
   $('next-photo').disabled = !item || state.items.indexOf(item) === state.items.length - 1 || state.exporting;
-  $('apply-settings').hidden = state.items.length < 2;
+  $('apply-settings').hidden = state.items.length < 2 || Boolean(selectedCopy());
   $('apply-settings').disabled = !item || state.exporting;
   $('library').hidden = !state.items.length;
 }
@@ -143,9 +173,9 @@ function renderLibrary() {
     button.setAttribute('aria-pressed', String(item.id === state.selected));
     button.setAttribute('aria-label', `Select ${item.name}`);
     const img = el('img', 'photo-thumb'); img.src = item.thumbnail; img.alt = '';
-    button.append(img, el('span', 'photo-item-name', item.name), el('span', 'photo-item-detail', `${item.width} × ${item.height}`));
+    button.append(img, el('span', 'photo-item-name', item.name));
     button.addEventListener('click', () => {
-      state.selected = item.id; state.slide = 0;
+      state.selected = item.id; state.slide = 0; state.copyId = null;
       renderLibrary(); syncControls(); requestPreview();
     });
     $('photo-list').append(button);
@@ -157,12 +187,16 @@ function copyCanvas(source, target) {
   target.width = source.width; target.height = source.height;
   target.getContext('2d', { colorSpace: 'srgb' }).drawImage(source, 0, 0);
 }
-function requestPreview() {
+function requestPreview(delay = 80) {
+  if (delay === 16 && state.timer) return;
   const revision = ++state.revision;
   clearTimeout(state.timer);
-  state.timer = setTimeout(() => renderPreview(revision).catch(error => {
-    if (revision === state.revision) setStatus(`Preview failed: ${error.message}`, true);
-  }), 80);
+  state.timer = setTimeout(() => {
+    state.timer = null;
+    renderPreview(revision).catch(error => {
+      if (revision === state.revision) setStatus(`Preview failed: ${error.message}`, true);
+    });
+  }, delay);
 }
 
 async function renderPreview(revision) {
@@ -173,54 +207,99 @@ async function renderPreview(revision) {
   $('sequence-heading').hidden = $('slide-strip').hidden = !item;
   $('quality-warning').hidden = true;
   if (!item) {
+    $('crop-editor').hidden = true; $('preview-stage').classList.remove('editing-detail');
     $('photo-title').textContent = 'Your photograph'; $('source-ratio').textContent = ''; $('source-info').textContent = 'Add a photograph to start framing.';
     $('slide-strip').replaceChildren(); $('output-dimensions').textContent = '—'; $('slide-description').textContent = 'No photo selected';
     $('sequence-summary').textContent = '0 slides';
     $('previous-slide').disabled = $('next-slide').disabled = true;
     return;
   }
-  const settings = structuredClone(settingsFor(item));
-  const plan = planFor(item, settings);
+  const sequence = planFor(item);
+  const copiedIndex = sequence.slides.findIndex(slide => slide.copyId === state.copyId);
+  if (state.copyId && copiedIndex >= 0) state.slide = copiedIndex;
+  const plan = sequence;
   state.slide = Math.max(0, Math.min(state.slide, plan.slides.length - 1));
   const index = state.slide, slide = plan.slides[index];
-  const view = await renderSlide(item, slide, plan, settings, 900);
+  state.copyId = slide.copyId || null;
+  const settings = structuredClone(slide.ownSettings || settingsFor(item));
+  const renderPlan = slide.ownPlan || plan;
+  const view = await renderSlide(item, slide, renderPlan, settings, 900);
   if (revision !== state.revision) return;
   copyCanvas(view, $('main-canvas'));
-  const viewKey = `${item.id}:${index}`;
+  const editingDetail = slide.kind === 'detail';
+  $('crop-editor').hidden = !editingDetail;
+  $('preview-stage').classList.toggle('editing-detail', editingDetail);
+  if (editingDetail) {
+    const original = $('crop-original');
+    if (original.dataset.photo !== item.id) {
+      const scale = Math.min(1, 1200 / Math.max(item.width, item.height));
+      original.width = Math.round(item.width * scale); original.height = Math.round(item.height * scale);
+      original.getContext('2d').drawImage(item.image, 0, 0, original.width, original.height);
+      original.dataset.photo = item.id;
+    }
+    positionCrop();
+  }
+  const viewKey = `${item.id}:${slideKey(slide)}`;
   if (state.lastView !== viewKey && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     state.motion?.cancel();
     state.motion = $('main-canvas').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
   }
   state.lastView = viewKey;
-  $('main-canvas').setAttribute('aria-label', `${item.name}, ${slide.kind === 'slice' ? `continuous part ${slide.index + 1} of ${slide.count}` : 'full framed photograph'}`);
+  $('main-canvas').setAttribute('aria-label', `${item.name}, ${slide.kind === 'detail' ? 'detail crop' : slide.kind === 'slice' ? `continuous part ${slide.index + 1} of ${slide.count}` : 'full framed photograph'}`);
   $('photo-title').textContent = item.name;
   $('source-ratio').textContent = aspectRatioLabel(item.width, item.height);
   $('source-info').textContent = `${item.width} × ${item.height} px · ${item.width > item.height ? 'Landscape' : item.width < item.height ? 'Portrait' : 'Square'}`;
   $('output-dimensions').textContent = `${slide.width} × ${slide.height} px`;
-  $('slide-description').textContent = slide.kind === 'slice' ? `Part ${slide.index + 1} of ${slide.count}` : 'Full photo';
+  $('slide-description').textContent = (slide.kind === 'detail' ? 'Detail' : slide.kind === 'slice' ? `Part ${slide.index + 1} of ${slide.count}` : 'Full photo') + (slide.copyId ? ' · copy' : '');
   $('sequence-summary').textContent = `${plan.slides.length} slide${plan.slides.length === 1 ? '' : 's'} · ${plan.ratio.label.replace('Portrait ', '')}`;
-  const lowResolution = (settings.instagramReady) && photoRect(item, slide, plan, settings).scale === 1;
+  const sourceScale = photoRect(item, slide, renderPlan, settings).scale;
+  const lowResolution = settings.instagramReady && (slide.kind === 'detail' ? sourceScale > 1 : sourceScale === 1);
   $('quality-warning').hidden = !lowResolution;
-  $('quality-warning').textContent = lowResolution ? 'Small source: padding added to avoid enlargement.' : '';
+  $('quality-warning').textContent = lowResolution ? (slide.kind === 'detail' ? 'This crop is below output resolution. Reduce zoom for more detail.' : 'Small source: padding added to avoid enlargement.') : '';
   $('previous-slide').disabled = index === 0;
   $('next-slide').disabled = index === plan.slides.length - 1;
   const fragment = document.createDocumentFragment();
   for (const [i, entry] of plan.slides.entries()) {
+    const tile = el('div', 'slide-item');
     const button = el('button', `slide-tile${entry.kind === 'overview' ? ' overview' : ''}`);
     button.dataset.slideIndex = String(i);
     button.setAttribute('aria-pressed', String(i === index));
-    button.setAttribute('aria-label', `Show slide ${i + 1}, ${entry.kind === 'slice' ? `part ${entry.index + 1}` : 'full photograph'}`);
-    const canvas = await renderSlide(item, entry, plan, settings, 160);
+    button.setAttribute('aria-label', `Show slide ${i + 1}, ${entry.kind === 'detail' ? 'detail crop' : entry.kind === 'slice' ? `part ${entry.index + 1}` : 'full photograph'}${entry.copyId ? ', copy' : ''}`);
+    const canvas = await renderSlide(item, entry, entry.ownPlan || plan, entry.ownSettings || settingsFor(item), 160);
     if (revision !== state.revision) return;
-    button.append(canvas, el('span', '', `${String(i + 1).padStart(2, '0')} · ${entry.kind === 'slice' ? `Part ${entry.index + 1}` : 'Full photo'}`));
-    button.addEventListener('click', () => { state.slide = i; syncControls(); requestPreview(); });
-    fragment.append(button);
+    button.append(canvas, el('span', '', `${String(i + 1).padStart(2, '0')} · ${entry.kind === 'detail' ? 'Detail' : entry.kind === 'slice' ? `Part ${entry.index + 1}` : 'Full photo'}`));
+    button.addEventListener('click', () => { chooseSlide(i); syncControls(); requestPreview(); });
+    const actions = el('div', 'slide-actions');
+    const duplicate = el('button', 'slide-action');
+    duplicate.setAttribute('aria-label', `Duplicate slide ${i + 1}`); duplicate.title = 'Duplicate slide';
+    duplicate.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V4H4v11h4"/></svg>';
+    duplicate.addEventListener('click', () => {
+      const copy = duplicateSlide(item, entry, settingsFor(item), crypto.randomUUID());
+      state.copyId = copy.id; state.newCopy = copy.id;
+      invalidateOutputs(); syncControls(); requestPreview(); setStatus('Slide duplicated. Edits to this copy stay separate.');
+    });
+    actions.append(duplicate);
+    if (entry.copyId) {
+      const remove = el('button', 'slide-action'); remove.setAttribute('aria-label', `Remove slide ${i + 1} copy`); remove.title = 'Remove copy';
+      remove.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
+      remove.addEventListener('click', () => {
+        removeSlideCopy(item, entry.copyId); chooseSlide(Math.max(0, i - 1));
+        invalidateOutputs(); syncControls(); requestPreview(); setStatus('Slide copy removed.');
+      }); actions.append(remove);
+    }
+    tile.dataset.copyId = entry.copyId || ''; tile.append(button, actions); fragment.append(tile);
   }
   const focusedSlide = document.activeElement?.closest('.slide-tile')?.dataset.slideIndex;
   $('slide-strip').replaceChildren(fragment);
   if (focusedSlide !== undefined) {
     const nextFocus = Math.min(Number(focusedSlide), plan.slides.length - 1);
-    $('slide-strip').children[nextFocus]?.focus({ preventScroll: true });
+    $('slide-strip').children[nextFocus]?.querySelector('.slide-tile')?.focus({ preventScroll: true });
+  }
+  if (state.newCopy) {
+    const added = [...$('slide-strip').children].find(tile => tile.dataset.copyId === state.newCopy);
+    if (added && !matchMedia('(prefers-reduced-motion: reduce)').matches) added.animate([{ opacity: 0, transform: 'translateX(-10px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 200, easing: 'ease-out' });
+    added?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    added?.querySelector('.slide-tile')?.focus({ preventScroll: true }); state.newCopy = null;
   }
   syncControls();
 }
@@ -228,11 +307,11 @@ async function renderPreview(revision) {
 for (const [id, direction] of [['previous-slide', -1], ['next-slide', 1]]) $(id).addEventListener('click', () => {
   const item = selected();
   if (!item) return;
-  state.slide = Math.max(0, Math.min(state.slide + direction, planFor(item).slides.length - 1));
+  chooseSlide(state.slide + direction);
   syncControls(); requestPreview();
 });
 let touchStart = null;
-$('preview-stage').addEventListener('touchstart', event => { touchStart = event.touches[0].clientX; }, { passive: true });
+$('preview-stage').addEventListener('touchstart', event => { touchStart = event.target.closest('.crop-editor') ? null : event.touches[0].clientX; }, { passive: true });
 $('preview-stage').addEventListener('touchend', event => {
   if (touchStart === null) return;
   const delta = event.changedTouches[0].clientX - touchStart;
@@ -241,12 +320,56 @@ $('preview-stage').addEventListener('touchend', event => {
   if (Math.abs(delta) > 45 && !button.disabled) button.click();
 }, { passive: true });
 $('workspace').addEventListener('keydown', event => {
-  if (event.target.closest('input,textarea,select,.photo-actions')) return;
+  if (event.target.closest('input,textarea,select,.photo-actions,.crop-editor')) return;
   if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
     const button = $(event.key === 'ArrowRight' ? 'next-slide' : 'previous-slide');
     if (!button.disabled) { event.preventDefault(); button.click(); }
   }
 });
+
+// Crop controls operate in original-image coordinates, independent of preview size.
+function positionCrop() {
+  const item = selected();
+  if (!item || $('crop-editor').hidden) return;
+  const settings = editingSettings(), crop = detailCrop(item, settings);
+  const area = $('crop-area').getBoundingClientRect();
+  const scale = Math.min(area.width / item.width, area.height / item.height);
+  const surface = $('crop-surface');
+  surface.style.width = `${item.width * scale}px`; surface.style.height = `${item.height * scale}px`;
+  const rectangle = $('crop-rectangle');
+  Object.assign(rectangle.style, { left: `${crop.x / item.width * 100}%`, top: `${crop.y / item.height * 100}%`, width: `${crop.width / item.width * 100}%`, height: `${crop.height / item.height * 100}%` });
+}
+new ResizeObserver(positionCrop).observe($('crop-area'));
+function moveCrop(x, y) {
+  if (!selected() || state.exporting) return;
+  if (selectedCopy()) selectedCopy().settings = sanitizeSettings({ ...selectedCopy().settings, detailX: x, detailY: y });
+  else patchPhotoSettings(state.items, state.selected, { detailX: x, detailY: y });
+  invalidateOutputs(); positionCrop(); requestPreview(16);
+}
+let cropDrag = null;
+$('crop-rectangle').addEventListener('pointerdown', event => {
+  if (event.button !== 0 || state.exporting) return;
+  const item = selected(), settings = editingSettings(), crop = detailCrop(item, settings);
+  const bounds = $('crop-surface').getBoundingClientRect();
+  cropDrag = { pointer: event.pointerId, id: item.id, x: event.clientX, y: event.clientY, startX: settings.detailX, startY: settings.detailY, travelX: bounds.width * (1 - crop.width / item.width), travelY: bounds.height * (1 - crop.height / item.height) };
+  event.currentTarget.setPointerCapture(event.pointerId);
+  event.currentTarget.classList.add('dragging');
+  event.preventDefault(); event.currentTarget.focus({ preventScroll: true });
+});
+$('crop-rectangle').addEventListener('pointermove', event => {
+  if (!cropDrag || cropDrag.pointer !== event.pointerId || cropDrag.id !== state.selected) return;
+  moveCrop(cropDrag.startX + (cropDrag.travelX ? (event.clientX - cropDrag.x) / cropDrag.travelX : 0), cropDrag.startY + (cropDrag.travelY ? (event.clientY - cropDrag.y) / cropDrag.travelY : 0));
+});
+for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('crop-rectangle').addEventListener(type, () => {
+  cropDrag = null; $('crop-rectangle').classList.remove('dragging');
+});
+$('crop-rectangle').addEventListener('keydown', event => {
+  if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)) return;
+  event.preventDefault(); event.stopPropagation();
+  const settings = editingSettings(), step = event.shiftKey ? 0.1 : 0.01;
+  moveCrop(settings.detailX + (event.key === 'ArrowRight' ? step : event.key === 'ArrowLeft' ? -step : 0), settings.detailY + (event.key === 'ArrowDown' ? step : event.key === 'ArrowUp' ? -step : 0));
+});
+$('center-crop').addEventListener('click', () => moveCrop(0.5, 0.5));
 
 async function decodeFile(file) {
   if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error(`${file.name}: use an edited JPEG, PNG, or WebP. Convert HEIC, RAW, or HDR files in your photo editor first.`);
@@ -255,7 +378,7 @@ async function decodeFile(file) {
   try {
     await image.decode();
 
-    const item = { id: crypto.randomUUID(), name: file.name, file, image, width: image.naturalWidth, height: image.naturalHeight, settings: structuredClone(preferences.instagramReady ? { ...preferences, layout: 'auto', overview: true } : preferences), thumbnail: '', average: '#c4bba6', exif: null };
+    const item = { id: crypto.randomUUID(), name: file.name, file, image, width: image.naturalWidth, height: image.naturalHeight, settings: structuredClone(preferences.instagramReady ? { ...preferences, layout: 'single', overview: true } : preferences), thumbnail: '', average: '#c4bba6', exif: null };
     const canvas = document.createElement('canvas');
     const thumbnailScale = 180 / Math.max(item.width, item.height);
     canvas.width = Math.max(1, Math.round(item.width * thumbnailScale));
@@ -290,7 +413,7 @@ async function addFiles(files) {
       setStatus(`Reading photograph ${index + 1} of ${files.length}…`);
       try {
         const item = await decodeFile(file);
-        state.items.push(item); state.selected = item.id; state.slide = 0;
+        state.items.push(item); state.selected = item.id; state.slide = 0; state.copyId = null;
         renderLibrary(); syncControls(); requestPreview();
       } catch (error) { failures.push(error.message); }
     }
@@ -313,13 +436,13 @@ document.addEventListener('drop', event => { event.preventDefault(); dragDepth =
 $('remove-photo').addEventListener('click', () => {
   const index = state.items.findIndex(item => item.id === state.selected);
   if (selected()?.workingCopy) selected().image.close();
-  state.items.splice(index, 1); state.selected = state.items[Math.min(index, state.items.length - 1)]?.id || null; state.slide = 0;
+  state.items.splice(index, 1); state.selected = state.items[Math.min(index, state.items.length - 1)]?.id || null; state.slide = 0; state.copyId = null;
   invalidateOutputs(); renderLibrary(); syncControls(); requestPreview(); setStatus('Photograph removed from this session.');
 });
 for (const [id, direction] of [['previous-photo', -1], ['next-photo', 1]]) $(id).addEventListener('click', () => {
   const index = state.items.findIndex(item => item.id === state.selected), destination = index + direction;
   if (destination < 0 || destination >= state.items.length) return;
-  state.selected = state.items[destination].id; state.slide = 0;
+  state.selected = state.items[destination].id; state.slide = 0; state.copyId = null;
   renderLibrary(); syncControls(); requestPreview();
   const active = $('photo-list').querySelector('[aria-pressed=true]');
   if (active) {
@@ -342,7 +465,7 @@ async function exportFiles(currentOnly = false) {
   const snapshot = targets.map(item => ({ item, settings: structuredClone(settingsFor(item)) }));
   const jobs = snapshot.flatMap(({ item, settings }, photoIndex) => {
     const plan = planFor(item, settings);
-    return plan.slides.flatMap((slide, slideIndex) => currentOnly && slideIndex !== state.slide ? [] : [{ item, settings, plan, slide, name: exportName(item.name, photoIndex, slideIndex, slide, settings.export) }]);
+    return plan.slides.flatMap((slide, slideIndex) => currentOnly && slideIndex !== state.slide ? [] : [{ item, settings: slide.ownSettings || settings, plan: slide.ownPlan || plan, slide, name: exportName(item.name, photoIndex, slideIndex, slide, (slide.ownSettings || settings).export) }]);
   });
   state.exporting = true; state.revision++; clearTimeout(state.timer); invalidateOutputs();
   $('editor').inert = true; $('editor').setAttribute('aria-busy', 'true'); $('add-photos').disabled = true;
@@ -354,7 +477,7 @@ async function exportFiles(currentOnly = false) {
         let original;
         let canvas;
         try {
-          if (job.item.workingCopy && !job.settings.instagramReady) original = await createImageBitmap(job.item.file);
+          if (job.item.workingCopy && (!job.settings.instagramReady || job.slide.kind === 'detail')) original = await createImageBitmap(job.item.file);
           canvas = await renderSlide(original ? { ...job.item, image: original } : job.item, job.slide, job.plan, job.settings);
         } finally { original?.close(); }
         const blob = await encodeCanvas(canvas, job.settings.export, job.settings.jpegQuality);

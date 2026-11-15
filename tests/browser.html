@@ -62,6 +62,21 @@ try {
   const filmPixels=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
   check(equal(filmPixels(first),filmPixels(repeat)),'Film patina and lettering remain identical across repeated exports');
   check(!equal(filmPixels(first),filmPixels(variation)),'Film patina and lettering vary with each photo seed');
+  for (const ratio of ['portrait','square','landscape','adaptive']) {
+    const settings=sanitizeSettings({instagramReady:false,layout:'detail',ratio,detailX:1,detailY:0,detailZoom:2,metadata:true,manual:'Must not appear on detail',style:'film-35mm'});
+    const plan=planPhoto(item,settings,true),slide=plan.slides[1],rect=photoRect(item,slide,plan,settings);
+    const canvas=await renderSlide(item,slide,plan,settings),crop=rect.crop;
+    const expected=ctx.getImageData(crop.x,crop.y,crop.width,crop.height).data;
+    check(equal(canvas.getContext('2d').getImageData(0,0,crop.width,crop.height).data,expected),`${ratio}: detail exports the exact selected source pixels with no film or footer overlay`);
+    const blob=await encodeCanvas(canvas,'native'),decoded=await createImageBitmap(blob);
+    check(decoded.width===crop.width&&decoded.height===crop.height,`${ratio}: native detail uses original crop resolution`);decoded.close();
+  }
+  const detailSettings=sanitizeSettings({layout:'detail',ratio:'portrait',detailX:0,detailY:1}),detailPlan=planPhoto(item,detailSettings);
+  const detailCanvas=await renderSlide(item,detailPlan.slides[1],detailPlan,detailSettings),detailRect=photoRect(item,detailPlan.slides[1],detailPlan,detailSettings);
+  check(detailCanvas.width===1080&&detailCanvas.height===1440&&detailRect.scale>1,'Explicit detail crop fills the output even for a small source');
+  const squareFilm=sanitizeSettings({style:'film-35mm',instagramReady:false,corners:25,ratio:'square'});
+  const squareFilmPlan=planPhoto(item,squareFilm),squareFilmCanvas=await renderSlide(item,squareFilmPlan.slides[0],squareFilmPlan,squareFilm),squareFilmRect=photoRect(item,squareFilmPlan.slides[0],squareFilmPlan,squareFilm);
+  check(equal(squareFilmCanvas.getContext('2d').getImageData(squareFilmRect.x,squareFilmRect.y,item.width,item.height).data,pixels.data),'Film ignores rounded corners and preserves all photo corner pixels');
   const fontRenders = new Set();
   for (const metadataFont of METADATA_FONTS) {
     const settings=sanitizeSettings({style:'classic-white',ratio:'square',layout:'single',metadata:true,manual:'FUJIFILM X-T5 | 50mm | f/2.8 | 1/250 | ISO 200',metadataFont,fontStep:8});
