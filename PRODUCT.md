@@ -44,3 +44,5 @@ Existing static code and the approved Frame It Up Revamp Plan in Pages, supersed
 ## Open Decisions
 
 Actual Instagram account support for Mixed orientation, hosting configuration, and support beyond edited SDR sRGB JPEG/PNG need verification. The initial browser workflow does not claim archival RAW/HDR preservation.
+
+Film-framed photographs and photographs detected as film (no readable camera EXIF at import) always remain whole. This classification stays with the photo if its frame changes. Automatic, explicit, shared and preset layouts all respect this rule; two-/three-part controls are disabled for these photos. Digital photos continue to split automatically only when occupancy improves by at least 15 percentage points.

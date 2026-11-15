@@ -1,6 +1,6 @@
-import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings } from './layout.mjs?v=3';
-import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=3';
-import { renderSlide, encodeCanvas } from './render.mjs?v=3';
+import { DEFAULTS, sanitizeSettings, migrateSettings, planPhoto, exportName, photoRect, instagramSettings, patchPhotoSettings, isFilmPhoto } from './layout.mjs?v=4';
+import { parseExifFromFile, metadataLine, hasCameraMetadata, importSettings } from './metadata.mjs?v=4';
+import { renderSlide, encodeCanvas } from './render.mjs?v=4';
 
 const $ = id => document.getElementById(id);
 const storage = {
@@ -88,7 +88,12 @@ function syncControls() {
   for (const [id, [key]] of Object.entries(controlMap)) {
     if ($(id).type === 'checkbox') $(id).checked = settings[key]; else $(id).value = settings[key];
   }
-  document.querySelectorAll('[data-layout]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layout === settings.layout)));
+  const film = item ? isFilmPhoto(item, settings) : settings.style === 'film-35mm';
+  const layout = film && ['2', '3'].includes(settings.layout) ? 'single' : settings.layout;
+  document.querySelectorAll('[data-layout]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.layout === layout));
+    button.disabled = film && ['2', '3'].includes(button.dataset.layout);
+  });
   document.querySelectorAll('[data-style]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.style === settings.style)));
   $('border-value').value = String(settings.border);
   $('corners-value').value = `${settings.corners}%`;
@@ -263,6 +268,7 @@ async function decodeFile(file) {
       item.workingCopy = true; image.src = '';
     }
     item.exif = await parseExifFromFile(file);
+    item.detectedFilm = !hasCameraMetadata(item.exif);
     item.settings = importSettings(item.exif, item.settings);
     item.filmSeed = crypto.getRandomValues(new Uint32Array(1))[0];
     return item;

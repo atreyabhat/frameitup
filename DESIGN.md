@@ -300,3 +300,5 @@ Control choices are informed by Apple’s HIG: [steppers](https://developer.appl
 - Don't describe file encoding as a resolution choice; JPG/PNG and Instagram/Custom are independent.
 - Don't add film counters or barcodes; 35mm is the only film lettering.
 - Don't add source-mode selectors, metadata field toggles, or custom-note controls.
+
+Film-framed or detected-film photos always use one full-photo slide. Split-count buttons are disabled for these photos; Auto and Single remain available. Detection persists when a user changes the frame.

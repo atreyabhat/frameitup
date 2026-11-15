@@ -44,9 +44,13 @@ export function migrateSettings(old = {}) {
   });
 }
 
+export function isFilmPhoto(item, settings) {
+  return item.detectedFilm === true || settings.style === 'film-35mm';
+}
+
 export function ratioFor(item, settings) {
   if (settings.ratio !== 'adaptive') return RATIOS[settings.ratio];
-  const split = settings.layout === '2' || settings.layout === '3' || (settings.layout === 'auto' && recommendCount(item.width, item.height, 0.75) > 1);
+  const split = !isFilmPhoto(item, settings) && (settings.layout === '2' || settings.layout === '3' || (settings.layout === 'auto' && recommendCount(item.width, item.height, 0.75) > 1));
   if (split) return { ...RATIOS.portrait, label: 'Adaptive · 3:4' };
   const frame = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : item;
   const q = frame.width / frame.height;
@@ -77,7 +81,7 @@ export function frameInsets(q, settings, hasMetadata) {
 export function planPhoto(item, settings, hasMetadata = false) {
   const ratio = ratioFor(item, settings);
   const q = ratio.width / ratio.height;
-  const count = settings.layout === 'auto' ? recommendCount(item.width, item.height, q) : settings.layout === 'single' ? 1 : Number(settings.layout);
+  const count = isFilmPhoto(item, settings) ? 1 : settings.layout === 'auto' ? recommendCount(item.width, item.height, q) : settings.layout === 'single' ? 1 : Number(settings.layout);
   const insets = frameInsets(q, settings, hasMetadata);
   const film = settings.style === 'film-35mm' ? filmBox(item.width, item.height) : null;
   const nativeSize = (needed) => {
